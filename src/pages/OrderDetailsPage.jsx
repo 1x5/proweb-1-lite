@@ -413,25 +413,8 @@ const OrderDetailsPage = () => {
             className="mr-2 cursor-pointer" 
             onClick={() => navigate('/')}
           />
-          <h1 className="text-xl font-bold" style={{ color: theme.textPrimary }}>
-            {editMode ? (
-              <input 
-                type="text" 
-                value={product?.name || ''}
-                onChange={(e) => setProduct({...product, name: e.target.value})}
-                className="p-1 rounded"
-                style={{ 
-                  backgroundColor: theme.inputBg, 
-                  color: theme.textPrimary, 
-                  border: 'none',
-                  fontSize: '1.25rem',
-                  fontWeight: 'bold',
-                  width: '200px'
-                }}
-              />
-            ) : (
-              product?.name || 'Детали заказа'
-            )}
+          <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>
+            {editMode ? 'Редактирование заказа' : 'Просмотр заказа'}
           </h1>
         </div>
         
@@ -471,600 +454,600 @@ const OrderDetailsPage = () => {
       </div>
       
       {/* Основное содержимое */}
-      <div className="flex-1 overflow-auto px-3 pb-20">
-        {/* Основная информация о заказе */}
-        <div 
-          className="rounded-xl p-3 mb-3"
-          style={{ backgroundColor: theme.card }}
-        >
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Основная информация</h2>
-            
-            {/* Статус заказа */}
-            {product && (
-              <div className="relative">
-                {editMode ? (
+      <div className="flex-1 overflow-auto px-1 pb-20">
+        {/* Основная информация */}
+        <div className="p-1">
+          <div className="space-y-2">
+            {/* Основная информация о заказе */}
+            <div 
+              className="rounded-xl p-2 mb-2"
+              style={{ backgroundColor: theme.card }}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Информация</h2>
+                {/* Статус заказа */}
+                {product && (
                   <div className="relative">
-                    <select
-                      value={product.status}
-                      onChange={(e) => setProduct({...product, status: e.target.value})}
-                      className="appearance-none px-3 py-1 pr-8 rounded"
-                      style={{ 
-                        backgroundColor: getStatusColor(product.status),
-                        color: '#ffffff',
-                        border: 'none'
-                      }}
-                    >
-                      {statuses.map(status => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
-                    <ChevronDown 
-                      size={16} 
-                      color="#ffffff" 
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" 
-                    />
+                    {editMode ? (
+                      <div className="relative">
+                        <select
+                          value={product.status}
+                          onChange={(e) => setProduct({...product, status: e.target.value})}
+                          className="appearance-none px-3 py-1 pr-8 rounded"
+                          style={{ 
+                            backgroundColor: getStatusColor(product.status),
+                            color: '#ffffff',
+                            border: 'none'
+                          }}
+                        >
+                          {statuses.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                          ))}
+                        </select>
+                        <ChevronDown 
+                          size={16} 
+                          color="#ffffff" 
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" 
+                        />
+                      </div>
+                    ) : (
+                      <span
+                        style={{ 
+                          color: '#ffffff', 
+                          backgroundColor: getStatusColor(product.status),
+                          padding: '4px 10px',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        {product.status}
+                      </span>
+                    )}
                   </div>
-                ) : (
-                  <span
-                    style={{ 
-                      color: '#ffffff', 
-                      backgroundColor: getStatusColor(product.status),
-                      padding: '4px 10px',
-                      borderRadius: '4px'
-                    }}
-                  >
-                    {product.status}
-                  </span>
                 )}
               </div>
-            )}
-          </div>
-          
-          <div className="h-px w-full mb-2" style={{ backgroundColor: theme.cardBorder }}></div>
-          
-          {/* Контактная информация в две колонки */}
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            {/* Поле телефона */}
-            <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Телефон:</div>
-              {editMode ? (
-                <input 
-                  type="tel" 
-                  value={product.phone}
-                  onChange={(e) => setProduct({...product, phone: e.target.value})}
-                  className="w-full p-2 rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                  placeholder="+7 (___) ___-__-__"
-                />
-              ) : (
-                <div style={{ color: theme.textPrimary }}>
-                  {product.phone || 'Не указан'}
-                </div>
-              )}
-            </div>
-            
-            {/* Поле мессенджера */}
-            <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Мессенджер:</div>
-              {editMode ? (
-                <select
-                  value={product.messenger}
-                  onChange={(e) => setProduct({...product, messenger: e.target.value})}
-                  className="w-full p-2 rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                >
-                  {messengers.map(messenger => (
-                    <option key={messenger} value={messenger}>{messenger}</option>
-                  ))}
-                </select>
-              ) : (
-                <div className="flex items-center">
-                  {product.phone && (
-                    <button
-                      className="px-3 py-1 rounded text-sm"
-                      style={{ 
-                        backgroundColor: product.messenger === 'WhatsApp' ? '#25D366' : '#0088cc',
-                        color: '#ffffff'
-                      }}
-                      onClick={openMessenger}
+              
+              <div className="h-px w-full mb-2" style={{ backgroundColor: theme.cardBorder }}></div>
+              
+              {/* Название заказа */}
+              <div className="mb-2">
+                <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Название:</div>
+                {editMode ? (
+                  <input 
+                    type="text" 
+                    value={product?.name || ''}
+                    onChange={(e) => setProduct({...product, name: e.target.value})}
+                    className="w-full p-2 rounded"
+                    style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                    placeholder="Введите название заказа"
+                  />
+                ) : (
+                  <div 
+                    style={{ color: theme.textPrimary, cursor: product.phone ? 'pointer' : 'default' }}
+                    onClick={() => product.phone && openMessenger()}
+                  >
+                    {product?.name || 'Не указано'}
+                  </div>
+                )}
+              </div>
+              
+              {/* Контактная информация в две колонки */}
+              {editMode && (
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  {/* Поле телефона */}
+                  <div>
+                    <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Телефон:</div>
+                    <input 
+                      type="tel" 
+                      value={product.phone}
+                      onChange={(e) => setProduct({...product, phone: e.target.value})}
+                      className="w-full p-2 rounded"
+                      style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                      placeholder="+7 (___) ___-__-__"
+                    />
+                  </div>
+                  
+                  {/* Поле мессенджера */}
+                  <div>
+                    <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Мессенджер:</div>
+                    <select
+                      value={product.messenger}
+                      onChange={(e) => setProduct({...product, messenger: e.target.value})}
+                      className="w-full p-2 rounded"
+                      style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                     >
-                      {product.messenger}
-                    </button>
+                      {messengers.map(messenger => (
+                        <option key={messenger} value={messenger}>{messenger}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+              
+              {/* Финансовая информация в две колонки */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Поле цены */}
+                <div className="mb-2">
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Стоимость:</div>
+                  {editMode ? (
+                    <input 
+                      type="number" 
+                      value={product.price}
+                      onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
+                      className="w-full p-2 rounded"
+                      style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                      placeholder="0"
+                    />
+                  ) : (
+                    <div style={{ color: theme.textPrimary }}>
+                      {product.price.toLocaleString()} ₽
+                    </div>
                   )}
-                  {!product.phone && (
-                    <span style={{ color: theme.textPrimary }}>
-                      {product.messenger}
-                    </span>
+                </div>
+                
+                {/* Поле предоплаты */}
+                <div className="mb-2">
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Предоплата:</div>
+                  {editMode ? (
+                    <input 
+                      type="number" 
+                      value={product.prepayment}
+                      onChange={handlePrepaymentChange}
+                      className="w-full p-2 rounded"
+                      style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                      placeholder="0"
+                    />
+                  ) : (
+                    <div style={{ color: theme.textPrimary }}>
+                      {product.prepayment.toLocaleString()} ₽
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Финансовая информация в две колонки */}
-          <div className="grid grid-cols-2 gap-2">
-            {/* Поле цены */}
-            <div className="mb-2">
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Стоимость:</div>
-              {editMode ? (
-                <input 
-                  type="number" 
-                  value={product.price}
-                  onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
-                  className="w-full p-2 rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                  placeholder="0"
-                />
-              ) : (
-                <div style={{ color: theme.textPrimary }}>
-                  {product.price.toLocaleString()} ₽
+                
+                {/* Поле себестоимости */}
+                <div className="mb-2">
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Себестоимость:</div>
+                  <div style={{ color: theme.textPrimary }}>
+                    {product.cost.toLocaleString()} ₽
+                  </div>
                 </div>
-              )}
-            </div>
-            
-            {/* Поле предоплаты */}
-            <div className="mb-2">
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Предоплата:</div>
-              {editMode ? (
-                <input 
-                  type="number" 
-                  value={product.prepayment}
-                  onChange={handlePrepaymentChange}
-                  className="w-full p-2 rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                  placeholder="0"
-                />
-              ) : (
-                <div style={{ color: theme.textPrimary }}>
-                  {product.prepayment.toLocaleString()} ₽
+                
+                {/* Поле остатка */}
+                <div className="mb-2">
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Остаток:</div>
+                  <div style={{ 
+                    color: product.balance > 0 ? theme.red : theme.green,
+                    fontWeight: 'bold'
+                  }}>
+                    {product.balance.toLocaleString()} ₽
+                  </div>
                 </div>
-              )}
-            </div>
-            
-            {/* Поле себестоимости */}
-            <div className="mb-2">
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Себестоимость:</div>
-              <div style={{ color: theme.textPrimary }}>
-                {product.cost.toLocaleString()} ₽
+                
+                {/* Поле прибыли */}
+                <div className="mb-2">
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Прибыль:</div>
+                  <div style={{ 
+                    color: product.profit >= 0 ? theme.green : theme.red,
+                    fontWeight: 'bold'
+                  }}>
+                    {product.profit.toLocaleString()} ₽
+                  </div>
+                </div>
+                
+                {/* Поле процента прибыли */}
+                <div className="mb-2">
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Процент:</div>
+                  <div style={{ 
+                    color: product.profitPercent >= 0 ? theme.green : theme.red,
+                    fontWeight: 'bold'
+                  }}>
+                    {product.profitPercent}%
+                  </div>
+                </div>
               </div>
             </div>
             
-            {/* Поле остатка */}
-            <div className="mb-2">
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Остаток:</div>
-              <div style={{ 
-                color: product.balance > 0 ? theme.red : theme.green,
-                fontWeight: 'bold'
-              }}>
-                {product.balance.toLocaleString()} ₽
+            {/* Блок расходов */}
+            <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Расходы: {product.cost}₽</h2>
               </div>
-            </div>
-            
-            {/* Поле прибыли */}
-            <div className="mb-2">
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Прибыль:</div>
-              <div style={{ 
-                color: product.profit >= 0 ? theme.green : theme.red,
-                fontWeight: 'bold'
-              }}>
-                {product.profit.toLocaleString()} ₽
-              </div>
-            </div>
-            
-            {/* Поле процента прибыли */}
-            <div className="mb-2">
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Процент:</div>
-              <div style={{ 
-                color: product.profitPercent >= 0 ? theme.green : theme.red,
-                fontWeight: 'bold'
-              }}>
-                {product.profitPercent}%
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Блок расходов */}
-        <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Расходы: {product.cost}₽</h2>
-          </div>
-          
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-          
-          <div className="rounded-lg p-2" style={{ backgroundColor: theme.innerCard }}>
-            {/* Список расходов */}
-            {product.expenses.length > 0 ? (
-              product.expenses.map((expense, index) => (
-                <div 
-                  key={expense.id} 
-                  className="mb-2 last:mb-0"
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      {editMode && (
-                        <div className="mr-1 cursor-move">
-                          <Move size={14} color={theme.textSecondary} />
-                        </div>
-                      )}
-                      
-                      {editMode ? (
-                        <input 
-                          type="text" 
-                          value={expense.name}
-                          onChange={(e) => {
-                            const updatedExpenses = [...product.expenses];
-                            updatedExpenses[index].name = e.target.value;
-                            setProduct({...product, expenses: updatedExpenses});
-                          }}
-                          className="p-1 rounded"
-                          style={{ 
-                            backgroundColor: theme.inputBg, 
-                            color: theme.textSecondary, 
-                            border: 'none',
-                            fontSize: '0.9rem',
-                            width: '150px'
-                          }}
-                        />
-                      ) : (
-                        <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>{expense.name}</span>
-                      )}
-                      
-                      {/* Иконка ссылки */}
-                      {!expense.showLinkInput && (
-                        expense.link ? (
-                          <div className="flex items-center">
-                            <a 
-                              href={expense.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-1"
-                              style={{ color: theme.accent }}
-                            >
-                              <ExternalLink size={14} />
-                            </a>
-                            {editMode && (
+              
+              <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+              
+              <div className="rounded-lg p-2" style={{ backgroundColor: theme.innerCard }}>
+                {/* Список расходов */}
+                {product.expenses.length > 0 ? (
+                  product.expenses.map((expense, index) => (
+                    <div 
+                      key={expense.id} 
+                      className="mb-2 last:mb-0"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          {editMode && (
+                            <div className="mr-1 cursor-move">
+                              <Move size={14} color={theme.textSecondary} />
+                            </div>
+                          )}
+                          
+                          {editMode ? (
+                            <input 
+                              type="text" 
+                              value={expense.name}
+                              onChange={(e) => {
+                                const updatedExpenses = [...product.expenses];
+                                updatedExpenses[index].name = e.target.value;
+                                setProduct({...product, expenses: updatedExpenses});
+                              }}
+                              className="p-1 rounded"
+                              style={{ 
+                                backgroundColor: theme.inputBg, 
+                                color: theme.textSecondary, 
+                                border: 'none',
+                                fontSize: '0.9rem',
+                                width: '150px'
+                              }}
+                            />
+                          ) : (
+                            <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>{expense.name}</span>
+                          )}
+                          
+                          {/* Иконка ссылки */}
+                          {!expense.showLinkInput && (
+                            expense.link ? (
+                              <div className="flex items-center">
+                                <a 
+                                  href={expense.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-1"
+                                  style={{ color: theme.accent }}
+                                >
+                                  <ExternalLink size={14} />
+                                </a>
+                                {editMode && (
+                                  <button 
+                                    className="ml-1"
+                                    onClick={() => {
+                                      const updatedExpenses = [...product.expenses];
+                                      updatedExpenses[index] = {
+                                        ...updatedExpenses[index],
+                                        showLinkInput: true
+                                      };
+                                      setProduct({...product, expenses: updatedExpenses});
+                                    }}
+                                    style={{ color: theme.accent }}
+                                  >
+                                    <Edit2 size={14} />
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              editMode && (
+                                <button 
+                                  className="ml-1"
+                                  onClick={() => {
+                                    const updatedExpenses = [...product.expenses];
+                                    updatedExpenses[index] = {
+                                      ...updatedExpenses[index],
+                                      showLinkInput: true
+                                    };
+                                    setProduct({...product, expenses: updatedExpenses});
+                                  }}
+                                  style={{ color: theme.textSecondary }}
+                                >
+                                  <Paperclip size={14} />
+                                </button>
+                              )
+                            )
+                          )}
+
+                          {/* Поле для ввода ссылки */}
+                          {editMode && expense.showLinkInput && (
+                            <div className="flex items-center space-x-2 ml-2">
+                              <input 
+                                type="text" 
+                                value={expense.newLinkUrl || expense.link || ''}
+                                onChange={(e) => {
+                                  const updatedExpenses = [...product.expenses];
+                                  updatedExpenses[index] = {
+                                    ...updatedExpenses[index],
+                                    newLinkUrl: e.target.value
+                                  };
+                                  setProduct({...product, expenses: updatedExpenses});
+                                }}
+                                placeholder="https://..." 
+                                className="p-1.5 text-xs rounded w-40"
+                                style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                              />
                               <button 
-                                className="ml-1"
+                                className="rounded-full w-6 h-6 flex items-center justify-center"
+                                style={{ backgroundColor: theme.accent }}
                                 onClick={() => {
                                   const updatedExpenses = [...product.expenses];
                                   updatedExpenses[index] = {
                                     ...updatedExpenses[index],
-                                    showLinkInput: true
+                                    link: updatedExpenses[index].newLinkUrl,
+                                    showLinkInput: false,
+                                    newLinkUrl: undefined
                                   };
                                   setProduct({...product, expenses: updatedExpenses});
                                 }}
-                                style={{ color: theme.accent }}
                               >
-                                <Edit2 size={14} />
+                                <Check size={14} color="#ffffff" />
                               </button>
-                            )}
-                          </div>
-                        ) : (
-                          editMode && (
-                            <button 
-                              className="ml-1"
-                              onClick={() => {
-                                const updatedExpenses = [...product.expenses];
-                                updatedExpenses[index] = {
-                                  ...updatedExpenses[index],
-                                  showLinkInput: true
-                                };
-                                setProduct({...product, expenses: updatedExpenses});
-                              }}
-                              style={{ color: theme.textSecondary }}
-                            >
-                              <Paperclip size={14} />
-                            </button>
-                          )
-                        )
-                      )}
-
-                      {/* Поле для ввода ссылки */}
-                      {editMode && expense.showLinkInput && (
-                        <div className="flex items-center space-x-2 ml-2">
-                          <input 
-                            type="text" 
-                            value={expense.newLinkUrl || expense.link || ''}
-                            onChange={(e) => {
-                              const updatedExpenses = [...product.expenses];
-                              updatedExpenses[index] = {
-                                ...updatedExpenses[index],
-                                newLinkUrl: e.target.value
-                              };
-                              setProduct({...product, expenses: updatedExpenses});
-                            }}
-                            placeholder="https://..." 
-                            className="p-1.5 text-xs rounded w-40"
-                            style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                          />
-                          <button 
-                            className="rounded-full w-6 h-6 flex items-center justify-center"
-                            style={{ backgroundColor: theme.accent }}
-                            onClick={() => {
-                              const updatedExpenses = [...product.expenses];
-                              updatedExpenses[index] = {
-                                ...updatedExpenses[index],
-                                link: updatedExpenses[index].newLinkUrl,
-                                showLinkInput: false,
-                                newLinkUrl: undefined
-                              };
-                              setProduct({...product, expenses: updatedExpenses});
-                            }}
-                          >
-                            <Check size={14} color="#ffffff" />
-                          </button>
-                          <button 
-                            className="rounded-full w-6 h-6 flex items-center justify-center"
-                            style={{ backgroundColor: theme.card }}
-                            onClick={() => {
-                              const updatedExpenses = [...product.expenses];
-                              updatedExpenses[index] = {
-                                ...updatedExpenses[index],
-                                showLinkInput: false,
-                                newLinkUrl: undefined
-                              };
-                              setProduct({...product, expenses: updatedExpenses});
-                            }}
-                          >
-                            <X size={14} color={theme.textSecondary} />
-                          </button>
+                              <button 
+                                className="rounded-full w-6 h-6 flex items-center justify-center"
+                                style={{ backgroundColor: theme.card }}
+                                onClick={() => {
+                                  const updatedExpenses = [...product.expenses];
+                                  updatedExpenses[index] = {
+                                    ...updatedExpenses[index],
+                                    showLinkInput: false,
+                                    newLinkUrl: undefined
+                                  };
+                                  setProduct({...product, expenses: updatedExpenses});
+                                }}
+                              >
+                                <X size={14} color={theme.textSecondary} />
+                              </button>
+                            </div>
+                          )}
                         </div>
-                      )}
+                        
+                        <div className="flex items-center">
+                          {editMode ? (
+                            <>
+                              <input 
+                                type="number" 
+                                value={expense.cost}
+                                onChange={(e) => {
+                                  const updatedExpenses = [...product.expenses];
+                                  updatedExpenses[index].cost = parseFloat(e.target.value) || 0;
+                                  setProduct({...product, expenses: updatedExpenses});
+                                }}
+                                className="p-1 rounded w-20 text-right mr-2"
+                                style={{ 
+                                  backgroundColor: theme.inputBg, 
+                                  color: theme.textPrimary, 
+                                  border: 'none',
+                                  fontSize: '0.9rem'
+                                }}
+                              />
+                              <button 
+                                onClick={() => handleRemoveExpense(expense.id)}
+                                className="p-1 rounded-full"
+                                style={{ backgroundColor: 'rgba(255,0,0,0.1)' }}
+                              >
+                                <Trash2 size={14} color={theme.red} />
+                              </button>
+                            </>
+                          ) : (
+                            <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{expense.cost}₽</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center">
-                      {editMode ? (
-                        <>
-                          <input 
-                            type="number" 
-                            value={expense.cost}
-                            onChange={(e) => {
-                              const updatedExpenses = [...product.expenses];
-                              updatedExpenses[index].cost = parseFloat(e.target.value) || 0;
-                              setProduct({...product, expenses: updatedExpenses});
-                            }}
-                            className="p-1 rounded w-20 text-right mr-2"
-                            style={{ 
-                              backgroundColor: theme.inputBg, 
-                              color: theme.textPrimary, 
-                              border: 'none',
-                              fontSize: '0.9rem'
-                            }}
-                          />
-                          <button 
-                            onClick={() => handleRemoveExpense(expense.id)}
-                            className="p-1 rounded-full"
-                            style={{ backgroundColor: 'rgba(255,0,0,0.1)' }}
-                          >
-                            <Trash2 size={14} color={theme.red} />
-                          </button>
-                        </>
-                      ) : (
-                        <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{expense.cost}₽</span>
-                      )}
+                  ))
+                ) : (
+                  <div className="text-center py-2" style={{ color: theme.textSecondary }}>
+                    Нет расходов
+                  </div>
+                )}
+                
+                {/* Форма добавления нового расхода */}
+                {editMode && (
+                  <div className="mt-3 pt-3 border-t" style={{ borderColor: theme.cardBorder }}>
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="text" 
+                        value={newExpense.name}
+                        onChange={(e) => setNewExpense({...newExpense, name: e.target.value})}
+                        placeholder="Название" 
+                        className="p-2 rounded flex-1"
+                        style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                      />
+                      <input 
+                        type="number" 
+                        value={newExpense.cost}
+                        onChange={(e) => setNewExpense({...newExpense, cost: e.target.value})}
+                        placeholder="Сумма" 
+                        className="p-2 rounded w-24"
+                        style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                      />
+                      <button 
+                        className="rounded-full w-8 h-8 flex items-center justify-center"
+                        style={{ backgroundColor: theme.accent }}
+                        onClick={handleAddExpense}
+                      >
+                        <Plus size={20} color="#ffffff" />
+                      </button>
                     </div>
                   </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Блок примечаний */}
+            {(editMode || product.notes) && (
+              <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Примечания</h2>
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-2" style={{ color: theme.textSecondary }}>
-                Нет расходов
-              </div>
-            )}
-            
-            {/* Форма добавления нового расхода */}
-            {editMode && (
-              <div className="mt-3 pt-3 border-t" style={{ borderColor: theme.cardBorder }}>
-                <div className="flex items-center space-x-2">
-                  <input 
-                    type="text" 
-                    value={newExpense.name}
-                    onChange={(e) => setNewExpense({...newExpense, name: e.target.value})}
-                    placeholder="Название" 
-                    className="p-2 rounded flex-1"
-                    style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                
+                <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+                
+                {editMode ? (
+                  <textarea 
+                    value={product.notes || ''}
+                    onChange={(e) => setProduct({...product, notes: e.target.value})}
+                    className="w-full p-2 rounded min-h-24"
+                    style={{ 
+                      backgroundColor: theme.innerCard, 
+                      color: theme.textPrimary, 
+                      border: 'none',
+                      resize: 'vertical'
+                    }}
+                    placeholder="Добавьте примечания к заказу..."
                   />
-                  <input 
-                    type="number" 
-                    value={newExpense.cost}
-                    onChange={(e) => setNewExpense({...newExpense, cost: e.target.value})}
-                    placeholder="Сумма" 
-                    className="p-2 rounded w-24"
-                    style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                  />
-                  <button 
-                    className="rounded-full w-8 h-8 flex items-center justify-center"
-                    style={{ backgroundColor: theme.accent }}
-                    onClick={handleAddExpense}
-                  >
-                    <Plus size={20} color="#ffffff" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        {/* Блок примечаний */}
-        {(editMode || product.notes) && (
-          <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Примечания</h2>
-            </div>
-            
-            <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-            
-            {editMode ? (
-              <textarea 
-                value={product.notes || ''}
-                onChange={(e) => setProduct({...product, notes: e.target.value})}
-                className="w-full p-2 rounded min-h-24"
-                style={{ 
-                  backgroundColor: theme.innerCard, 
-                  color: theme.textPrimary, 
-                  border: 'none',
-                  resize: 'vertical'
-                }}
-                placeholder="Добавьте примечания к заказу..."
-              />
-            ) : (
-              <div 
-                className="p-2 rounded"
-                style={{ backgroundColor: theme.innerCard }}
-              >
-                <p style={{ color: theme.textPrimary }}>{product.notes}</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Блок сроков */}
-        <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Сроки</h2>
-            <div className="flex items-center">
-              <Clock size={16} color={theme.textSecondary} className="mr-1" />
-              <span style={{ color: theme.textPrimary }}>{product.duration}</span>
-              <span style={{ color: theme.textSecondary, marginLeft: '4px' }}>дней</span>
-            </div>
-          </div>
-          
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Начало:</div>
-              {editMode ? (
-                <input 
-                  type="date" 
-                  value={product.startDate}
-                  onChange={handleStartDateChange}
-                  className="w-full p-1.5 rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                />
-              ) : (
-                <div style={{ color: theme.textPrimary }}>{formatDate(product.startDate)}</div>
-              )}
-            </div>
-
-            <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Окончание:</div>
-              {editMode ? (
-                <input 
-                  type="date" 
-                  value={product.endDate}
-                  onChange={handleEndDateChange}
-                  className="w-full p-1.5 rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                />
-              ) : (
-                <div style={{ color: theme.textPrimary }}>{formatDate(product.endDate)}</div>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {/* Блок фотографий */}
-        <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Фотографии</h2>
-          </div>
-          
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-          
-          {/* Загрузка фотографий */}
-          {editMode && (
-            <div className="mb-3">
-              <input 
-                type="file" 
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept="image/*"
-                multiple
-                className="hidden"
-              />
-              <button 
-                className="w-full p-3 rounded flex items-center justify-center"
-                style={{ 
-                  backgroundColor: theme.innerCard, 
-                  color: theme.textPrimary,
-                  border: `1px dashed ${theme.cardBorder}`
-                }}
-                onClick={() => fileInputRef.current.click()}
-              >
-                <Camera size={20} className="mr-2" />
-                Загрузить фотографии
-              </button>
-            </div>
-          )}
-          
-          {/* Индикаторы прогресса загрузки */}
-          {Object.keys(uploadProgress).length > 0 && (
-            <div className="mb-3">
-              {Object.entries(uploadProgress).map(([fileId, progress]) => (
-                <div key={fileId} className="mb-2">
-                  <div className="flex justify-between mb-1">
-                    <span style={{ color: theme.textSecondary, fontSize: '0.8rem' }}>
-                      Загрузка: {fileId.split('_')[1]}
-                    </span>
-                    <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>
-                      {progress}%
-                    </span>
-                  </div>
+                ) : (
                   <div 
-                    className="h-1.5 rounded-full overflow-hidden"
-                    style={{ backgroundColor: theme.inputBg }}
+                    className="p-2 rounded"
+                    style={{ backgroundColor: theme.innerCard }}
                   >
-                    <div 
-                      className="h-full rounded-full"
-                      style={{ 
-                        width: `${progress}%`, 
-                        backgroundColor: theme.accent,
-                        transition: 'width 0.2s ease-in-out'
-                      }}
-                    ></div>
+                    <p style={{ color: theme.textPrimary }}>{product.notes}</p>
                   </div>
+                )}
+              </div>
+            )}
+            
+            {/* Блок сроков */}
+            <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Сроки</h2>
+                <div className="flex items-center">
+                  <Clock size={16} color={theme.textSecondary} className="mr-1" />
+                  <span style={{ color: theme.textPrimary }}>{product.duration}</span>
+                  <span style={{ color: theme.textSecondary, marginLeft: '4px' }}>дней</span>
                 </div>
-              ))}
-            </div>
-          )}
-          
-          {/* Галерея фотографий */}
-          {photos.length > 0 ? (
-            <div className="grid grid-cols-3 gap-2">
-              {photos.map(photo => (
-                <div 
-                  key={photo.id} 
-                  className="relative aspect-square rounded overflow-hidden"
-                  onClick={() => handleOpenPreview(photo)}
-                >
-                  <img 
-                    src={photo.url} 
-                    alt={photo.name}
-                    className="w-full h-full object-cover"
-                  />
-                  {editMode && (
-                    <button 
-                      className="absolute top-1 right-1 rounded-full p-1"
-                      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeletePhoto(photo.id);
-                      }}
-                    >
-                      <X size={16} color="#ffffff" />
-                    </button>
+              </div>
+              
+              <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Начало:</div>
+                  {editMode ? (
+                    <input 
+                      type="date" 
+                      value={product.startDate}
+                      onChange={handleStartDateChange}
+                      className="w-full p-1.5 rounded"
+                      style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                    />
+                  ) : (
+                    <div style={{ color: theme.textPrimary }}>{formatDate(product.startDate)}</div>
                   )}
                 </div>
-              ))}
+
+                <div>
+                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Окончание:</div>
+                  {editMode ? (
+                    <input 
+                      type="date" 
+                      value={product.endDate}
+                      onChange={handleEndDateChange}
+                      className="w-full p-1.5 rounded"
+                      style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                    />
+                  ) : (
+                    <div style={{ color: theme.textPrimary }}>{formatDate(product.endDate)}</div>
+                  )}
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-4" style={{ color: theme.textSecondary }}>
-              Нет фотографий
+            
+            {/* Блок фотографий */}
+            <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Фотографии</h2>
+              </div>
+              
+              <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+              
+              {/* Загрузка фотографий */}
+              {editMode && (
+                <div className="mb-3">
+                  <input 
+                    type="file" 
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                  />
+                  <button 
+                    className="w-full p-3 rounded flex items-center justify-center"
+                    style={{ 
+                      backgroundColor: theme.innerCard, 
+                      color: theme.textPrimary,
+                      border: `1px dashed ${theme.cardBorder}`
+                    }}
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    <Camera size={20} className="mr-2" />
+                    Загрузить фотографии
+                  </button>
+                </div>
+              )}
+              
+              {/* Индикаторы прогресса загрузки */}
+              {Object.keys(uploadProgress).length > 0 && (
+                <div className="mb-3">
+                  {Object.entries(uploadProgress).map(([fileId, progress]) => (
+                    <div key={fileId} className="mb-2">
+                      <div className="flex justify-between mb-1">
+                        <span style={{ color: theme.textSecondary, fontSize: '0.8rem' }}>
+                          Загрузка: {fileId.split('_')[1]}
+                        </span>
+                        <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>
+                          {progress}%
+                        </span>
+                      </div>
+                      <div 
+                        className="h-1.5 rounded-full overflow-hidden"
+                        style={{ backgroundColor: theme.inputBg }}
+                      >
+                        <div 
+                          className="h-full rounded-full"
+                          style={{ 
+                            width: `${progress}%`, 
+                            backgroundColor: theme.accent,
+                            transition: 'width 0.2s ease-in-out'
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Галерея фотографий */}
+              {photos.length > 0 ? (
+                <div className="grid grid-cols-3 gap-2">
+                  {photos.map(photo => (
+                    <div 
+                      key={photo.id} 
+                      className="relative aspect-square rounded overflow-hidden"
+                      onClick={() => handleOpenPreview(photo)}
+                    >
+                      <img 
+                        src={photo.url} 
+                        alt={photo.name}
+                        className="w-full h-full object-cover"
+                      />
+                      {editMode && (
+                        <button 
+                          className="absolute top-1 right-1 rounded-full p-1"
+                          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePhoto(photo.id);
+                          }}
+                        >
+                          <X size={16} color="#ffffff" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4" style={{ color: theme.textSecondary }}>
+                  Нет фотографий
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
       
