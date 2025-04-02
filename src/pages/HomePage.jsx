@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Sun, Moon, ChevronDown, X, Calendar, List, LayoutGrid, Trash2 } from 'lucide-react';
+import { Search, Sun, Moon, Calendar, List, LayoutGrid, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { getOrders, deleteOrder } from '../services/OrderService';
@@ -17,7 +17,6 @@ const HomePage = () => {
   const [compactMode, setCompactMode] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const searchInputRef = useRef(null);
   const statusDropdownRef = useRef(null);
   const touchStartXRef = useRef(0);
   const touchEndXRef = useRef(0);
@@ -99,25 +98,6 @@ const HomePage = () => {
     setShowStatusDropdown(false);
   };
   
-  // Обработчик изменения поискового запроса
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-  
-  // Обработчик открытия/закрытия поиска
-  const handleSearchToggle = () => {
-    setShowSearch(!showSearch);
-    if (!showSearch && searchInputRef.current) {
-      setTimeout(() => searchInputRef.current.focus(), 100);
-    }
-  };
-  
-  // Обработчик очистки поискового запроса
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setShowSearch(false);
-  };
-  
   // Обработчик перехода к деталям заказа
   const handleOrderClick = (orderId) => {
     navigate(`/order/${orderId}`);
@@ -137,13 +117,13 @@ const HomePage = () => {
   const getStatusColor = (status) => {
     switch(status) {
       case 'Выполнен':
-        return theme.green;
+        return '#22c55e'; // Зеленый
       case 'В работе':
-        return theme.accent;
+        return '#3b82f6'; // Синий
       case 'Ожидает':
-        return theme.textSecondary;
+        return '#f59e0b'; // Оранжевый
       default:
-        return theme.accent;
+        return '#6b7280'; // Серый для "Все"
     }
   };
   
@@ -289,41 +269,37 @@ const HomePage = () => {
       }}
     >
       <div className="flex justify-between items-center">
-        <div className="flex-1 mr-2">
+        <div className="flex-1 mr-2 flex items-center min-w-0">
+          {/* Цветовая полоса статуса */}
+          <div 
+            className="w-1 h-4 rounded-full mr-2 flex-shrink-0"
+            style={{ 
+              backgroundColor: getStatusColor(order.status)
+            }}
+          />
           <h2 className="font-bold truncate" style={{ 
             color: theme.textPrimary,
             fontSize: isMobile ? '0.9rem' : '1rem'
           }}>{order.name}</h2>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-shrink-0">
           <div className="flex items-center">
             <Calendar size={isMobile ? 12 : 14} color={theme.textSecondary} className="mr-1" />
             <span style={{ 
               color: theme.textPrimary, 
-              fontSize: isMobile ? '0.7rem' : '0.8rem'
+              fontSize: isMobile ? '0.7rem' : '0.8rem',
+              whiteSpace: 'nowrap'
             }}>{formatDate(order.endDate)}</span>
           </div>
           
           <div className="flex items-center">
             <span style={{ 
               color: theme.textPrimary, 
-              fontSize: isMobile ? '0.7rem' : '0.8rem'
+              fontSize: isMobile ? '0.7rem' : '0.8rem',
+              whiteSpace: 'nowrap'
             }}>{order.price}₽</span>
           </div>
-          
-          <span
-            style={{ 
-              color: '#ffffff', 
-              backgroundColor: getStatusColor(order.status),
-              padding: '1px 6px',
-              borderRadius: '4px',
-              fontSize: isMobile ? '0.65rem' : '0.75rem',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {order.status}
-          </span>
         </div>
       </div>
     </div>
@@ -344,144 +320,108 @@ const HomePage = () => {
     <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
       {/* Верхняя панель */}
       <div className="p-3 flex justify-between items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold" style={{ color: theme.textPrimary }}>
-            Мои заказы
-          </h1>
+        <div className="flex items-center">
+          <h1 className="text-xl font-bold" style={{ color: theme.textPrimary }}>Мои заказы</h1>
         </div>
         
-        <div className="flex items-center">
+        <div className="flex items-center space-x-2">
+          {/* Иконка статуса */}
+          <div className="relative" ref={statusDropdownRef}>
+            <button 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: theme.card }}
+              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+            >
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ 
+                  backgroundColor: getStatusColor(selectedFilter),
+                  display: 'inline-block'
+                }}
+              />
+            </button>
+            {showStatusDropdown && (
+              <div 
+                className="absolute top-full right-0 mt-1 rounded-lg shadow-lg z-10"
+                style={{ backgroundColor: theme.card, minWidth: '120px' }}
+              >
+                {statuses.map(status => (
+                  <button
+                    key={status}
+                    className="block w-full text-left px-4 py-2 first:rounded-t-lg last:rounded-b-lg"
+                    style={{ 
+                      backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
+                      color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
+                      fontSize: isMobile ? '0.85rem' : '1rem'
+                    }}
+                    onClick={() => handleFilterChange(status)}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Иконка поиска */}
           <button 
-            className="rounded-full p-2 mr-2"
+            className="w-10 h-10 rounded-full flex items-center justify-center"
             style={{ backgroundColor: theme.card }}
-            onClick={handleSearchToggle}
+            onClick={() => setShowSearch(!showSearch)}
           >
-            <Search size={isMobile ? 18 : 20} color={theme.textPrimary} />
+            <Search size={20} color={theme.textPrimary} />
           </button>
-          
+
+          {/* Иконка вида */}
           <button 
-            className="rounded-full p-2"
+            className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: theme.card }}
+            onClick={() => setCompactMode(!compactMode)}
+          >
+            {compactMode ? 
+              <LayoutGrid size={20} color={theme.textPrimary} /> : 
+              <List size={20} color={theme.textPrimary} />
+            }
+          </button>
+
+          {/* Переключатель темы */}
+          <button 
+            className="w-10 h-10 rounded-full flex items-center justify-center"
             style={{ backgroundColor: theme.card }}
             onClick={toggleDarkMode}
           >
-            {darkMode ? <Sun size={isMobile ? 18 : 20} color={theme.textPrimary} /> : <Moon size={isMobile ? 18 : 20} color={theme.textPrimary} />}
+            {darkMode ? 
+              <Sun size={20} color={theme.textPrimary} /> : 
+              <Moon size={20} color={theme.textPrimary} />
+            }
           </button>
         </div>
       </div>
-      
+
       {/* Поле поиска */}
       {showSearch && (
-        <div 
-          className="p-3 flex items-center" 
-          style={{ 
-            backgroundColor: darkMode ? '#1a1a1a' : theme.bg,
-            borderBottom: `1px solid ${theme.cardBorder}`
-          }}
-        >
-          <div className="relative flex-1">
+        <div className="px-3 mb-3">
+          <div className="relative">
             <input
-              ref={searchInputRef}
               type="text"
-              placeholder="Поиск..."
-              className="py-2 pl-8 pr-4 rounded-full text-sm w-full"
-              style={{ 
-                backgroundColor: theme.inputBg, 
-                color: theme.textPrimary,
-                border: 'none',
-                fontSize: isMobile ? '0.9rem' : '1rem'
-              }}
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Поиск заказов..."
+              className="w-full p-2 pl-10 rounded"
+              style={{ 
+                backgroundColor: theme.card, 
+                color: theme.textPrimary, 
+                border: 'none'
+              }}
             />
             <Search 
-              size={isMobile ? 14 : 16} 
+              size={16} 
               color={theme.textSecondary} 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2" 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2"
             />
-            {searchQuery && (
-              <button 
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                onClick={handleClearSearch}
-              >
-                <X size={isMobile ? 14 : 16} color={theme.textSecondary} />
-              </button>
-            )}
           </div>
         </div>
       )}
-      
-      {/* Фильтры */}
-      <div className="flex items-center justify-between p-3" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
-        <div className="flex items-center space-x-2">
-          {isMobile ? (
-            <div className="relative" ref={statusDropdownRef}>
-              <button
-                className="px-3 py-1 rounded-full flex items-center"
-                style={{ 
-                  backgroundColor: theme.card,
-                  color: theme.textPrimary,
-                  fontSize: isMobile ? '0.85rem' : '1rem'
-                }}
-                onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-              >
-                {selectedFilter}
-                <ChevronDown size={isMobile ? 14 : 16} className="ml-1" />
-              </button>
-              {showStatusDropdown && (
-                <div 
-                  className="absolute top-full left-0 mt-1 rounded-lg shadow-lg z-10"
-                  style={{ backgroundColor: theme.card, minWidth: '120px' }}
-                >
-                  {statuses.map(status => (
-                    <button
-                      key={status}
-                      className="block w-full text-left px-4 py-2 first:rounded-t-lg last:rounded-b-lg"
-                      style={{ 
-                        backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
-                        color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
-                        fontSize: isMobile ? '0.85rem' : '1rem'
-                      }}
-                      onClick={() => handleFilterChange(status)}
-                    >
-                      {status}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex space-x-2">
-              {statuses.map(status => (
-                <button
-                  key={status}
-                  className="px-3 py-1 rounded-full"
-                  style={{ 
-                    backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
-                    color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
-                    border: `1px solid ${status === 'Все' ? theme.accent : getStatusColor(status)}`,
-                    fontSize: isMobile ? '0.85rem' : '1rem'
-                  }}
-                  onClick={() => setSelectedFilter(status)}
-                >
-                  {status}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        {/* Кнопка переключения вида */}
-        <button
-          className="rounded-full p-2"
-          style={{ 
-            backgroundColor: theme.card,
-            color: theme.textPrimary
-          }}
-          onClick={() => setCompactMode(!compactMode)}
-        >
-          {compactMode ? <LayoutGrid size={isMobile ? 18 : 20} /> : <List size={isMobile ? 18 : 20} />}
-        </button>
-      </div>
       
       {/* Список заказов */}
       <div className="flex-1 p-3 overflow-auto pb-20">
