@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, Edit2, ExternalLink, Check, Move, Paperclip, Clock, Plus, Sun, Moon, X, Trash2, Image, Camera } from 'lucide-react';
+import { ChevronLeft, Edit2, ExternalLink, Check, Move, Paperclip, Clock, Plus, Sun, Moon, X, Trash2, Camera, ChevronDown } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrder, deleteOrder } from '../services/OrderService';
@@ -25,6 +25,9 @@ const OrderDetailsPage = () => {
   // Статусы продукта
   const statuses = ['Ожидает', 'В работе', 'Выполнен'];
   
+  // Доступные мессенджеры
+  const messengers = ['WhatsApp', 'Telegram'];
+  
   // Определяем, является ли устройство мобильным
   useEffect(() => {
     const checkIfMobile = () => {
@@ -46,7 +49,8 @@ const OrderDetailsPage = () => {
       setIsNewOrder(true);
       setProduct({
         name: 'Новый заказ',
-        customer: '',
+        phone: '',
+        messenger: 'WhatsApp', // По умолчанию выбираем WhatsApp
         cost: 0,
         price: 0,
         profit: 0,
@@ -57,7 +61,9 @@ const OrderDetailsPage = () => {
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         expenses: [],
         notes: '',
-        photos: []
+        photos: [],
+        prepayment: 0,
+        balance: 0
       });
       setEditMode(true);
     } else {
@@ -65,6 +71,20 @@ const OrderDetailsPage = () => {
       setIsNewOrder(false);
       const orderData = getOrderById(id);
       if (orderData) {
+        // Добавляем поля предоплаты и остатка, если их нет
+        if (orderData.prepayment === undefined) {
+          orderData.prepayment = 0;
+        }
+        if (orderData.balance === undefined) {
+          orderData.balance = orderData.price || 0;
+        }
+        // Добавляем поля телефона и мессенджера, если их нет
+        if (orderData.phone === undefined) {
+          orderData.phone = '';
+        }
+        if (orderData.messenger === undefined) {
+          orderData.messenger = 'WhatsApp';
+        }
         setProduct(orderData);
         // Загружаем фотографии, если они есть
         if (orderData.photos && orderData.photos.length > 0) {
@@ -86,12 +106,17 @@ const OrderDetailsPage = () => {
     const profit = price - totalCost;
     const profitPercent = price > 0 ? Math.round((profit / price) * 100 * 10) / 10 : 0;
     
+    // Рассчитываем остаток
+    const prepayment = parseFloat(product.prepayment || 0);
+    const balance = price - prepayment;
+    
     const updatedProduct = {
       ...product,
       cost: totalCost,
       profit: profit,
       profitPercent: profitPercent,
-      photos: photos
+      photos: photos,
+      balance: balance
     };
     
     // Сохраняем изменения
@@ -325,6 +350,49 @@ const OrderDetailsPage = () => {
     }, 500);
   };
   
+  // Функция для получения цвета статуса
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'Выполнен':
+        return theme.green;
+      case 'В работе':
+        return theme.accent;
+      case 'Ожидает':
+        return theme.textSecondary;
+      default:
+        return theme.accent;
+    }
+  };
+  
+  // Обработчик изменения предоплаты
+  const handlePrepaymentChange = (e) => {
+    const prepayment = parseFloat(e.target.value) || 0;
+    const price = parseFloat(product.price || 0);
+    const balance = price - prepayment;
+    
+    setProduct({
+      ...product,
+      prepayment: prepayment,
+      balance: balance
+    });
+  };
+  
+  // Функция для открытия чата в мессенджере
+  const openMessenger = () => {
+    if (!product.phone) return;
+    
+    // Форматируем номер телефона (удаляем все, кроме цифр)
+    const formattedPhone = product.phone.replace(/\D/g, '');
+    
+    if (product.messenger === 'WhatsApp') {
+      // Открываем WhatsApp
+      window.open(`https://wa.me/${formattedPhone}`, '_blank');
+    } else if (product.messenger === 'Telegram') {
+      // Открываем Telegram
+      window.open(`https://t.me/+${formattedPhone}`, '_blank');
+    }
+  };
+  
   // Если данные еще не загружены
   if (!product) {
     return (
@@ -368,16 +436,6 @@ const OrderDetailsPage = () => {
         </div>
         
         <div className="flex items-center">
-          {!isMobile && id !== 'new' && !isNewOrder && (
-            <button 
-              className="rounded-full p-2 mr-2"
-              style={{ backgroundColor: theme.red }}
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <Trash2 size={20} color="#ffffff" />
-            </button>
-          )}
-          
           <button 
             className="rounded-full p-2 mr-2"
             style={{ backgroundColor: theme.card }}
@@ -388,6 +446,16 @@ const OrderDetailsPage = () => {
               <Moon size={20} color={theme.textPrimary} />
             }
           </button>
+
+          {!isMobile && id !== 'new' && !isNewOrder && (
+            <button 
+              className="rounded-full p-2 mr-2"
+              style={{ backgroundColor: theme.red }}
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              <Trash2 size={20} color="#ffffff" />
+            </button>
+          )}
           
           <button 
             className="rounded-full p-2"
@@ -404,46 +472,192 @@ const OrderDetailsPage = () => {
       
       {/* Основное содержимое */}
       <div className="flex-1 overflow-auto px-3 pb-20">
-        {/* Блок цены и прибыли */}
-        <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
+        {/* Основная информация о заказе */}
+        <div 
+          className="rounded-xl p-3 mb-3"
+          style={{ backgroundColor: theme.card }}
+        >
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Финансы</h2>
+            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Основная информация</h2>
+            
+            {/* Статус заказа */}
+            {product && (
+              <div className="relative">
+                {editMode ? (
+                  <div className="relative">
+                    <select
+                      value={product.status}
+                      onChange={(e) => setProduct({...product, status: e.target.value})}
+                      className="appearance-none px-3 py-1 pr-8 rounded"
+                      style={{ 
+                        backgroundColor: getStatusColor(product.status),
+                        color: '#ffffff',
+                        border: 'none'
+                      }}
+                    >
+                      {statuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                    <ChevronDown 
+                      size={16} 
+                      color="#ffffff" 
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" 
+                    />
+                  </div>
+                ) : (
+                  <span
+                    style={{ 
+                      color: '#ffffff', 
+                      backgroundColor: getStatusColor(product.status),
+                      padding: '4px 10px',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    {product.status}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+          <div className="h-px w-full mb-2" style={{ backgroundColor: theme.cardBorder }}></div>
           
-          <div className="grid grid-cols-2 gap-3 mb-2">
+          {/* Контактная информация в две колонки */}
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            {/* Поле телефона */}
             <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Стоимость заказа:</div>
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Телефон:</div>
               {editMode ? (
                 <input 
-                  type="number" 
-                  value={product.price || ''}
-                  onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
+                  type="tel" 
+                  value={product.phone}
+                  onChange={(e) => setProduct({...product, phone: e.target.value})}
                   className="w-full p-2 rounded"
                   style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                  placeholder="+7 (___) ___-__-__"
                 />
               ) : (
-                <div style={{ color: theme.textPrimary }}>{product.price}₽</div>
+                <div style={{ color: theme.textPrimary }}>
+                  {product.phone || 'Не указан'}
+                </div>
               )}
             </div>
             
+            {/* Поле мессенджера */}
             <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Себестоимость:</div>
-              <div style={{ color: theme.textPrimary }}>{product.cost}₽</div>
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Мессенджер:</div>
+              {editMode ? (
+                <select
+                  value={product.messenger}
+                  onChange={(e) => setProduct({...product, messenger: e.target.value})}
+                  className="w-full p-2 rounded"
+                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                >
+                  {messengers.map(messenger => (
+                    <option key={messenger} value={messenger}>{messenger}</option>
+                  ))}
+                </select>
+              ) : (
+                <div className="flex items-center">
+                  {product.phone && (
+                    <button
+                      className="px-3 py-1 rounded text-sm"
+                      style={{ 
+                        backgroundColor: product.messenger === 'WhatsApp' ? '#25D366' : '#0088cc',
+                        color: '#ffffff'
+                      }}
+                      onClick={openMessenger}
+                    >
+                      {product.messenger}
+                    </button>
+                  )}
+                  {!product.phone && (
+                    <span style={{ color: theme.textPrimary }}>
+                      {product.messenger}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Прибыль:</div>
-              <div style={{ color: theme.green }}>{product.profit}₽</div>
+          {/* Финансовая информация в две колонки */}
+          <div className="grid grid-cols-2 gap-2">
+            {/* Поле цены */}
+            <div className="mb-2">
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Стоимость:</div>
+              {editMode ? (
+                <input 
+                  type="number" 
+                  value={product.price}
+                  onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
+                  className="w-full p-2 rounded"
+                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                  placeholder="0"
+                />
+              ) : (
+                <div style={{ color: theme.textPrimary }}>
+                  {product.price.toLocaleString()} ₽
+                </div>
+              )}
             </div>
             
-            <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Рентабельность:</div>
+            {/* Поле предоплаты */}
+            <div className="mb-2">
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Предоплата:</div>
+              {editMode ? (
+                <input 
+                  type="number" 
+                  value={product.prepayment}
+                  onChange={handlePrepaymentChange}
+                  className="w-full p-2 rounded"
+                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                  placeholder="0"
+                />
+              ) : (
+                <div style={{ color: theme.textPrimary }}>
+                  {product.prepayment.toLocaleString()} ₽
+                </div>
+              )}
+            </div>
+            
+            {/* Поле себестоимости */}
+            <div className="mb-2">
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Себестоимость:</div>
+              <div style={{ color: theme.textPrimary }}>
+                {product.cost.toLocaleString()} ₽
+              </div>
+            </div>
+            
+            {/* Поле остатка */}
+            <div className="mb-2">
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Остаток:</div>
               <div style={{ 
-                color: product.profitPercent < 50 ? theme.red : theme.green
+                color: product.balance > 0 ? theme.red : theme.green,
+                fontWeight: 'bold'
+              }}>
+                {product.balance.toLocaleString()} ₽
+              </div>
+            </div>
+            
+            {/* Поле прибыли */}
+            <div className="mb-2">
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Прибыль:</div>
+              <div style={{ 
+                color: product.profit >= 0 ? theme.green : theme.red,
+                fontWeight: 'bold'
+              }}>
+                {product.profit.toLocaleString()} ₽
+              </div>
+            </div>
+            
+            {/* Поле процента прибыли */}
+            <div className="mb-2">
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Процент:</div>
+              <div style={{ 
+                color: product.profitPercent >= 0 ? theme.green : theme.red,
+                fontWeight: 'bold'
               }}>
                 {product.profitPercent}%
               </div>
@@ -498,18 +712,37 @@ const OrderDetailsPage = () => {
                       )}
                       
                       {/* Иконка ссылки */}
-                      {expense.link ? (
-                        <div className="flex items-center">
-                          <a 
-                            href={expense.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ml-1"
-                            style={{ color: theme.accent }}
-                          >
-                            <ExternalLink size={14} />
-                          </a>
-                          {editMode && (
+                      {!expense.showLinkInput && (
+                        expense.link ? (
+                          <div className="flex items-center">
+                            <a 
+                              href={expense.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-1"
+                              style={{ color: theme.accent }}
+                            >
+                              <ExternalLink size={14} />
+                            </a>
+                            {editMode && (
+                              <button 
+                                className="ml-1"
+                                onClick={() => {
+                                  const updatedExpenses = [...product.expenses];
+                                  updatedExpenses[index] = {
+                                    ...updatedExpenses[index],
+                                    showLinkInput: true
+                                  };
+                                  setProduct({...product, expenses: updatedExpenses});
+                                }}
+                                style={{ color: theme.accent }}
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          editMode && (
                             <button 
                               className="ml-1"
                               onClick={() => {
@@ -520,29 +753,64 @@ const OrderDetailsPage = () => {
                                 };
                                 setProduct({...product, expenses: updatedExpenses});
                               }}
-                              style={{ color: theme.accent }}
+                              style={{ color: theme.textSecondary }}
                             >
-                              <Edit2 size={14} />
+                              <Paperclip size={14} />
                             </button>
-                          )}
-                        </div>
-                      ) : (
-                        editMode && (
+                          )
+                        )
+                      )}
+
+                      {/* Поле для ввода ссылки */}
+                      {editMode && expense.showLinkInput && (
+                        <div className="flex items-center space-x-2 ml-2">
+                          <input 
+                            type="text" 
+                            value={expense.newLinkUrl || expense.link || ''}
+                            onChange={(e) => {
+                              const updatedExpenses = [...product.expenses];
+                              updatedExpenses[index] = {
+                                ...updatedExpenses[index],
+                                newLinkUrl: e.target.value
+                              };
+                              setProduct({...product, expenses: updatedExpenses});
+                            }}
+                            placeholder="https://..." 
+                            className="p-1.5 text-xs rounded w-40"
+                            style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
+                          />
                           <button 
-                            className="ml-1"
+                            className="rounded-full w-6 h-6 flex items-center justify-center"
+                            style={{ backgroundColor: theme.accent }}
                             onClick={() => {
                               const updatedExpenses = [...product.expenses];
                               updatedExpenses[index] = {
                                 ...updatedExpenses[index],
-                                showLinkInput: true
+                                link: updatedExpenses[index].newLinkUrl,
+                                showLinkInput: false,
+                                newLinkUrl: undefined
                               };
                               setProduct({...product, expenses: updatedExpenses});
                             }}
-                            style={{ color: theme.textSecondary }}
                           >
-                            <Paperclip size={14} />
+                            <Check size={14} color="#ffffff" />
                           </button>
-                        )
+                          <button 
+                            className="rounded-full w-6 h-6 flex items-center justify-center"
+                            style={{ backgroundColor: theme.card }}
+                            onClick={() => {
+                              const updatedExpenses = [...product.expenses];
+                              updatedExpenses[index] = {
+                                ...updatedExpenses[index],
+                                showLinkInput: false,
+                                newLinkUrl: undefined
+                              };
+                              setProduct({...product, expenses: updatedExpenses});
+                            }}
+                          >
+                            <X size={14} color={theme.textSecondary} />
+                          </button>
+                        </div>
                       )}
                     </div>
                     
@@ -578,60 +846,6 @@ const OrderDetailsPage = () => {
                       )}
                     </div>
                   </div>
-                  
-                  {/* Поле для ввода ссылки */}
-                  {editMode && expense.showLinkInput && (
-                    <div className="mt-1 mb-2 pl-2">
-                      <div className="flex items-center space-x-2">
-                        <input 
-                          type="text" 
-                          value={expense.newLinkUrl || expense.link || ''}
-                          onChange={(e) => {
-                            const updatedExpenses = [...product.expenses];
-                            updatedExpenses[index] = {
-                              ...updatedExpenses[index],
-                              newLinkUrl: e.target.value
-                            };
-                            setProduct({...product, expenses: updatedExpenses});
-                          }}
-                          placeholder="https://..." 
-                          className="flex-1 p-1.5 text-xs rounded"
-                          style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                        />
-                        <button 
-                          className="rounded-full w-6 h-6 flex items-center justify-center"
-                          style={{ backgroundColor: theme.accent }}
-                          onClick={() => {
-                            const updatedExpenses = [...product.expenses];
-                            updatedExpenses[index] = {
-                              ...updatedExpenses[index],
-                              link: updatedExpenses[index].newLinkUrl,
-                              showLinkInput: false,
-                              newLinkUrl: undefined
-                            };
-                            setProduct({...product, expenses: updatedExpenses});
-                          }}
-                        >
-                          <Check size={14} color="#ffffff" />
-                        </button>
-                        <button 
-                          className="rounded-full w-6 h-6 flex items-center justify-center"
-                          style={{ backgroundColor: theme.card }}
-                          onClick={() => {
-                            const updatedExpenses = [...product.expenses];
-                            updatedExpenses[index] = {
-                              ...updatedExpenses[index],
-                              showLinkInput: false,
-                              newLinkUrl: undefined
-                            };
-                            setProduct({...product, expenses: updatedExpenses});
-                          }}
-                        >
-                          <X size={14} color={theme.textSecondary} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               ))
             ) : (
@@ -649,7 +863,7 @@ const OrderDetailsPage = () => {
                     value={newExpense.name}
                     onChange={(e) => setNewExpense({...newExpense, name: e.target.value})}
                     placeholder="Название" 
-                    className="flex-1 p-2 rounded"
+                    className="p-2 rounded flex-1"
                     style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                   />
                   <input 
@@ -657,7 +871,7 @@ const OrderDetailsPage = () => {
                     value={newExpense.cost}
                     onChange={(e) => setNewExpense({...newExpense, cost: e.target.value})}
                     placeholder="Сумма" 
-                    className="w-24 p-2 rounded"
+                    className="p-2 rounded w-24"
                     style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                   />
                   <button 
@@ -674,94 +888,75 @@ const OrderDetailsPage = () => {
         </div>
         
         {/* Блок примечаний */}
-        <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Примечания</h2>
-          </div>
-          
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-          
-          {editMode ? (
-            <textarea 
-              value={product.notes || ''}
-              onChange={(e) => setProduct({...product, notes: e.target.value})}
-              className="w-full p-2 rounded min-h-24"
-              style={{ 
-                backgroundColor: theme.innerCard, 
-                color: theme.textPrimary, 
-                border: 'none',
-                resize: 'vertical'
-              }}
-              placeholder="Добавьте примечания к заказу..."
-            />
-          ) : (
-            <div 
-              className="p-2 rounded"
-              style={{ backgroundColor: theme.innerCard }}
-            >
-              {product.notes ? (
-                <p style={{ color: theme.textPrimary }}>{product.notes}</p>
-              ) : (
-                <p style={{ color: theme.textSecondary }}>Нет примечаний</p>
-              )}
+        {(editMode || product.notes) && (
+          <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Примечания</h2>
             </div>
-          )}
-        </div>
+            
+            <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+            
+            {editMode ? (
+              <textarea 
+                value={product.notes || ''}
+                onChange={(e) => setProduct({...product, notes: e.target.value})}
+                className="w-full p-2 rounded min-h-24"
+                style={{ 
+                  backgroundColor: theme.innerCard, 
+                  color: theme.textPrimary, 
+                  border: 'none',
+                  resize: 'vertical'
+                }}
+                placeholder="Добавьте примечания к заказу..."
+              />
+            ) : (
+              <div 
+                className="p-2 rounded"
+                style={{ backgroundColor: theme.innerCard }}
+              >
+                <p style={{ color: theme.textPrimary }}>{product.notes}</p>
+              </div>
+            )}
+          </div>
+        )}
         
         {/* Блок сроков */}
         <div className="mb-3 rounded-xl p-3" style={{ backgroundColor: theme.card }}>
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Сроки</h2>
-          </div>
-          
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-          
-          <div className="flex items-center mb-3">
-            <div className="flex items-center mr-4">
-              <Clock size={16} color={theme.textSecondary} className="mr-1" />
-              <span style={{ color: theme.textSecondary }}>Длительность:</span>
-            </div>
             <div className="flex items-center">
-              {editMode ? (
-                <input 
-                  type="number" 
-                  value={product.duration}
-                  onChange={(e) => setProduct({...product, duration: parseInt(e.target.value, 10) || 0})}
-                  className="w-12 p-1 text-center rounded"
-                  style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                  readOnly
-                />
-              ) : (
-                <span style={{ color: theme.textPrimary }}>{product.duration}</span>
-              )}
+              <Clock size={16} color={theme.textSecondary} className="mr-1" />
+              <span style={{ color: theme.textPrimary }}>{product.duration}</span>
               <span style={{ color: theme.textSecondary, marginLeft: '4px' }}>дней</span>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-3">
+          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
+          
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Дата начала:</div>
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Начало:</div>
               {editMode ? (
                 <input 
                   type="date" 
                   value={product.startDate}
                   onChange={handleStartDateChange}
-                  className="w-full p-2 rounded"
+                  className="w-full p-1.5 rounded"
                   style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                 />
               ) : (
                 <div style={{ color: theme.textPrimary }}>{formatDate(product.startDate)}</div>
               )}
             </div>
-            
+
             <div>
-              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Дата окончания:</div>
+              <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Окончание:</div>
               {editMode ? (
                 <input 
                   type="date" 
                   value={product.endDate}
                   onChange={handleEndDateChange}
-                  className="w-full p-2 rounded"
+                  className="w-full p-1.5 rounded"
                   style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                 />
               ) : (

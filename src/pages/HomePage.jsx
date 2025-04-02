@@ -1,25 +1,64 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Sun, Calendar, X, Plus, Moon, List, LayoutGrid, Trash2 } from 'lucide-react';
+import { Search, Sun, Moon, ChevronDown, X, Calendar, List, LayoutGrid, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import BottomNavigation from '../components/BottomNavigation';
-import { getOrders, deleteOrder } from '../services/OrderService';
 import { useTheme } from '../contexts/ThemeContext';
+import { getOrders, deleteOrder } from '../services/OrderService';
+import BottomNavigation from '../components/BottomNavigation';
 
 const HomePage = () => {
   const { darkMode, toggleDarkMode, theme } = useTheme();
   const [selectedFilter, setSelectedFilter] = useState('Все');
+  const [searchQuery, setSearchQuery] = useState('');
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [swipedOrderId, setSwipedOrderId] = useState(null);
   const [compactMode, setCompactMode] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const searchInputRef = useRef(null);
+  const statusDropdownRef = useRef(null);
   const touchStartXRef = useRef(0);
   const touchEndXRef = useRef(0);
   const navigate = useNavigate();
+  
+  // Статусы заказов
+  const statuses = ['Все', 'Ожидает', 'В работе', 'Выполнен'];
+  
+  // Определяем, является ли устройство мобильным
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+  
+  // Закрытие выпадающего меню при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setShowStatusDropdown(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   
   // Загрузка заказов при монтировании компонента
   useEffect(() => {
     const loadedOrders = getOrders();
     setOrders(loadedOrders);
+    setFilteredOrders(loadedOrders);
     
     // Загружаем состояние компактного режима из localStorage
     const savedCompactMode = localStorage.getItem('compactMode');
@@ -33,9 +72,68 @@ const HomePage = () => {
     localStorage.setItem('compactMode', compactMode.toString());
   }, [compactMode]);
   
-  // Фильтры для заказов
-  const filters = ['Все', 'Ожидает', 'В работе', 'Выполнен'];
+  // Фильтрация заказов при изменении фильтра или поискового запроса
+  useEffect(() => {
+    let result = orders;
+    
+    // Фильтрация по статусу
+    if (selectedFilter !== 'Все') {
+      result = result.filter(order => order.status === selectedFilter);
+    }
+    
+    // Фильтрация по поисковому запросу
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(order => 
+        order.name.toLowerCase().includes(query) || 
+        (order.customer && order.customer.toLowerCase().includes(query))
+      );
+    }
+    
+    setFilteredOrders(result);
+  }, [orders, selectedFilter, searchQuery]);
   
+  // Обработчик выбора статуса
+  const handleFilterChange = (status) => {
+    setSelectedFilter(status);
+    setShowStatusDropdown(false);
+  };
+  
+  // Обработчик изменения поискового запроса
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  
+  // Обработчик открытия/закрытия поиска
+  const handleSearchToggle = () => {
+    setShowSearch(!showSearch);
+    if (!showSearch && searchInputRef.current) {
+      setTimeout(() => searchInputRef.current.focus(), 100);
+    }
+  };
+  
+  // Обработчик очистки поискового запроса
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setShowSearch(false);
+  };
+  
+  // Обработчик перехода к деталям заказа
+  const handleOrderClick = (orderId) => {
+    navigate(`/order/${orderId}`);
+  };
+  
+  // Обработчик удаления заказа
+  const handleDeleteOrder = (orderId, e) => {
+    e.stopPropagation(); // Предотвращаем переход к деталям заказа
+    
+    if (window.confirm('Вы уверены, что хотите удалить этот заказ?')) {
+      deleteOrder(orderId);
+      setOrders(getOrders());
+    }
+  };
+  
+  // Функция для получения цвета статуса
   const getStatusColor = (status) => {
     switch(status) {
       case 'Выполнен':
@@ -47,24 +145,6 @@ const HomePage = () => {
       default:
         return theme.accent;
     }
-  };
-  
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    
-    return `${day}.${month}.${year}`;
-  };
-  
-  const handleDeleteOrder = (id) => {
-    const updatedOrders = deleteOrder(id);
-    setOrders(updatedOrders);
-    setShowDeleteConfirm(null);
-    setSwipedOrderId(null);
   };
   
   // Обработчики свайпа
@@ -96,12 +176,8 @@ const HomePage = () => {
     }
   };
   
-  const filteredOrders = selectedFilter === 'Все' 
-    ? orders 
-    : orders.filter(order => order.status === selectedFilter);
-  
   // Компонент для отображения заказа в обычном режиме
-  const RegularOrderCard = ({ order }) => (
+  const RegularOrderCard = ({ order, isMobile }) => (
     <div
       className="rounded-xl p-3 transition-transform duration-300"
       style={{ 
@@ -112,14 +188,20 @@ const HomePage = () => {
         if (swipedOrderId === order.id) {
           setSwipedOrderId(null);
         } else {
-          navigate(`/order/${order.id}`);
+          handleOrderClick(order.id);
         }
       }}
     >
       <div className="flex justify-between items-start mb-1">
         <div>
-          <h2 className="text-lg font-bold" style={{ color: theme.textPrimary }}>{order.name}</h2>
-          <p className="text-sm" style={{ color: theme.textSecondary }}>{order.customer}</p>
+          <h2 className="font-bold" style={{ 
+            color: theme.textPrimary,
+            fontSize: isMobile ? '1rem' : '1.125rem'
+          }}>{order.name}</h2>
+          <p style={{ 
+            color: theme.textSecondary,
+            fontSize: isMobile ? '0.8rem' : '0.875rem'
+          }}>{order.customer}</p>
         </div>
         <span
           style={{ 
@@ -127,7 +209,7 @@ const HomePage = () => {
             backgroundColor: getStatusColor(order.status),
             padding: '2px 8px',
             borderRadius: '4px',
-            fontSize: '0.85rem'
+            fontSize: isMobile ? '0.75rem' : '0.85rem'
           }}
         >
           {order.status}
@@ -138,27 +220,46 @@ const HomePage = () => {
       
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center">
-          <Calendar size={16} color={theme.textSecondary} className="mr-1" />
-          <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>Сдача:</span>
+          <Calendar size={isMobile ? 14 : 16} color={theme.textSecondary} className="mr-1" />
+          <span style={{ 
+            color: theme.textSecondary, 
+            fontSize: isMobile ? '0.8rem' : '0.9rem'
+          }}>Сдача:</span>
         </div>
-        <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{formatDate(order.endDate)}</span>
+        <span style={{ 
+          color: theme.textPrimary, 
+          fontSize: isMobile ? '0.8rem' : '0.9rem'
+        }}>{formatDate(order.endDate)}</span>
       </div>
       
       <div className="flex justify-between items-center">
-        <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>Стоимость:</span>
-        <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{order.price}₽</span>
+        <span style={{ 
+          color: theme.textSecondary, 
+          fontSize: isMobile ? '0.8rem' : '0.9rem'
+        }}>Стоимость:</span>
+        <span style={{ 
+          color: theme.textPrimary, 
+          fontSize: isMobile ? '0.8rem' : '0.9rem'
+        }}>{order.price}₽</span>
       </div>
       
       <div className="flex justify-between items-center">
-        <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>Прибыль:</span>
+        <span style={{ 
+          color: theme.textSecondary, 
+          fontSize: isMobile ? '0.8rem' : '0.9rem'
+        }}>Прибыль:</span>
         <div className="flex items-center">
-          <span style={{ color: theme.green, fontSize: '0.9rem', marginRight: '4px' }}>
+          <span style={{ 
+            color: theme.green, 
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
+            marginRight: '4px'
+          }}>
             +{order.profit}₽
           </span>
           <span 
             style={{ 
               color: order.profitPercent < 50 ? theme.red : theme.green, 
-              fontSize: '0.8rem',
+              fontSize: isMobile ? '0.7rem' : '0.8rem',
               backgroundColor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
               padding: '1px 4px',
               borderRadius: '2px'
@@ -172,7 +273,7 @@ const HomePage = () => {
   );
   
   // Компонент для отображения заказа в компактном режиме
-  const CompactOrderCard = ({ order }) => (
+  const CompactOrderCard = ({ order, isMobile }) => (
     <div
       className="rounded-xl p-2 transition-transform duration-300 mb-1"
       style={{ 
@@ -183,23 +284,32 @@ const HomePage = () => {
         if (swipedOrderId === order.id) {
           setSwipedOrderId(null);
         } else {
-          navigate(`/order/${order.id}`);
+          handleOrderClick(order.id);
         }
       }}
     >
       <div className="flex justify-between items-center">
         <div className="flex-1 mr-2">
-          <h2 className="text-base font-bold truncate" style={{ color: theme.textPrimary }}>{order.name}</h2>
+          <h2 className="font-bold truncate" style={{ 
+            color: theme.textPrimary,
+            fontSize: isMobile ? '0.9rem' : '1rem'
+          }}>{order.name}</h2>
         </div>
         
         <div className="flex items-center space-x-2">
           <div className="flex items-center">
-            <Calendar size={14} color={theme.textSecondary} className="mr-1" />
-            <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>{formatDate(order.endDate)}</span>
+            <Calendar size={isMobile ? 12 : 14} color={theme.textSecondary} className="mr-1" />
+            <span style={{ 
+              color: theme.textPrimary, 
+              fontSize: isMobile ? '0.7rem' : '0.8rem'
+            }}>{formatDate(order.endDate)}</span>
           </div>
           
           <div className="flex items-center">
-            <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>{order.price}₽</span>
+            <span style={{ 
+              color: theme.textPrimary, 
+              fontSize: isMobile ? '0.7rem' : '0.8rem'
+            }}>{order.price}₽</span>
           </div>
           
           <span
@@ -208,7 +318,7 @@ const HomePage = () => {
               backgroundColor: getStatusColor(order.status),
               padding: '1px 6px',
               borderRadius: '4px',
-              fontSize: '0.75rem',
+              fontSize: isMobile ? '0.65rem' : '0.75rem',
               whiteSpace: 'nowrap'
             }}
           >
@@ -219,9 +329,20 @@ const HomePage = () => {
     </div>
   );
   
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}.${month}.${year}`;
+  };
+  
   return (
     <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
-      {/* Верхняя панель с поиском */}
+      {/* Верхняя панель */}
       <div className="p-3 flex justify-between items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
         <div className="flex-1">
           <h1 className="text-xl font-bold" style={{ color: theme.textPrimary }}>
@@ -230,66 +351,135 @@ const HomePage = () => {
         </div>
         
         <div className="flex items-center">
-          <div className="relative mr-2">
-            <input
-              type="text"
-              placeholder="Поиск..."
-              className="py-2 pl-8 pr-4 rounded-full text-sm"
-              style={{ 
-                backgroundColor: theme.inputBg, 
-                color: theme.textPrimary,
-                border: 'none',
-                width: '180px'
-              }}
-            />
-            <Search 
-              size={16} 
-              color={theme.textSecondary} 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2" 
-            />
-          </div>
-          
           <button 
             className="rounded-full p-2 mr-2"
             style={{ backgroundColor: theme.card }}
+            onClick={handleSearchToggle}
+          >
+            <Search size={isMobile ? 18 : 20} color={theme.textPrimary} />
+          </button>
+          
+          <button 
+            className="rounded-full p-2"
+            style={{ backgroundColor: theme.card }}
             onClick={toggleDarkMode}
           >
-            {darkMode ? <Sun size={20} color={theme.textPrimary} /> : <Moon size={20} color={theme.textPrimary} />}
+            {darkMode ? <Sun size={isMobile ? 18 : 20} color={theme.textPrimary} /> : <Moon size={isMobile ? 18 : 20} color={theme.textPrimary} />}
           </button>
         </div>
       </div>
       
-      {/* Фильтры и переключатель режима отображения */}
-      <div className="px-3 pt-2 pb-3 flex items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
-        <div className="flex-1 overflow-x-auto flex space-x-2">
-          {filters.map(filter => (
-            <button
-              key={filter}
-              className={`px-3 py-1.5 rounded-full whitespace-nowrap ${selectedFilter === filter ? 'font-bold' : ''}`}
+      {/* Поле поиска */}
+      {showSearch && (
+        <div 
+          className="p-3 flex items-center" 
+          style={{ 
+            backgroundColor: darkMode ? '#1a1a1a' : theme.bg,
+            borderBottom: `1px solid ${theme.cardBorder}`
+          }}
+        >
+          <div className="relative flex-1">
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Поиск..."
+              className="py-2 pl-8 pr-4 rounded-full text-sm w-full"
               style={{ 
-                backgroundColor: selectedFilter === filter ? theme.accent : theme.card,
-                color: selectedFilter === filter ? '#ffffff' : theme.textSecondary
+                backgroundColor: theme.inputBg, 
+                color: theme.textPrimary,
+                border: 'none',
+                fontSize: isMobile ? '0.9rem' : '1rem'
               }}
-              onClick={() => setSelectedFilter(filter)}
-            >
-              {filter}
-            </button>
-          ))}
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            <Search 
+              size={isMobile ? 14 : 16} 
+              color={theme.textSecondary} 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2" 
+            />
+            {searchQuery && (
+              <button 
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                onClick={handleClearSearch}
+              >
+                <X size={isMobile ? 14 : 16} color={theme.textSecondary} />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Фильтры */}
+      <div className="flex items-center justify-between p-3" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
+        <div className="flex items-center space-x-2">
+          {isMobile ? (
+            <div className="relative" ref={statusDropdownRef}>
+              <button
+                className="px-3 py-1 rounded-full flex items-center"
+                style={{ 
+                  backgroundColor: theme.card,
+                  color: theme.textPrimary,
+                  fontSize: isMobile ? '0.85rem' : '1rem'
+                }}
+                onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+              >
+                {selectedFilter}
+                <ChevronDown size={isMobile ? 14 : 16} className="ml-1" />
+              </button>
+              {showStatusDropdown && (
+                <div 
+                  className="absolute top-full left-0 mt-1 rounded-lg shadow-lg z-10"
+                  style={{ backgroundColor: theme.card, minWidth: '120px' }}
+                >
+                  {statuses.map(status => (
+                    <button
+                      key={status}
+                      className="block w-full text-left px-4 py-2 first:rounded-t-lg last:rounded-b-lg"
+                      style={{ 
+                        backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
+                        color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
+                        fontSize: isMobile ? '0.85rem' : '1rem'
+                      }}
+                      onClick={() => handleFilterChange(status)}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex space-x-2">
+              {statuses.map(status => (
+                <button
+                  key={status}
+                  className="px-3 py-1 rounded-full"
+                  style={{ 
+                    backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
+                    color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
+                    border: `1px solid ${status === 'Все' ? theme.accent : getStatusColor(status)}`,
+                    fontSize: isMobile ? '0.85rem' : '1rem'
+                  }}
+                  onClick={() => setSelectedFilter(status)}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         
-        {/* Переключатель компактного режима */}
+        {/* Кнопка переключения вида */}
         <button
-          className="ml-2 p-2 rounded-full"
+          className="rounded-full p-2"
           style={{ 
             backgroundColor: theme.card,
-            color: compactMode ? theme.accent : theme.textSecondary
+            color: theme.textPrimary
           }}
           onClick={() => setCompactMode(!compactMode)}
         >
-          {compactMode ? 
-            <List size={20} color={theme.accent} /> : 
-            <LayoutGrid size={20} color={theme.textSecondary} />
-          }
+          {compactMode ? <LayoutGrid size={isMobile ? 18 : 20} /> : <List size={isMobile ? 18 : 20} />}
         </button>
       </div>
       
@@ -314,7 +504,7 @@ const HomePage = () => {
                   setShowDeleteConfirm(order.id);
                 }}
               >
-                <Trash2 size={20} color="#ffffff" />
+                <Trash2 size={isMobile ? 18 : 20} color="#ffffff" />
               </button>
             </div>
             
@@ -326,8 +516,8 @@ const HomePage = () => {
               style={{ position: 'relative', zIndex: 2 }}
             >
               {compactMode ? 
-                <CompactOrderCard order={order} /> : 
-                <RegularOrderCard order={order} />
+                <CompactOrderCard order={order} isMobile={isMobile} /> : 
+                <RegularOrderCard order={order} isMobile={isMobile} />
               }
             </div>
             
@@ -342,21 +532,34 @@ const HomePage = () => {
                   className="p-4 rounded-lg text-center"
                   style={{ backgroundColor: theme.card, maxWidth: '80%' }}
                 >
-                  <p style={{ color: theme.textPrimary, marginBottom: '12px' }}>
+                  <p style={{ 
+                    color: theme.textPrimary, 
+                    marginBottom: '12px',
+                    fontSize: isMobile ? '0.9rem' : '1rem'
+                  }}>
                     Удалить заказ "{order.name}"?
                   </p>
                   <div className="flex space-x-2">
                     <button
                       className="flex-1 py-2 rounded"
-                      style={{ backgroundColor: theme.red, color: '#ffffff' }}
-                      onClick={() => handleDeleteOrder(order.id)}
+                      style={{ 
+                        backgroundColor: theme.red, 
+                        color: '#ffffff',
+                        fontSize: isMobile ? '0.85rem' : '1rem'
+                      }}
+                      onClick={(e) => handleDeleteOrder(order.id, e)}
                     >
                       Удалить
                     </button>
                     <button
                       className="flex-1 py-2 rounded"
-                      style={{ backgroundColor: theme.card, color: theme.textSecondary }}
-                      onClick={() => {
+                      style={{ 
+                        backgroundColor: theme.card, 
+                        color: theme.textSecondary,
+                        fontSize: isMobile ? '0.85rem' : '1rem'
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setShowDeleteConfirm(null);
                         setSwipedOrderId(null);
                       }}
@@ -375,12 +578,20 @@ const HomePage = () => {
             className="flex flex-col items-center justify-center mt-10 p-4 rounded-lg"
             style={{ backgroundColor: theme.card }}
           >
-            <p style={{ color: theme.textSecondary, marginBottom: '8px' }}>
+            <p style={{ 
+              color: theme.textSecondary, 
+              marginBottom: '8px',
+              fontSize: isMobile ? '0.9rem' : '1rem'
+            }}>
               Нет заказов с выбранным статусом
             </p>
             <button
               className="px-4 py-2 rounded text-sm"
-              style={{ backgroundColor: theme.accent, color: '#ffffff' }}
+              style={{ 
+                backgroundColor: theme.accent, 
+                color: '#ffffff',
+                fontSize: isMobile ? '0.85rem' : '1rem'
+              }}
               onClick={() => setSelectedFilter('Все')}
             >
               Показать все заказы
