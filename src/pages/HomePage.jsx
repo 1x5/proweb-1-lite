@@ -320,9 +320,7 @@ const HomePage = () => {
     <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
       {/* Верхняя панель */}
       <div className="p-3 flex justify-between items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
-        <div className="flex items-center">
-          <h1 className="text-xl font-bold" style={{ color: theme.textPrimary }}>Мои заказы</h1>
-        </div>
+        <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Заказы</h1>
         
         <div className="flex items-center space-x-2">
           {/* Иконка статуса */}

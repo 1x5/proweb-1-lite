@@ -377,21 +377,17 @@ const OrderDetailsPage = () => {
     });
   };
   
-  // Функция для открытия чата в мессенджере
-  const openMessenger = () => {
+  // Функция открытия мессенджера
+  const openMessenger = useCallback(() => {
     if (!product.phone) return;
     
-    // Форматируем номер телефона (удаляем все, кроме цифр)
-    const formattedPhone = product.phone.replace(/\D/g, '');
-    
-    if (product.messenger === 'WhatsApp') {
-      // Открываем WhatsApp
-      window.open(`https://wa.me/${formattedPhone}`, '_blank');
-    } else if (product.messenger === 'Telegram') {
-      // Открываем Telegram
-      window.open(`https://t.me/+${formattedPhone}`, '_blank');
-    }
-  };
+    const phoneNumber = product.phone.replace(/[^\d]/g, '');
+    const url = product.messenger === 'WhatsApp' 
+      ? `https://wa.me/${phoneNumber}`
+      : `https://t.me/${phoneNumber}`;
+      
+    window.open(url, '_blank');
+  }, [product?.phone, product?.messenger]);
   
   // Если данные еще не загружены
   if (!product) {

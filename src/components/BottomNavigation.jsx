@@ -1,6 +1,6 @@
 import React from 'react';
-import { Home, Settings, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Home, Settings, Plus, Package } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
 const BottomNavigation = ({ activePage }) => {
@@ -42,6 +42,15 @@ const BottomNavigation = ({ activePage }) => {
         <Settings size={20} />
         <span className="text-xs mt-1">Настройки</span>
       </button>
+      
+      <Link 
+        to="/" 
+        className="flex flex-col items-center"
+        style={{ color: activePage === 'orders' ? theme.accent : theme.textSecondary }}
+      >
+        <Package size={24} />
+        <span className="text-xs mt-1">Заказы</span>
+      </Link>
     </nav>
   );
 };
