@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   ChevronLeft, ChevronDown, Edit2, Check, Plus, Trash2, 
-  Clock, X, Camera, Sun, Moon 
+  Clock, X, Camera, Sun, Moon
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrder, deleteOrder } from '../services/OrderService';
 import { useTheme } from '../contexts/ThemeContext';
+
+// Добавляем стили анимации
+const fadeInOutKeyframes = `
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.8); }
+  20% { opacity: 1; transform: scale(1.1); }
+  30% { transform: scale(1); }
+  90% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+`;
 
 const OrderDetailsPage = () => {
   const { darkMode, toggleDarkMode, theme } = useTheme();
@@ -124,8 +135,8 @@ const OrderDetailsPage = () => {
         navigate('/');
       }, 500); // Небольшая задержка, чтобы пользователь увидел сообщение о сохранении
     } else {
-      // Просто скрываем сообщение через 2 секунды
-      setTimeout(() => setSaveMessage(''), 2000);
+      // Просто скрываем сообщение через 1 секунду
+      setTimeout(() => setSaveMessage(''), 1000);
     }
     
     return savedOrder;
@@ -316,13 +327,13 @@ const OrderDetailsPage = () => {
   const getStatusColor = (status) => {
     switch(status) {
       case 'Выполнен':
-        return theme.green;
+        return '#22c55e'; // Зеленый
       case 'В работе':
-        return theme.accent;
+        return '#3b82f6'; // Синий
       case 'Ожидает':
-        return theme.textSecondary;
+        return '#f59e0b'; // Оранжевый
       default:
-        return theme.accent;
+        return '#6b7280'; // Серый
     }
   };
   
@@ -355,6 +366,16 @@ const OrderDetailsPage = () => {
     }
   };
   
+  // Добавляем стили в head
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = fadeInOutKeyframes;
+    document.head.appendChild(styleSheet);
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+  
   // Если данные еще не загружены
   if (!product) {
     return (
@@ -381,6 +402,14 @@ const OrderDetailsPage = () => {
         </div>
         
         <div className="flex items-center">
+          {saveMessage && (
+            <div className="mr-2 flex items-center justify-center rounded-full p-2 animate-fade-in" style={{ 
+              backgroundColor: theme.green,
+              animation: 'fadeInOut 1s ease-in-out'
+            }}>
+              <Check size={20} color="#ffffff" />
+            </div>
+          )}
           <button 
             className="rounded-full p-2 mr-2"
             style={{ backgroundColor: theme.card }}
@@ -1048,21 +1077,6 @@ const OrderDetailsPage = () => {
               </button>
             </div>
           </div>
-        </div>
-      )}
-      
-      {/* Сообщение о сохранении */}
-      {saveMessage && (
-        <div 
-          className="fixed bottom-20 left-0 right-0 mx-auto w-64 p-3 rounded-lg text-center"
-          style={{ 
-            backgroundColor: theme.green, 
-            color: '#ffffff',
-            zIndex: 1000,
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-          }}
-        >
-          {saveMessage}
         </div>
       )}
       
