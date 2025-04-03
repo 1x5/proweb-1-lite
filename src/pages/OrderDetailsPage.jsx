@@ -819,9 +819,8 @@ const OrderDetailsPage = () => {
                   <textarea 
                     value={product.notes || ''}
                     onChange={(e) => setProduct({...product, notes: e.target.value})}
-                    className="w-full p-2 rounded min-h-24"
+                    className="w-full rounded min-h-24"
                     style={{ 
-                      backgroundColor: theme.innerCard, 
                       color: theme.textPrimary, 
                       border: 'none',
                       resize: 'vertical'
@@ -830,8 +829,7 @@ const OrderDetailsPage = () => {
                   />
                 ) : (
                   <div 
-                    className="p-2 rounded"
-                    style={{ backgroundColor: theme.innerCard }}
+                    className="rounded"
                   >
                     <p style={{ color: theme.textPrimary }}>{product.notes}</p>
                   </div>
