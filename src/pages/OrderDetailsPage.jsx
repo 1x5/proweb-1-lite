@@ -418,17 +418,17 @@ const OrderDetailsPage = () => {
       </div>
       
       {/* Основное содержимое */}
-      <div className="flex-1 overflow-auto px-1 pb-20">
+      <div className="flex-1 overflow-auto px-[0.7rem] pb-20">
         {/* Основная информация */}
-        <div className="p-1">
+        <div className="p-0">
           <div className="space-y-2">
             {/* Основная информация о заказе */}
             <div 
-              className="rounded-xl p-2 mb-2"
+              className="rounded-xl px-[0.7rem] py-1.5 mb-2"
               style={{ backgroundColor: theme.card }}
             >
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Информация</h2>
+              <div className="flex justify-between items-center mb-1.5">
+                <h2 className="text-sm font-bold" style={{ color: theme.textPrimary }}>Информация</h2>
                 {/* Статус заказа */}
                 {product && (
                   <div className="relative">
@@ -437,7 +437,7 @@ const OrderDetailsPage = () => {
                         <select
                           value={product.status}
                           onChange={(e) => setProduct({...product, status: e.target.value})}
-                          className="appearance-none px-3 py-1 pr-8 rounded"
+                          className="appearance-none px-2 py-0.5 pr-6 rounded text-sm"
                           style={{ 
                             backgroundColor: getStatusColor(product.status),
                             color: '#ffffff',
@@ -449,17 +449,18 @@ const OrderDetailsPage = () => {
                           ))}
                         </select>
                         <ChevronDown 
-                          size={16} 
+                          size={14} 
                           color="#ffffff" 
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" 
+                          className="absolute right-1.5 top-1/2 transform -translate-y-1/2 pointer-events-none" 
                         />
                       </div>
                     ) : (
                       <span
+                        className="text-sm"
                         style={{ 
                           color: '#ffffff', 
                           backgroundColor: getStatusColor(product.status),
-                          padding: '4px 10px',
+                          padding: '2px 8px',
                           borderRadius: '4px'
                         }}
                       >
@@ -470,22 +471,23 @@ const OrderDetailsPage = () => {
                 )}
               </div>
               
-              <div className="h-px w-full mb-2" style={{ backgroundColor: theme.cardBorder }}></div>
+              <div className="h-px w-full mb-1.5" style={{ backgroundColor: theme.cardBorder }}></div>
               
               {/* Название заказа */}
-              <div className="mb-2">
-                <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Название:</div>
+              <div className="mb-1.5">
+                <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Название:</div>
                 {editMode ? (
                   <input 
                     type="text" 
                     value={product?.name || ''}
                     onChange={(e) => setProduct({...product, name: e.target.value})}
-                    className="w-full p-2 rounded"
+                    className="w-full p-1.5 rounded text-sm"
                     style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                     placeholder="Введите название заказа"
                   />
                 ) : (
                   <div 
+                    className="text-sm"
                     style={{ color: theme.textPrimary, cursor: product.phone ? 'pointer' : 'default' }}
                     onClick={() => product.phone && openMessenger()}
                   >
@@ -496,15 +498,15 @@ const OrderDetailsPage = () => {
               
               {/* Контактная информация в две колонки */}
               {editMode && (
-                <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="grid grid-cols-2 gap-1.5 mb-1.5">
                   {/* Поле телефона */}
                   <div>
-                    <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Телефон:</div>
+                    <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Телефон:</div>
                     <input 
                       type="tel" 
                       value={product.phone}
                       onChange={(e) => setProduct({...product, phone: e.target.value})}
-                      className="w-full p-2 rounded"
+                      className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                       placeholder="+7 (___) ___-__-__"
                     />
@@ -512,11 +514,11 @@ const OrderDetailsPage = () => {
                   
                   {/* Поле мессенджера */}
                   <div>
-                    <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Мессенджер:</div>
+                    <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Мессенджер:</div>
                     <select
                       value={product.messenger}
                       onChange={(e) => setProduct({...product, messenger: e.target.value})}
-                      className="w-full p-2 rounded"
+                      className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                     >
                       {messengers.map(messenger => (
@@ -528,57 +530,57 @@ const OrderDetailsPage = () => {
               )}
               
               {/* Финансовая информация в две колонки */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1.5">
                 {/* Поле цены */}
-                <div className="mb-2">
-                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Стоимость:</div>
+                <div className="mb-1">
+                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Стоимость:</div>
                   {editMode ? (
                     <input 
                       type="number" 
                       value={product.price}
                       onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
-                      className="w-full p-2 rounded"
+                      className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                       placeholder="0"
                     />
                   ) : (
-                    <div style={{ color: theme.textPrimary }}>
+                    <div className="text-sm" style={{ color: theme.textPrimary }}>
                       {product.price.toLocaleString()} ₽
                     </div>
                   )}
                 </div>
                 
                 {/* Поле предоплаты */}
-                <div className="mb-2">
-                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Предоплата:</div>
+                <div className="mb-1">
+                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Предоплата:</div>
                   {editMode ? (
                     <input 
                       type="number" 
                       value={product.prepayment}
                       onChange={handlePrepaymentChange}
-                      className="w-full p-2 rounded"
+                      className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                       placeholder="0"
                     />
                   ) : (
-                    <div style={{ color: theme.textPrimary }}>
+                    <div className="text-sm" style={{ color: theme.textPrimary }}>
                       {product.prepayment.toLocaleString()} ₽
                     </div>
                   )}
                 </div>
                 
                 {/* Поле себестоимости */}
-                <div className="mb-2">
-                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Себестоимость:</div>
-                  <div style={{ color: theme.textPrimary }}>
+                <div className="mb-1">
+                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Себестоимость:</div>
+                  <div className="text-sm" style={{ color: theme.textPrimary }}>
                     {product.cost.toLocaleString()} ₽
                   </div>
                 </div>
                 
                 {/* Поле остатка */}
-                <div className="mb-2">
-                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Остаток:</div>
-                  <div style={{ 
+                <div className="mb-1">
+                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Остаток:</div>
+                  <div className="text-sm" style={{ 
                     color: product.balance > 0 ? theme.red : theme.green,
                     fontWeight: 'bold'
                   }}>
@@ -587,9 +589,9 @@ const OrderDetailsPage = () => {
                 </div>
                 
                 {/* Поле прибыли */}
-                <div className="mb-2">
-                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Прибыль:</div>
-                  <div style={{ 
+                <div className="mb-1">
+                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Прибыль:</div>
+                  <div className="text-sm" style={{ 
                     color: product.profit >= 0 ? theme.green : theme.red,
                     fontWeight: 'bold'
                   }}>
@@ -598,9 +600,9 @@ const OrderDetailsPage = () => {
                 </div>
                 
                 {/* Поле процента прибыли */}
-                <div className="mb-2">
-                  <div className="text-sm mb-1" style={{ color: theme.textSecondary }}>Процент:</div>
-                  <div style={{ 
+                <div className="mb-1">
+                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Процент:</div>
+                  <div className="text-sm" style={{ 
                     color: product.profitPercent >= 0 ? theme.green : theme.red,
                     fontWeight: 'bold'
                   }}>
@@ -611,7 +613,7 @@ const OrderDetailsPage = () => {
             </div>
             
             {/* Блок расходов */}
-            <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+            <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Расходы: {product.cost}₽</h2>
                 {editMode && (
@@ -639,7 +641,7 @@ const OrderDetailsPage = () => {
 
               <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
               
-              <div className="rounded-lg p-2" style={{ backgroundColor: theme.innerCard }}>
+              <div className="rounded-lg">
                 {/* Список расходов */}
                 {product.expenses.filter(e => e.name || e.cost > 0 || e.isNew).map((expense) => (
                   <div 
@@ -806,7 +808,7 @@ const OrderDetailsPage = () => {
             
             {/* Блок примечаний */}
             {(editMode || product.notes) && (
-              <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+              <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
                 <div className="flex justify-between items-center mb-2">
                   <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Примечания</h2>
                 </div>
@@ -838,7 +840,7 @@ const OrderDetailsPage = () => {
             )}
             
             {/* Блок сроков */}
-            <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+            <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Сроки</h2>
                 <div className="flex items-center">
@@ -884,7 +886,7 @@ const OrderDetailsPage = () => {
             </div>
             
             {/* Блок фотографий */}
-            <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
+            <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Фотографии</h2>
               </div>
