@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, Edit2, Check, Plus, Sun, Moon, X, Trash2, Camera, ChevronDown, Clock } from 'lucide-react';
+import { 
+  ChevronLeft, ChevronDown, Edit2, Check, Plus, Trash2, 
+  Clock, X, Camera, Sun, Moon 
+} from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrder, deleteOrder } from '../services/OrderService';
@@ -272,11 +275,6 @@ const OrderDetailsPage = () => {
     setPreviewPhoto(photo);
   };
   
-  // Закрытие предпросмотра фотографии
-  const handleClosePreview = () => {
-    setPreviewPhoto(null);
-  };
-  
   const toggleEditMode = () => {
     if (editMode) {
       // Сохраняем изменения при выходе из режима редактирования
@@ -421,7 +419,7 @@ const OrderDetailsPage = () => {
       <div className="flex-1 overflow-auto px-[0.7rem] pb-20">
         {/* Основная информация */}
         <div className="p-0">
-          <div className="space-y-2">
+          <div className="space-y-2 mt-[0.7rem]">
             {/* Основная информация о заказе */}
             <div 
               className="rounded-xl px-[0.7rem] py-1.5 mb-2"
@@ -823,7 +821,8 @@ const OrderDetailsPage = () => {
                     style={{ 
                       color: theme.textPrimary, 
                       border: 'none',
-                      resize: 'vertical'
+                      resize: 'vertical',
+                      backgroundColor: theme.inputBg
                     }}
                     placeholder="Добавьте примечания к заказу..."
                   />
@@ -992,7 +991,6 @@ const OrderDetailsPage = () => {
         <div 
           className="fixed inset-0 flex items-center justify-center z-50"
           style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
-          onClick={handleClosePreview}
         >
           <div className="relative max-w-full max-h-full p-2">
             <img 
@@ -1003,7 +1001,7 @@ const OrderDetailsPage = () => {
             <button 
               className="absolute top-2 right-2 rounded-full p-2"
               style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-              onClick={handleClosePreview}
+              onClick={() => setPreviewPhoto(null)}
             >
               <X size={24} color="#ffffff" />
             </button>
