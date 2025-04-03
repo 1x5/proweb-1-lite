@@ -319,86 +319,88 @@ const HomePage = () => {
   return (
     <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
       {/* Верхняя панель */}
-      <div className="p-3 flex justify-between items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
-        <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Заказы</h1>
-        
-        <div className="flex items-center space-x-2">
-          {/* Иконка статуса */}
-          <div className="relative" ref={statusDropdownRef}>
+      <div className="sticky top-0 z-10" style={{ backgroundColor: theme.bg }}>
+        <div className="p-3 flex justify-between items-center">
+          <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Заказы</h1>
+          
+          <div className="flex items-center space-x-2">
+            {/* Иконка статуса */}
+            <div className="relative" ref={statusDropdownRef}>
+              <button 
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: theme.card }}
+                onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+              >
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{ 
+                    backgroundColor: getStatusColor(selectedFilter),
+                    display: 'inline-block'
+                  }}
+                />
+              </button>
+              {showStatusDropdown && (
+                <div 
+                  className="absolute top-full right-0 mt-1 rounded-lg shadow-lg z-10"
+                  style={{ backgroundColor: theme.card, minWidth: '120px' }}
+                >
+                  {statuses.map(status => (
+                    <button
+                      key={status}
+                      className="block w-full text-left px-4 py-2 first:rounded-t-lg last:rounded-b-lg"
+                      style={{ 
+                        backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
+                        color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
+                        fontSize: isMobile ? '0.85rem' : '1rem'
+                      }}
+                      onClick={() => handleFilterChange(status)}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Иконка поиска */}
             <button 
               className="w-10 h-10 rounded-full flex items-center justify-center"
               style={{ backgroundColor: theme.card }}
-              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+              onClick={() => setShowSearch(!showSearch)}
             >
-              <span
-                className="w-2 h-2 rounded-full"
-                style={{ 
-                  backgroundColor: getStatusColor(selectedFilter),
-                  display: 'inline-block'
-                }}
-              />
+              <Search size={20} color={theme.textPrimary} />
             </button>
-            {showStatusDropdown && (
-              <div 
-                className="absolute top-full right-0 mt-1 rounded-lg shadow-lg z-10"
-                style={{ backgroundColor: theme.card, minWidth: '120px' }}
-              >
-                {statuses.map(status => (
-                  <button
-                    key={status}
-                    className="block w-full text-left px-4 py-2 first:rounded-t-lg last:rounded-b-lg"
-                    style={{ 
-                      backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
-                      color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
-                      fontSize: isMobile ? '0.85rem' : '1rem'
-                    }}
-                    onClick={() => handleFilterChange(status)}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            )}
+
+            {/* Иконка вида */}
+            <button 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: theme.card }}
+              onClick={() => setCompactMode(!compactMode)}
+            >
+              {compactMode ? 
+                <LayoutGrid size={20} color={theme.textPrimary} /> : 
+                <List size={20} color={theme.textPrimary} />
+              }
+            </button>
+
+            {/* Переключатель темы */}
+            <button 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: theme.card }}
+              onClick={toggleDarkMode}
+            >
+              {darkMode ? 
+                <Sun size={20} color={theme.textPrimary} /> : 
+                <Moon size={20} color={theme.textPrimary} />
+              }
+            </button>
           </div>
-
-          {/* Иконка поиска */}
-          <button 
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: theme.card }}
-            onClick={() => setShowSearch(!showSearch)}
-          >
-            <Search size={20} color={theme.textPrimary} />
-          </button>
-
-          {/* Иконка вида */}
-          <button 
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: theme.card }}
-            onClick={() => setCompactMode(!compactMode)}
-          >
-            {compactMode ? 
-              <LayoutGrid size={20} color={theme.textPrimary} /> : 
-              <List size={20} color={theme.textPrimary} />
-            }
-          </button>
-
-          {/* Переключатель темы */}
-          <button 
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: theme.card }}
-            onClick={toggleDarkMode}
-          >
-            {darkMode ? 
-              <Sun size={20} color={theme.textPrimary} /> : 
-              <Moon size={20} color={theme.textPrimary} />
-            }
-          </button>
         </div>
       </div>
 
       {/* Поле поиска */}
       {showSearch && (
-        <div className="px-3 mb-3">
+        <div className="px-3">
           <div className="relative">
             <input
               type="text"
@@ -422,7 +424,7 @@ const HomePage = () => {
       )}
       
       {/* Список заказов */}
-      <div className="flex-1 p-3 overflow-auto pb-20">
+      <div className="flex-1 p-3 overflow-y-auto" style={{ paddingBottom: '80px' }}>
         {filteredOrders.map(order => (
           <div key={order.id} className="relative mb-3 overflow-hidden rounded-xl">
             {/* Кнопка удаления (видна при свайпе) */}

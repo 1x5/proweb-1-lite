@@ -13,7 +13,8 @@ const BottomNavigation = ({ activePage }) => {
       style={{ 
         backgroundColor: darkMode ? '#1a1a1a' : theme.bg,
         borderTop: `1px solid ${theme.cardBorder}`,
-        padding: '8px 0'
+        padding: '8px 0',
+        zIndex: 1000
       }}
     >
       <Link 
