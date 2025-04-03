@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Settings, Plus, Package } from 'lucide-react';
+import { Settings, Plus, Package } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -16,14 +16,14 @@ const BottomNavigation = ({ activePage }) => {
         padding: '8px 0'
       }}
     >
-      <button
+      <Link 
+        to="/" 
         className="flex flex-col items-center"
-        onClick={() => navigate('/')}
-        style={{ color: activePage === 'home' ? theme.accent : theme.textSecondary }}
+        style={{ color: activePage === 'orders' ? theme.accent : theme.textSecondary }}
       >
-        <Home size={20} />
-        <span className="text-xs mt-1">Главная</span>
-      </button>
+        <Package size={20} />
+        <span className="text-xs mt-1">Заказы</span>
+      </Link>
       
       <button
         className="flex flex-col items-center"
@@ -33,7 +33,7 @@ const BottomNavigation = ({ activePage }) => {
         <Plus size={20} />
         <span className="text-xs mt-1">Новый</span>
       </button>
-      
+
       <button
         className="flex flex-col items-center"
         onClick={() => navigate('/settings')}
@@ -42,15 +42,6 @@ const BottomNavigation = ({ activePage }) => {
         <Settings size={20} />
         <span className="text-xs mt-1">Настройки</span>
       </button>
-      
-      <Link 
-        to="/" 
-        className="flex flex-col items-center"
-        style={{ color: activePage === 'orders' ? theme.accent : theme.textSecondary }}
-      >
-        <Package size={24} />
-        <span className="text-xs mt-1">Заказы</span>
-      </Link>
     </nav>
   );
 };

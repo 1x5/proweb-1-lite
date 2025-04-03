@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, Edit2, ExternalLink, Check, Move, Paperclip, Clock, Plus, Sun, Moon, X, Trash2, Camera, ChevronDown } from 'lucide-react';
+import { ChevronLeft, Edit2, Check, Plus, Sun, Moon, X, Trash2, Camera, ChevronDown, Clock } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrder, deleteOrder } from '../services/OrderService';
@@ -9,13 +9,11 @@ const OrderDetailsPage = () => {
   const { darkMode, toggleDarkMode, theme } = useTheme();
   const [editMode, setEditMode] = useState(false);
   const [product, setProduct] = useState(null);
-  const [newExpense, setNewExpense] = useState({ name: '', cost: '' });
   const [saveMessage, setSaveMessage] = useState('');
   const [photos, setPhotos] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({});
   const [previewPhoto, setPreviewPhoto] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [isNewOrder, setIsNewOrder] = useState(false);
   
   const fileInputRef = useRef(null);
@@ -27,20 +25,6 @@ const OrderDetailsPage = () => {
   
   // Доступные мессенджеры
   const messengers = ['WhatsApp', 'Telegram'];
-  
-  // Определяем, является ли устройство мобильным
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkIfMobile);
-    };
-  }, []);
   
   // Загрузка данных заказа по ID
   useEffect(() => {
@@ -312,26 +296,6 @@ const OrderDetailsPage = () => {
     return `${day}.${month}.${year}`;
   };
   
-  const handleAddExpense = () => {
-    if (newExpense.name && newExpense.cost) {
-      const maxId = product.expenses.length > 0 
-        ? Math.max(...product.expenses.map(e => e.id)) 
-        : 0;
-      
-      const updatedExpenses = [
-        ...product.expenses,
-        {
-          id: maxId + 1,
-          name: newExpense.name,
-          cost: parseFloat(newExpense.cost)
-        }
-      ];
-      
-      setProduct({...product, expenses: updatedExpenses});
-      setNewExpense({ name: '', cost: '' });
-    }
-  };
-  
   const handleRemoveExpense = (expenseId) => {
     const updatedExpenses = product.expenses.filter(expense => expense.id !== expenseId);
     setProduct({...product, expenses: updatedExpenses});
@@ -377,17 +341,21 @@ const OrderDetailsPage = () => {
     });
   };
   
-  // Функция открытия мессенджера
-  const openMessenger = useCallback(() => {
+  // Функция для открытия чата в мессенджере
+  const openMessenger = () => {
     if (!product.phone) return;
     
-    const phoneNumber = product.phone.replace(/[^\d]/g, '');
-    const url = product.messenger === 'WhatsApp' 
-      ? `https://wa.me/${phoneNumber}`
-      : `https://t.me/${phoneNumber}`;
-      
-    window.open(url, '_blank');
-  }, [product?.phone, product?.messenger]);
+    // Форматируем номер телефона (удаляем все, кроме цифр)
+    const formattedPhone = product.phone.replace(/\D/g, '');
+    
+    if (product.messenger === 'WhatsApp') {
+      // Открываем WhatsApp
+      window.open(`https://wa.me/${formattedPhone}`, '_blank');
+    } else if (product.messenger === 'Telegram') {
+      // Открываем Telegram
+      window.open(`https://t.me/+${formattedPhone}`, '_blank');
+    }
+  };
   
   // Если данные еще не загружены
   if (!product) {
@@ -410,7 +378,7 @@ const OrderDetailsPage = () => {
             onClick={() => navigate('/')}
           />
           <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>
-            {editMode ? 'Редактирование заказа' : 'Просмотр заказа'}
+            {editMode ? 'Редактирование' : 'Просмотр'}
           </h1>
         </div>
         
@@ -426,7 +394,7 @@ const OrderDetailsPage = () => {
             }
           </button>
 
-          {!isMobile && id !== 'new' && !isNewOrder && (
+          {id !== 'new' && !isNewOrder && (
             <button 
               className="rounded-full p-2 mr-2"
               style={{ backgroundColor: theme.red }}
@@ -646,221 +614,193 @@ const OrderDetailsPage = () => {
             <div className="mb-2 rounded-xl p-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Расходы: {product.cost}₽</h2>
+                {editMode && (
+                  <button 
+                    className="rounded-full w-6 h-6 flex items-center justify-center"
+                    style={{ backgroundColor: theme.accent }}
+                    onClick={() => {
+                      const maxId = Math.max(...product.expenses.map(e => e.id || 0), 0);
+                      const newExpense = {
+                        id: maxId + 1,
+                        name: '',
+                        cost: 0,
+                        isNew: true // Маркер для новых полей
+                      };
+                      setProduct(prev => ({
+                        ...prev,
+                        expenses: [...prev.expenses, newExpense]
+                      }));
+                    }}
+                  >
+                    <Plus size={16} color="#ffffff" />
+                  </button>
+                )}
               </div>
-              
+
               <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
               
               <div className="rounded-lg p-2" style={{ backgroundColor: theme.innerCard }}>
                 {/* Список расходов */}
-                {product.expenses.length > 0 ? (
-                  product.expenses.map((expense, index) => (
-                    <div 
-                      key={expense.id} 
-                      className="mb-2 last:mb-0"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          {editMode && (
-                            <div className="mr-1 cursor-move">
-                              <Move size={14} color={theme.textSecondary} />
-                            </div>
-                          )}
-                          
-                          {editMode ? (
-                            <input 
-                              type="text" 
-                              value={expense.name}
-                              onChange={(e) => {
-                                const updatedExpenses = [...product.expenses];
+                {product.expenses.filter(e => e.name || e.cost > 0 || e.isNew).map((expense) => (
+                  <div 
+                    key={expense.id} 
+                    className="mb-2 last:mb-0"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        {editMode ? (
+                          <input 
+                            type="text" 
+                            value={expense.name}
+                            onChange={(e) => {
+                              const updatedExpenses = [...product.expenses];
+                              const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
+                              if (index !== -1) {
                                 updatedExpenses[index].name = e.target.value;
                                 setProduct({...product, expenses: updatedExpenses});
-                              }}
-                              className="p-1 rounded"
-                              style={{ 
-                                backgroundColor: theme.inputBg, 
-                                color: theme.textSecondary, 
-                                border: 'none',
-                                fontSize: '0.9rem',
-                                width: '150px'
-                              }}
-                            />
-                          ) : (
-                            <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>{expense.name}</span>
-                          )}
-                          
-                          {/* Иконка ссылки */}
-                          {!expense.showLinkInput && (
-                            expense.link ? (
-                              <div className="flex items-center">
-                                <a 
-                                  href={expense.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="ml-1"
-                                  style={{ color: theme.accent }}
-                                >
-                                  <ExternalLink size={14} />
-                                </a>
-                                {editMode && (
-                                  <button 
-                                    className="ml-1"
-                                    onClick={() => {
-                                      const updatedExpenses = [...product.expenses];
-                                      updatedExpenses[index] = {
-                                        ...updatedExpenses[index],
-                                        showLinkInput: true
-                                      };
-                                      setProduct({...product, expenses: updatedExpenses});
-                                    }}
-                                    style={{ color: theme.accent }}
-                                  >
-                                    <Edit2 size={14} />
-                                  </button>
-                                )}
-                              </div>
-                            ) : (
-                              editMode && (
-                                <button 
-                                  className="ml-1"
-                                  onClick={() => {
-                                    const updatedExpenses = [...product.expenses];
-                                    updatedExpenses[index] = {
-                                      ...updatedExpenses[index],
-                                      showLinkInput: true
-                                    };
-                                    setProduct({...product, expenses: updatedExpenses});
-                                  }}
-                                  style={{ color: theme.textSecondary }}
-                                >
-                                  <Paperclip size={14} />
-                                </button>
-                              )
-                            )
-                          )}
-
-                          {/* Поле для ввода ссылки */}
-                          {editMode && expense.showLinkInput && (
-                            <div className="flex items-center space-x-2 ml-2">
-                              <input 
-                                type="text" 
-                                value={expense.newLinkUrl || expense.link || ''}
-                                onChange={(e) => {
-                                  const updatedExpenses = [...product.expenses];
-                                  updatedExpenses[index] = {
-                                    ...updatedExpenses[index],
-                                    newLinkUrl: e.target.value
-                                  };
-                                  setProduct({...product, expenses: updatedExpenses});
-                                }}
-                                placeholder="https://..." 
-                                className="p-1.5 text-xs rounded w-40"
-                                style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                              />
-                              <button 
-                                className="rounded-full w-6 h-6 flex items-center justify-center"
-                                style={{ backgroundColor: theme.accent }}
-                                onClick={() => {
-                                  const updatedExpenses = [...product.expenses];
-                                  updatedExpenses[index] = {
-                                    ...updatedExpenses[index],
-                                    link: updatedExpenses[index].newLinkUrl,
-                                    showLinkInput: false,
-                                    newLinkUrl: undefined
-                                  };
-                                  setProduct({...product, expenses: updatedExpenses});
-                                }}
-                              >
-                                <Check size={14} color="#ffffff" />
-                              </button>
-                              <button 
-                                className="rounded-full w-6 h-6 flex items-center justify-center"
-                                style={{ backgroundColor: theme.card }}
-                                onClick={() => {
-                                  const updatedExpenses = [...product.expenses];
-                                  updatedExpenses[index] = {
-                                    ...updatedExpenses[index],
-                                    showLinkInput: false,
-                                    newLinkUrl: undefined
-                                  };
-                                  setProduct({...product, expenses: updatedExpenses});
-                                }}
-                              >
-                                <X size={14} color={theme.textSecondary} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center">
-                          {editMode ? (
-                            <>
-                              <input 
-                                type="number" 
-                                value={expense.cost}
-                                onChange={(e) => {
-                                  const updatedExpenses = [...product.expenses];
+                              }
+                            }}
+                            className="p-1 rounded"
+                            style={{ 
+                              backgroundColor: theme.inputBg,
+                              color: theme.textPrimary,
+                              border: 'none',
+                              fontSize: '0.9rem',
+                              width: '150px'
+                            }}
+                            placeholder="Название"
+                          />
+                        ) : (
+                          expense.name && <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>{expense.name}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        {editMode ? (
+                          <>
+                            <input 
+                              type="number" 
+                              value={expense.cost}
+                              onChange={(e) => {
+                                const updatedExpenses = [...product.expenses];
+                                const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
+                                if (index !== -1) {
                                   updatedExpenses[index].cost = parseFloat(e.target.value) || 0;
                                   setProduct({...product, expenses: updatedExpenses});
-                                }}
-                                className="p-1 rounded w-20 text-right mr-2"
-                                style={{ 
-                                  backgroundColor: theme.inputBg, 
-                                  color: theme.textPrimary, 
-                                  border: 'none',
-                                  fontSize: '0.9rem'
-                                }}
-                              />
-                              <button 
-                                onClick={() => handleRemoveExpense(expense.id)}
-                                className="p-1 rounded-full"
-                                style={{ backgroundColor: 'rgba(255,0,0,0.1)' }}
-                              >
-                                <Trash2 size={14} color={theme.red} />
-                              </button>
-                            </>
-                          ) : (
-                            <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{expense.cost}₽</span>
-                          )}
-                        </div>
+                                }
+                              }}
+                              className="p-1 rounded w-20 text-right mr-2"
+                              style={{ 
+                                backgroundColor: theme.inputBg,
+                                color: theme.textPrimary,
+                                border: 'none',
+                                fontSize: '0.9rem'
+                              }}
+                              placeholder="0"
+                            />
+                            <button 
+                              onClick={() => handleRemoveExpense(expense.id)}
+                              className="p-1 rounded-full"
+                              style={{ backgroundColor: 'rgba(255,0,0,0.1)' }}
+                            >
+                              <Trash2 size={14} color={theme.red} />
+                            </button>
+                          </>
+                        ) : (
+                          expense.cost > 0 && <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{expense.cost}₽</span>
+                        )}
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-2" style={{ color: theme.textSecondary }}>
-                    Нет расходов
                   </div>
-                )}
-                
-                {/* Форма добавления нового расхода */}
-                {editMode && (
-                  <div className="mt-3 pt-3 border-t" style={{ borderColor: theme.cardBorder }}>
-                    <div className="flex items-center space-x-2">
-                      <input 
-                        type="text" 
-                        value={newExpense.name}
-                        onChange={(e) => setNewExpense({...newExpense, name: e.target.value})}
-                        placeholder="Название" 
-                        className="p-2 rounded flex-1"
-                        style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                      />
-                      <input 
-                        type="number" 
-                        value={newExpense.cost}
-                        onChange={(e) => setNewExpense({...newExpense, cost: e.target.value})}
-                        placeholder="Сумма" 
-                        className="p-2 rounded w-24"
-                        style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
-                      />
-                      <button 
-                        className="rounded-full w-8 h-8 flex items-center justify-center"
-                        style={{ backgroundColor: theme.accent }}
-                        onClick={handleAddExpense}
-                      >
-                        <Plus size={20} color="#ffffff" />
-                      </button>
+                ))}
+
+                {/* Пустые поля в режиме редактирования */}
+                {editMode && Array.from({ length: Math.max(0, 2 - product.expenses.filter(e => e.name || e.cost > 0).length) }).map((_, index) => (
+                  <div key={`empty-${index}`} className="mb-2 last:mb-0">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <input 
+                          type="text" 
+                          value=""
+                          onChange={(e) => {
+                            if (!e.target.value) return;
+                            
+                            const newExpense = {
+                              id: Date.now() + index,
+                              name: e.target.value,
+                              cost: 0
+                            };
+                            const updatedExpenses = [...product.expenses];
+                            
+                            // Находим индекс первого пустого расхода
+                            const emptyExpenseIndex = updatedExpenses.findIndex(e => !e.name && e.cost === 0);
+                            
+                            if (emptyExpenseIndex !== -1) {
+                              // Обновляем существующий пустой расход
+                              updatedExpenses[emptyExpenseIndex] = newExpense;
+                            } else {
+                              // Добавляем новый расход
+                              updatedExpenses.push(newExpense);
+                            }
+                            
+                            setProduct({
+                              ...product, 
+                              expenses: updatedExpenses
+                            });
+                          }}
+                          className="p-1 rounded"
+                          style={{ 
+                            backgroundColor: theme.inputBg,
+                            color: theme.textPrimary,
+                            border: 'none',
+                            fontSize: '0.9rem',
+                            width: '150px'
+                          }}
+                          placeholder="Название"
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <input 
+                          type="number" 
+                          value=""
+                          onChange={(e) => {
+                            if (!e.target.value) return;
+                            
+                            const newExpense = {
+                              id: Date.now() + index,
+                              name: '',
+                              cost: parseFloat(e.target.value) || 0
+                            };
+                            const updatedExpenses = [...product.expenses];
+                            
+                            // Находим индекс первого пустого расхода
+                            const emptyExpenseIndex = updatedExpenses.findIndex(e => !e.name && e.cost === 0);
+                            
+                            if (emptyExpenseIndex !== -1) {
+                              // Обновляем существующий пустой расход
+                              updatedExpenses[emptyExpenseIndex] = newExpense;
+                            } else {
+                              // Добавляем новый расход
+                              updatedExpenses.push(newExpense);
+                            }
+                            
+                            setProduct({
+                              ...product, 
+                              expenses: updatedExpenses
+                            });
+                          }}
+                          className="p-1 rounded w-20 text-right mr-2"
+                          style={{ 
+                            backgroundColor: theme.inputBg,
+                            color: theme.textPrimary,
+                            border: 'none',
+                            fontSize: '0.9rem'
+                          }}
+                          placeholder="0"
+                        />
+                      </div>
                     </div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
             

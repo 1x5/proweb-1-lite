@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, Mail, Lock, Eye, EyeOff, Edit2, Check, Sun, Moon, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
@@ -15,6 +15,39 @@ const SettingsPage = ({ onLogout }) => {
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const navigate = useNavigate();
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleSaveSettings = useCallback(() => {
+    // Проверка валидности email
+    if (newEmail && !/\S+@\S+\.\S+/.test(newEmail)) {
+      setSaveMessage('Некорректный email');
+      setTimeout(() => setSaveMessage(''), 2000);
+      return;
+    }
+    
+    // Проверка длины пароля
+    if (newPassword && newPassword.length < 6) {
+      setSaveMessage('Пароль должен содержать минимум 6 символов');
+      setTimeout(() => setSaveMessage(''), 2000);
+      return;
+    }
+    
+    // Сохраняем новые значения
+    if (newEmail) setEmail(newEmail);
+    if (newPassword) {
+      setPassword(newPassword);
+      setDisplayPassword('•'.repeat(newPassword.length));
+    }
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('userEmail', newEmail || email);
+    localStorage.setItem('userPassword', newPassword || password);
+    
+    setSaveMessage('Настройки сохранены');
+    setTimeout(() => setSaveMessage(''), 2000);
+    setEditMode(false);
+  }, [newEmail, newPassword, email, password]);
   
   // Загрузка данных пользователя из localStorage при монтировании компонента
   useEffect(() => {
@@ -24,6 +57,7 @@ const SettingsPage = ({ onLogout }) => {
     setEmail(storedEmail);
     setPassword(storedPassword);
     setDisplayPassword('•'.repeat(storedPassword.length));
+    setIsInitialized(true);
   }, []);
   
   // Инициализация значений при входе в режим редактирования
@@ -53,38 +87,13 @@ const SettingsPage = ({ onLogout }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [editMode]);
+  }, [editMode, handleSaveSettings]);
   
-  const handleSaveSettings = () => {
-    // Проверка валидности email
-    if (newEmail && !/\S+@\S+\.\S+/.test(newEmail)) {
-      setSaveMessage('Некорректный email');
-      setTimeout(() => setSaveMessage(''), 2000);
-      return;
+  useEffect(() => {
+    if (isInitialized) {
+      handleSaveSettings();
     }
-    
-    // Проверка длины пароля
-    if (newPassword && newPassword.length < 6) {
-      setSaveMessage('Пароль должен содержать минимум 6 символов');
-      setTimeout(() => setSaveMessage(''), 2000);
-      return;
-    }
-    
-    // Сохраняем новые значения
-    if (newEmail) setEmail(newEmail);
-    if (newPassword) {
-      setPassword(newPassword);
-      setDisplayPassword('•'.repeat(newPassword.length));
-    }
-    
-    // Сохраняем в localStorage
-    localStorage.setItem('userEmail', newEmail || email);
-    localStorage.setItem('userPassword', newPassword || password);
-    
-    setSaveMessage('Настройки сохранены');
-    setTimeout(() => setSaveMessage(''), 2000);
-    setEditMode(false);
-  };
+  }, [isInitialized, handleSaveSettings]);
   
   const handleCancelEdit = () => {
     setNewEmail('');

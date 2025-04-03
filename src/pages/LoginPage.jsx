@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 
-const LoginPage = ({ onLogin }) => {
-  const { darkMode, theme } = useTheme();
+function LoginPage() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { theme } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
   
   const handleLogin = (e) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const LoginPage = ({ onLogin }) => {
       localStorage.setItem('userPassword', password);
       
       // Вызываем функцию обратного вызова для обновления состояния в родительском компоненте
-      onLogin();
+      login();
       
       // Перенаправляем на главную страницу
       navigate('/');
@@ -107,6 +109,6 @@ const LoginPage = ({ onLogin }) => {
       </div>
     </div>
   );
-};
+}
 
 export default LoginPage; 

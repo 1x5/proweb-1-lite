@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { 
   createBrowserRouter, 
   RouterProvider, 
   createRoutesFromElements, 
   Route, 
   Navigate,
-  useNavigate,
-  useLocation
+  useNavigate
 } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Компонент для защищенных маршрутов
 const ProtectedRoute = ({ element }) => {
@@ -28,7 +28,6 @@ const ProtectedRoute = ({ element }) => {
 // Компонент для глобальных горячих клавиш
 const GlobalHotkeys = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -71,25 +70,19 @@ const SettingsWithLogout = ({ onLogout }) => {
 };
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem('isLoggedIn') === 'true'
-  );
-  
   // Принудительно очищаем localStorage при первой загрузке приложения
   useEffect(() => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
-    setIsLoggedIn(false);
   }, []);
   
   const handleLogin = () => {
-    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
   };
   
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
-    setIsLoggedIn(false);
   };
   
   // Создаем маршруты с использованием нового API React Router v6.4+
@@ -120,9 +113,11 @@ function App() {
   );
 
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 
