@@ -57,7 +57,13 @@ const OrderDetailsPage = () => {
         duration: 7,
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        expenses: [],
+        expenses: [{
+          id: Date.now().toString(),
+          name: '',
+          cost: 0,
+          link: '',
+          isNew: true
+        }],
         notes: '',
         photos: [],
         prepayment: 0,
@@ -371,7 +377,8 @@ const OrderDetailsPage = () => {
       id: Date.now().toString(),
       name: '',
       cost: 0,
-      link: '' // Добавляем поле для ссылки
+      link: '',
+      isNew: true
     };
     setProduct({
       ...product,
@@ -577,7 +584,7 @@ const OrderDetailsPage = () => {
                   {editMode ? (
                     <input 
                       type="number" 
-                      value={product.price}
+                      value={product.price || ''}
                       onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
                       className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
@@ -596,7 +603,7 @@ const OrderDetailsPage = () => {
                   {editMode ? (
                     <input 
                       type="number" 
-                      value={product.prepayment}
+                      value={product.prepayment || ''}
                       onChange={handlePrepaymentChange}
                       className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
@@ -671,7 +678,7 @@ const OrderDetailsPage = () => {
               
               <div className="rounded-lg">
                 {/* Список расходов */}
-                {product.expenses.filter(e => e.name || e.cost > 0 || e.isNew).map((expense) => (
+                {product.expenses.map((expense) => (
                   <div 
                     key={expense.id} 
                     className="mb-2 last:mb-0"
@@ -751,7 +758,7 @@ const OrderDetailsPage = () => {
                           <>
                             <input 
                               type="number" 
-                              value={expense.cost}
+                              value={expense.cost || ''}
                               onChange={(e) => {
                                 const updatedExpenses = [...product.expenses];
                                 const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
@@ -780,95 +787,6 @@ const OrderDetailsPage = () => {
                         ) : (
                           <span style={{ color: theme.textPrimary, fontSize: '0.875rem', backgroundColor: theme.card, paddingLeft: '4px' }}>{expense.cost}₽</span>
                         )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Пустые поля в режиме редактирования */}
-                {editMode && Array.from({ length: Math.max(0, 2 - product.expenses.filter(e => e.name || e.cost > 0).length) }).map((_, index) => (
-                  <div key={`empty-${index}`} className="mb-2 last:mb-0">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <input 
-                          type="text" 
-                          value=""
-                          onChange={(e) => {
-                            if (!e.target.value) return;
-                            
-                            const newExpense = {
-                              id: Date.now() + index,
-                              name: e.target.value,
-                              cost: 0
-                            };
-                            const updatedExpenses = [...product.expenses];
-                            
-                            // Находим индекс первого пустого расхода
-                            const emptyExpenseIndex = updatedExpenses.findIndex(e => !e.name && e.cost === 0);
-                            
-                            if (emptyExpenseIndex !== -1) {
-                              // Обновляем существующий пустой расход
-                              updatedExpenses[emptyExpenseIndex] = newExpense;
-                            } else {
-                              // Добавляем новый расход
-                              updatedExpenses.push(newExpense);
-                            }
-                            
-                            setProduct({
-                              ...product, 
-                              expenses: updatedExpenses
-                            });
-                          }}
-                          className="p-1 rounded"
-                          style={{ 
-                            backgroundColor: theme.inputBg,
-                            color: theme.textPrimary,
-                            border: 'none',
-                            fontSize: '0.875rem',
-                            width: '150px'
-                          }}
-                          placeholder="Название"
-                        />
-                      </div>
-                      <div className="flex items-center">
-                        <input 
-                          type="number" 
-                          value=""
-                          onChange={(e) => {
-                            if (!e.target.value) return;
-                            
-                            const newExpense = {
-                              id: Date.now() + index,
-                              name: '',
-                              cost: parseFloat(e.target.value) || 0
-                            };
-                            const updatedExpenses = [...product.expenses];
-                            
-                            // Находим индекс первого пустого расхода
-                            const emptyExpenseIndex = updatedExpenses.findIndex(e => !e.name && e.cost === 0);
-                            
-                            if (emptyExpenseIndex !== -1) {
-                              // Обновляем существующий пустой расход
-                              updatedExpenses[emptyExpenseIndex] = newExpense;
-                            } else {
-                              // Добавляем новый расход
-                              updatedExpenses.push(newExpense);
-                            }
-                            
-                            setProduct({
-                              ...product, 
-                              expenses: updatedExpenses
-                            });
-                          }}
-                          className="p-1 rounded w-20 text-right mr-2"
-                          style={{ 
-                            backgroundColor: theme.inputBg,
-                            color: theme.textPrimary,
-                            border: 'none',
-                            fontSize: '0.875rem'
-                          }}
-                          placeholder="0"
-                        />
                       </div>
                     </div>
                   </div>
