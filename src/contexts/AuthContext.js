@@ -16,6 +16,8 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userPassword');
   };
 
   return (

@@ -400,22 +400,59 @@ const OrderDetailsPage = () => {
   // Обновляем функцию handlePasteLinkClick
   const handlePasteLinkClick = async (expenseId) => {
     try {
-      const text = await navigator.clipboard.readText();
-      if (text && text.trim()) {
-        const updatedExpenses = product.expenses.map(expense =>
-          expense.id === expenseId ? { ...expense, link: text.trim() } : expense
-        );
-        setProduct({ ...product, expenses: updatedExpenses });
+      // Проверяем, поддерживается ли новый API
+      if (navigator.clipboard?.read) {
+        const clipboardItems = await navigator.clipboard.read();
+        for (const clipboardItem of clipboardItems) {
+          const textBlob = await clipboardItem.getType('text/plain');
+          const text = await new Response(textBlob).text();
+          if (text && text.trim()) {
+            updateExpenseLink(expenseId, text.trim());
+          }
+        }
+      } 
+      // Пробуем использовать старый API для iOS
+      else if (navigator.clipboard?.readText) {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          updateExpenseLink(expenseId, text.trim());
+        }
+      }
+      // Для iOS используем execCommand
+      else {
+        const textArea = document.createElement('textarea');
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
         
-        // Запускаем анимацию для конкретной иконки
-        setLinkAnimations({ ...linkAnimations, [expenseId]: true });
-        setTimeout(() => {
-          setLinkAnimations({ ...linkAnimations, [expenseId]: false });
-        }, 1000);
+        const successful = document.execCommand('paste');
+        const text = textArea.value;
+        document.body.removeChild(textArea);
+        
+        if (successful && text && text.trim()) {
+          updateExpenseLink(expenseId, text.trim());
+        }
       }
     } catch (err) {
       console.error('Ошибка при чтении буфера обмена:', err);
     }
+  };
+  
+  // Вспомогательная функция для обновления ссылки
+  const updateExpenseLink = (expenseId, link) => {
+    const updatedExpenses = product.expenses.map(expense =>
+      expense.id === expenseId ? { ...expense, link } : expense
+    );
+    setProduct({ ...product, expenses: updatedExpenses });
+    
+    // Запускаем анимацию для конкретной иконки
+    setLinkAnimations({ ...linkAnimations, [expenseId]: true });
+    setTimeout(() => {
+      setLinkAnimations({ ...linkAnimations, [expenseId]: false });
+    }, 1000);
   };
   
   // Добавляем стили в head
