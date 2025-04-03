@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   ChevronLeft, ChevronDown, Edit2, Check, Plus, Trash2, 
-  Clock, X, Camera, Sun, Moon
+  Clock, X, Camera, Sun, Moon, ExternalLink, Link
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
@@ -366,6 +366,19 @@ const OrderDetailsPage = () => {
     }
   };
   
+  const handleAddExpense = () => {
+    const newExpense = {
+      id: Date.now().toString(),
+      name: '',
+      cost: 0,
+      link: '' // Добавляем поле для ссылки
+    };
+    setProduct({
+      ...product,
+      expenses: [...product.expenses, newExpense]
+    });
+  };
+  
   // Добавляем стили в head
   useEffect(() => {
     const styleSheet = document.createElement("style");
@@ -647,19 +660,7 @@ const OrderDetailsPage = () => {
                   <button 
                     className="rounded-full w-6 h-6 flex items-center justify-center"
                     style={{ backgroundColor: theme.accent }}
-                    onClick={() => {
-                      const maxId = Math.max(...product.expenses.map(e => e.id || 0), 0);
-                      const newExpense = {
-                        id: maxId + 1,
-                        name: '',
-                        cost: 0,
-                        isNew: true // Маркер для новых полей
-                      };
-                      setProduct(prev => ({
-                        ...prev,
-                        expenses: [...prev.expenses, newExpense]
-                      }));
-                    }}
+                    onClick={handleAddExpense}
                   >
                     <Plus size={16} color="#ffffff" />
                   </button>
@@ -678,29 +679,71 @@ const OrderDetailsPage = () => {
                     <div className="flex justify-between items-end">
                       <div className="flex items-center">
                         {editMode ? (
-                          <input 
-                            type="text" 
-                            value={expense.name}
-                            onChange={(e) => {
-                              const updatedExpenses = [...product.expenses];
-                              const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
-                              if (index !== -1) {
-                                updatedExpenses[index].name = e.target.value;
-                                setProduct({...product, expenses: updatedExpenses});
-                              }
-                            }}
-                            className="p-1 rounded"
-                            style={{ 
-                              backgroundColor: theme.inputBg,
-                              color: theme.textPrimary,
-                              border: 'none',
-                              fontSize: '0.875rem',
-                              width: '150px'
-                            }}
-                            placeholder="Название"
-                          />
+                          <div className="flex items-center">
+                            <input 
+                              type="text" 
+                              value={expense.name}
+                              onChange={(e) => {
+                                const updatedExpenses = [...product.expenses];
+                                const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
+                                if (index !== -1) {
+                                  updatedExpenses[index].name = e.target.value;
+                                  setProduct({...product, expenses: updatedExpenses});
+                                }
+                              }}
+                              className="p-1 rounded"
+                              style={{ 
+                                backgroundColor: theme.inputBg,
+                                color: theme.textPrimary,
+                                border: 'none',
+                                fontSize: '0.875rem',
+                                width: '150px'
+                              }}
+                              placeholder="Название"
+                            />
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const text = await navigator.clipboard.readText();
+                                  const updatedExpenses = [...product.expenses];
+                                  const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
+                                  if (index !== -1) {
+                                    updatedExpenses[index].link = text;
+                                    setProduct({...product, expenses: updatedExpenses});
+                                  }
+                                } catch (err) {
+                                  console.error('Failed to read clipboard:', err);
+                                }
+                              }}
+                              className="p-1.5 rounded-full ml-2 flex items-center justify-center"
+                              style={{ 
+                                backgroundColor: theme.inputBg,
+                                color: expense.link ? theme.accent : theme.textSecondary
+                              }}
+                              title={expense.link || 'Вставить ссылку из буфера'}
+                            >
+                              <Link size={14} />
+                            </button>
+                          </div>
                         ) : (
-                          expense.name && <span style={{ color: theme.textPrimary, fontSize: '0.875rem' }}>{expense.name}</span>
+                          expense.name && (
+                            <div className="flex items-center">
+                              {expense.link ? (
+                                <a
+                                  href={expense.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center hover:opacity-80"
+                                  style={{ color: theme.textPrimary }}
+                                >
+                                  <span style={{ fontSize: '0.875rem' }}>{expense.name}</span>
+                                  <ExternalLink size={14} style={{ color: theme.textSecondary, marginLeft: '8px' }} />
+                                </a>
+                              ) : (
+                                <span style={{ color: theme.textPrimary, fontSize: '0.875rem' }}>{expense.name}</span>
+                              )}
+                            </div>
+                          )
                         )}
                       </div>
                       <div className="flex items-center">
