@@ -205,7 +205,7 @@ const HomePage = () => {
           <span style={{ 
             color: theme.textSecondary, 
             fontSize: isMobile ? '0.8rem' : '0.9rem'
-          }}>Сдача:</span>
+          }}>Дата:</span>
         </div>
         <span style={{ 
           color: theme.textPrimary, 
@@ -314,7 +314,11 @@ const HomePage = () => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${day}.${month}.${year}`;
+    // Добавляем день недели
+    const weekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const weekDay = weekDays[date.getDay()];
+    
+    return `${day}.${month}.${year}, ${weekDay}`;
   };
   
   return (
@@ -403,8 +407,11 @@ const HomePage = () => {
 
       {/* Поле поиска */}
       {showSearch && (
-        <div className="px-3">
-          <div className="relative">
+        <div className="p-3 mb-2" style={{ backgroundColor: theme.bg }}>
+          <div 
+            className="flex items-center rounded-xl px-3 py-2"
+            style={{ backgroundColor: theme.card }}
+          >
             <input
               type="text"
               value={searchQuery}
