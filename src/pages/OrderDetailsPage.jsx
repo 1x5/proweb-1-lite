@@ -396,7 +396,7 @@ const OrderDetailsPage = () => {
             className="mr-2 cursor-pointer" 
             onClick={() => navigate('/')}
           />
-          <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>
+          <h1 className="text-sm font-bold" style={{ color: theme.textPrimary }}>
             {editMode ? 'Редактирование' : 'Просмотр'}
           </h1>
         </div>
@@ -502,7 +502,7 @@ const OrderDetailsPage = () => {
               
               {/* Название заказа */}
               <div className="mb-1.5">
-                <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Название:</div>
+                <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Название:</div>
                 {editMode ? (
                   <input 
                     type="text" 
@@ -528,7 +528,7 @@ const OrderDetailsPage = () => {
                 <div className="grid grid-cols-2 gap-1.5 mb-1.5">
                   {/* Поле телефона */}
                   <div>
-                    <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Телефон:</div>
+                    <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Телефон:</div>
                     <input 
                       type="tel" 
                       value={product.phone}
@@ -541,7 +541,7 @@ const OrderDetailsPage = () => {
                   
                   {/* Поле мессенджера */}
                   <div>
-                    <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Мессенджер:</div>
+                    <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Мессенджер:</div>
                     <select
                       value={product.messenger}
                       onChange={(e) => setProduct({...product, messenger: e.target.value})}
@@ -560,7 +560,7 @@ const OrderDetailsPage = () => {
               <div className="grid grid-cols-2 gap-1.5">
                 {/* Поле цены */}
                 <div className="mb-1">
-                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Стоимость:</div>
+                  <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Стоимость:</div>
                   {editMode ? (
                     <input 
                       type="number" 
@@ -579,7 +579,7 @@ const OrderDetailsPage = () => {
                 
                 {/* Поле предоплаты */}
                 <div className="mb-1">
-                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Предоплата:</div>
+                  <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Предоплата:</div>
                   {editMode ? (
                     <input 
                       type="number" 
@@ -598,7 +598,7 @@ const OrderDetailsPage = () => {
                 
                 {/* Поле себестоимости */}
                 <div className="mb-1">
-                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Себестоимость:</div>
+                  <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Себестоимость:</div>
                   <div className="text-sm" style={{ color: theme.textPrimary }}>
                     {product.cost.toLocaleString()} ₽
                   </div>
@@ -606,7 +606,7 @@ const OrderDetailsPage = () => {
                 
                 {/* Поле остатка */}
                 <div className="mb-1">
-                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Остаток:</div>
+                  <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Остаток:</div>
                   <div className="text-sm" style={{ 
                     color: product.balance > 0 ? theme.red : theme.green,
                     fontWeight: 'bold'
@@ -617,7 +617,7 @@ const OrderDetailsPage = () => {
                 
                 {/* Поле прибыли */}
                 <div className="mb-1">
-                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Прибыль:</div>
+                  <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Прибыль:</div>
                   <div className="text-sm" style={{ 
                     color: product.profit >= 0 ? theme.green : theme.red,
                     fontWeight: 'bold'
@@ -628,7 +628,7 @@ const OrderDetailsPage = () => {
                 
                 {/* Поле процента прибыли */}
                 <div className="mb-1">
-                  <div className="text-xs mb-0.5" style={{ color: theme.textSecondary }}>Процент:</div>
+                  <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Процент:</div>
                   <div className="text-sm" style={{ 
                     color: product.profitPercent >= 0 ? theme.green : theme.red,
                     fontWeight: 'bold'
@@ -642,7 +642,7 @@ const OrderDetailsPage = () => {
             {/* Блок расходов */}
             <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Расходы: {product.cost}₽</h2>
+                <h2 className="text-sm font-bold" style={{ color: theme.textPrimary }}>Расходы: {product.cost}₽</h2>
                 {editMode && (
                   <button 
                     className="rounded-full w-6 h-6 flex items-center justify-center"
@@ -675,7 +675,7 @@ const OrderDetailsPage = () => {
                     key={expense.id} 
                     className="mb-2 last:mb-0"
                   >
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-end">
                       <div className="flex items-center">
                         {editMode ? (
                           <input 
@@ -694,13 +694,13 @@ const OrderDetailsPage = () => {
                               backgroundColor: theme.inputBg,
                               color: theme.textPrimary,
                               border: 'none',
-                              fontSize: '0.9rem',
+                              fontSize: '0.875rem',
                               width: '150px'
                             }}
                             placeholder="Название"
                           />
                         ) : (
-                          expense.name && <span style={{ color: theme.textSecondary, fontSize: '0.9rem' }}>{expense.name}</span>
+                          expense.name && <span style={{ color: theme.textPrimary, fontSize: '0.875rem' }}>{expense.name}</span>
                         )}
                       </div>
                       <div className="flex items-center">
@@ -722,7 +722,7 @@ const OrderDetailsPage = () => {
                                 backgroundColor: theme.inputBg,
                                 color: theme.textPrimary,
                                 border: 'none',
-                                fontSize: '0.9rem'
+                                fontSize: '0.875rem'
                               }}
                               placeholder="0"
                             />
@@ -735,7 +735,7 @@ const OrderDetailsPage = () => {
                             </button>
                           </>
                         ) : (
-                          expense.cost > 0 && <span style={{ color: theme.textPrimary, fontSize: '0.9rem' }}>{expense.cost}₽</span>
+                          <span style={{ color: theme.textPrimary, fontSize: '0.875rem', backgroundColor: theme.card, paddingLeft: '4px' }}>{expense.cost}₽</span>
                         )}
                       </div>
                     </div>
@@ -781,7 +781,7 @@ const OrderDetailsPage = () => {
                             backgroundColor: theme.inputBg,
                             color: theme.textPrimary,
                             border: 'none',
-                            fontSize: '0.9rem',
+                            fontSize: '0.875rem',
                             width: '150px'
                           }}
                           placeholder="Название"
@@ -822,7 +822,7 @@ const OrderDetailsPage = () => {
                             backgroundColor: theme.inputBg,
                             color: theme.textPrimary,
                             border: 'none',
-                            fontSize: '0.9rem'
+                            fontSize: '0.875rem'
                           }}
                           placeholder="0"
                         />
@@ -833,11 +833,11 @@ const OrderDetailsPage = () => {
               </div>
             </div>
             
-            {/* Блок примечаний */}
+            {/* Блок заметок */}
             {(editMode || product.notes) && (
               <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
                 <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Примечания</h2>
+                  <h2 className="text-sm font-bold" style={{ color: theme.textPrimary }}>Заметки</h2>
                 </div>
                 
                 <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
@@ -846,20 +846,20 @@ const OrderDetailsPage = () => {
                   <textarea 
                     value={product.notes || ''}
                     onChange={(e) => setProduct({...product, notes: e.target.value})}
-                    className="w-full rounded min-h-24"
+                    className="w-full rounded min-h-24 text-sm p-2"
                     style={{ 
                       color: theme.textPrimary, 
                       border: 'none',
                       resize: 'vertical',
                       backgroundColor: theme.inputBg
                     }}
-                    placeholder="Добавьте примечания к заказу..."
+                    placeholder="Добавьте заметки к заказу..."
                   />
                 ) : (
                   <div 
                     className="rounded"
                   >
-                    <p style={{ color: theme.textPrimary }}>{product.notes}</p>
+                    <p className="text-sm" style={{ color: theme.textPrimary }}>{product.notes}</p>
                   </div>
                 )}
               </div>
@@ -868,7 +868,7 @@ const OrderDetailsPage = () => {
             {/* Блок сроков */}
             <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Сроки</h2>
+                <h2 className="text-sm font-bold" style={{ color: theme.textPrimary }}>Сроки</h2>
                 <div className="flex items-center">
                   <Clock size={16} color={theme.textSecondary} className="mr-1" />
                   <span style={{ color: theme.textPrimary }}>{product.duration}</span>
@@ -886,11 +886,11 @@ const OrderDetailsPage = () => {
                       type="date" 
                       value={product.startDate}
                       onChange={handleStartDateChange}
-                      className="w-full p-1.5 rounded"
+                      className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                     />
                   ) : (
-                    <div style={{ color: theme.textPrimary }}>{formatDate(product.startDate)}</div>
+                    <div className="text-sm" style={{ color: theme.textPrimary }}>{formatDate(product.startDate)}</div>
                   )}
                 </div>
 
@@ -901,11 +901,11 @@ const OrderDetailsPage = () => {
                       type="date" 
                       value={product.endDate}
                       onChange={handleEndDateChange}
-                      className="w-full p-1.5 rounded"
+                      className="w-full p-1.5 rounded text-sm"
                       style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                     />
                   ) : (
-                    <div style={{ color: theme.textPrimary }}>{formatDate(product.endDate)}</div>
+                    <div className="text-sm" style={{ color: theme.textPrimary }}>{formatDate(product.endDate)}</div>
                   )}
                 </div>
               </div>
@@ -914,7 +914,7 @@ const OrderDetailsPage = () => {
             {/* Блок фотографий */}
             <div className="mb-2 rounded-xl px-[0.7rem] py-2" style={{ backgroundColor: theme.card }}>
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-base font-bold" style={{ color: theme.textPrimary }}>Фотографии</h2>
+                <h2 className="text-sm font-bold" style={{ color: theme.textPrimary }}>Фотографии</h2>
               </div>
               
               <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
@@ -951,10 +951,10 @@ const OrderDetailsPage = () => {
                   {Object.entries(uploadProgress).map(([fileId, progress]) => (
                     <div key={fileId} className="mb-2">
                       <div className="flex justify-between mb-1">
-                        <span style={{ color: theme.textSecondary, fontSize: '0.8rem' }}>
+                        <span style={{ color: theme.textSecondary, fontSize: '0.875rem' }}>
                           Загрузка: {fileId.split('_')[1]}
                         </span>
-                        <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>
+                        <span style={{ color: theme.textPrimary, fontSize: '0.875rem' }}>
                           {progress}%
                         </span>
                       </div>
