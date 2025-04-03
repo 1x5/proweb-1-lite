@@ -189,7 +189,8 @@ const HomePage = () => {
             backgroundColor: getStatusColor(order.status),
             padding: '2px 8px',
             borderRadius: '4px',
-            fontSize: isMobile ? '0.75rem' : '0.85rem'
+            fontSize: isMobile ? '0.75rem' : '0.85rem',
+            whiteSpace: 'nowrap'
           }}
         >
           {order.status}
@@ -363,36 +364,38 @@ const HomePage = () => {
             </div>
 
             {/* Иконка поиска */}
-            <button 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: theme.card }}
+            <button
               onClick={() => setShowSearch(!showSearch)}
-            >
-              <Search size={20} color={theme.textPrimary} />
-            </button>
-
-            {/* Иконка вида */}
-            <button 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
+              className="p-2 rounded-full"
               style={{ backgroundColor: theme.card }}
-              onClick={() => setCompactMode(!compactMode)}
             >
-              {compactMode ? 
-                <LayoutGrid size={20} color={theme.textPrimary} /> : 
-                <List size={20} color={theme.textPrimary} />
-              }
+              <Search size={20} style={{ color: theme.textSecondary }} />
             </button>
 
             {/* Переключатель темы */}
-            <button 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: theme.card }}
+            <button
               onClick={toggleDarkMode}
+              className="p-2 rounded-full"
+              style={{ backgroundColor: theme.card }}
             >
-              {darkMode ? 
-                <Sun size={20} color={theme.textPrimary} /> : 
-                <Moon size={20} color={theme.textPrimary} />
-              }
+              {darkMode ? (
+                <Sun size={20} style={{ color: theme.textSecondary }} />
+              ) : (
+                <Moon size={20} style={{ color: theme.textSecondary }} />
+              )}
+            </button>
+
+            {/* Переключатель вида */}
+            <button
+              onClick={() => setCompactMode(!compactMode)}
+              className="p-2 rounded-full"
+              style={{ backgroundColor: theme.card }}
+            >
+              {compactMode ? (
+                <LayoutGrid size={20} style={{ color: theme.textSecondary }} />
+              ) : (
+                <List size={20} style={{ color: theme.textSecondary }} />
+              )}
             </button>
           </div>
         </div>
@@ -406,27 +409,22 @@ const HomePage = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Поиск заказов..."
-              className="w-full p-2 pl-10 rounded"
+              className="w-full p-2 rounded-xl"
               style={{ 
-                backgroundColor: theme.card, 
-                color: theme.textPrimary, 
+                backgroundColor: theme.card,
+                color: theme.textPrimary,
                 border: 'none'
               }}
-            />
-            <Search 
-              size={16} 
-              color={theme.textSecondary} 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
+              placeholder="Поиск заказов..."
             />
           </div>
         </div>
       )}
       
       {/* Список заказов */}
-      <div className="flex-1 p-3 overflow-y-auto" style={{ paddingBottom: '80px' }}>
+      <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: '80px' }}>
         {filteredOrders.map(order => (
-          <div key={order.id} className="relative mb-3 overflow-hidden rounded-xl">
+          <div key={order.id} className="mb-3 relative overflow-hidden rounded-xl">
             {/* Кнопка удаления (видна при свайпе) */}
             <div 
               className="absolute right-0 top-0 bottom-0 flex items-center"

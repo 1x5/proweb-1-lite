@@ -406,9 +406,9 @@ const OrderDetailsPage = () => {
   }
   
   return (
-    <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: theme.bg }}>
       {/* Верхняя панель */}
-      <div className="p-3 flex justify-between items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
+      <div className="sticky top-0 z-10 p-3 flex justify-between items-center" style={{ backgroundColor: theme.bg }}>
         <div className="flex items-center">
           <ChevronLeft 
             size={24} 
@@ -464,8 +464,8 @@ const OrderDetailsPage = () => {
         </div>
       </div>
       
-      {/* Основное содержимое */}
-      <div className="flex-1 overflow-auto px-[0.7rem] pb-20">
+      {/* Основной контент */}
+      <div className="flex-1 overflow-y-auto pb-20 px-3">
         {/* Основная информация */}
         <div className="p-0">
           <div className="space-y-2 mt-[0.7rem]">
@@ -1041,7 +1041,7 @@ const OrderDetailsPage = () => {
         </div>
       )}
       
-      <BottomNavigation activePage="none" />
+      <BottomNavigation />
     </div>
   );
 };
