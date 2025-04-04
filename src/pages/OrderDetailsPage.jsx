@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
-  ChevronLeft, ChevronDown, Edit2, Check, Plus, Trash2, 
-  Clock, X, Camera, Sun, Moon, ExternalLink, Link
+  ChevronLeft, ChevronDown, Edit2, Plus, Trash2, 
+  Clock, X, Camera, Sun, Moon, ExternalLink, Link, Save
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
@@ -24,19 +24,58 @@ const fadeInOutKeyframes = `
   50% { transform: scale(1.2); color: #22c55e; }
   100% { transform: scale(1); color: inherit; }
 }
+
+@keyframes slideDown {
+  0% { transform: translateY(-100%); }
+  15% { transform: translateY(0); }
+  85% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+`;
+
+const progressAnimation = `
+  @keyframes progress {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideUp {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
 `;
 
 const OrderDetailsPage = () => {
   const { darkMode, toggleDarkMode, theme } = useTheme();
   const [editMode, setEditMode] = useState(false);
   const [product, setProduct] = useState(null);
-  const [saveMessage, setSaveMessage] = useState('');
+  const [showSuccessBar, setShowSuccessBar] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({});
   const [previewPhoto, setPreviewPhoto] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isNewOrder, setIsNewOrder] = useState(false);
   const [linkAnimations, setLinkAnimations] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
   
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -114,50 +153,60 @@ const OrderDetailsPage = () => {
   
   // Функция сохранения заказа
   const handleSaveOrder = useCallback((shouldNavigateHome = false) => {
-    if (!product) return;
-    
-    // Пересчитываем прибыль и процент прибыли
-    const totalCost = product.expenses.reduce((sum, expense) => sum + parseFloat(expense.cost || 0), 0);
-    const price = parseFloat(product.price || 0);
-    const profit = price - totalCost;
-    const profitPercent = price > 0 ? Math.round((profit / price) * 100 * 10) / 10 : 0;
-    
-    // Рассчитываем остаток
-    const prepayment = parseFloat(product.prepayment || 0);
-    const balance = price - prepayment;
-    
-    const updatedProduct = {
-      ...product,
-      cost: totalCost,
-      profit: profit,
-      profitPercent: profitPercent,
-      photos: photos,
-      balance: balance
-    };
-    
-    // Сохраняем изменения
-    const savedOrder = saveOrder(updatedProduct);
-    
-    // Если это был новый заказ, обновляем URL
-    if (isNewOrder) {
-      setIsNewOrder(false);
-      navigate(`/order/${savedOrder.id}`, { replace: true });
+    setIsSaving(true);
+    try {
+      if (!product) return;
+      
+      // Пересчитываем прибыль и процент прибыли
+      const totalCost = product.expenses.reduce((sum, expense) => sum + parseFloat(expense.cost || 0), 0);
+      const price = parseFloat(product.price || 0);
+      const profit = price - totalCost;
+      const profitPercent = price > 0 ? Math.round((profit / price) * 100 * 10) / 10 : 0;
+      
+      // Рассчитываем остаток
+      const prepayment = parseFloat(product.prepayment || 0);
+      const balance = price - prepayment;
+      
+      const updatedProduct = {
+        ...product,
+        cost: totalCost,
+        profit: profit,
+        profitPercent: profitPercent,
+        photos: photos,
+        balance: balance
+      };
+      
+      // Сохраняем изменения
+      const savedOrder = saveOrder(updatedProduct);
+      
+      // Если это был новый заказ, обновляем URL
+      if (isNewOrder) {
+        setIsNewOrder(false);
+        navigate(`/order/${savedOrder.id}`, { replace: true });
+      }
+      
+      setProduct(savedOrder);
+      setEditMode(false);
+      setShowSuccessBar(true);
+      
+      if (shouldNavigateHome) {
+        // Если нужно перейти на главную страницу
+        setTimeout(() => {
+          navigate('/');
+        }, 500);
+      } else {
+        // Скрываем полосу через 1 секунду
+        setTimeout(() => {
+          setShowSuccessBar(false);
+          setIsSaving(false);
+        }, 1000);
+      }
+      
+      return savedOrder;
+    } catch (error) {
+      console.error('Error saving order:', error);
+      setIsSaving(false);
     }
-    
-    setProduct(savedOrder);
-    setSaveMessage('Изменения сохранены');
-    
-    if (shouldNavigateHome) {
-      // Если нужно перейти на главную страницу
-      setTimeout(() => {
-        navigate('/');
-      }, 500); // Небольшая задержка, чтобы пользователь увидел сообщение о сохранении
-    } else {
-      // Просто скрываем сообщение через 1 секунду
-      setTimeout(() => setSaveMessage(''), 1000);
-    }
-    
-    return savedOrder;
   }, [product, navigate, photos, isNewOrder]);
   
   // Обработчик нажатия клавиш (Cmd+S / Ctrl+S)
@@ -385,7 +434,7 @@ const OrderDetailsPage = () => {
     if (!product) return;
     
     deleteOrder(product.id);
-    setSaveMessage('Заказ удален');
+    setShowSuccessBar(false);
     
     // Перенаправляем на главную страницу
     setTimeout(() => {
@@ -513,7 +562,7 @@ const OrderDetailsPage = () => {
   // Добавляем стили в head
   useEffect(() => {
     const styleSheet = document.createElement("style");
-    styleSheet.innerText = fadeInOutKeyframes;
+    styleSheet.innerText = fadeInOutKeyframes + progressAnimation;
     document.head.appendChild(styleSheet);
     return () => {
       document.head.removeChild(styleSheet);
@@ -531,8 +580,41 @@ const OrderDetailsPage = () => {
   
   return (
     <>
-      <style>{fadeInOutKeyframes}</style>
-      <div className="fixed inset-0 flex flex-col" style={{ backgroundColor: theme.bg }}>
+      <style>{fadeInOutKeyframes + progressAnimation}</style>
+      <div className="fixed inset-0 flex flex-col relative" style={{ backgroundColor: theme.bg }}>
+        {/* Полоса успешного сохранения */}
+        {(showSuccessBar || isSaving) && (
+          <div 
+            className="absolute top-0 left-0 right-0 h-[3px]"
+            style={{ 
+              backgroundColor: 'transparent',
+              animation: showSuccessBar ? 
+                'slideDown 0.3s ease-in-out forwards' : 
+                (isSaving ? undefined : 'slideUp 0.15s ease-in-out forwards'),
+              zIndex: 100
+            }}
+          >
+            {isSaving && (
+              <div 
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  background: `linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    ${theme.green} 35%,
+                    ${theme.green} 65%,
+                    transparent 100%
+                  )`,
+                  backgroundSize: '200% 100%',
+                  animation: 'progress 1s linear infinite',
+                  opacity: 0.8
+                }}
+              />
+            )}
+          </div>
+        )}
+        
         {/* Верхняя панель */}
         <div className="flex-none p-3 flex justify-between items-center" style={{ backgroundColor: theme.bg }}>
           <div className="flex items-center">
@@ -548,14 +630,6 @@ const OrderDetailsPage = () => {
           </div>
           
           <div className="flex items-center">
-            {saveMessage && (
-              <div className="mr-2 flex items-center justify-center rounded-full p-2 animate-fade-in" style={{ 
-                backgroundColor: theme.green,
-                animation: 'fadeInOut 1s ease-in-out'
-              }}>
-                <Check size={20} color="#ffffff" />
-              </div>
-            )}
             <button 
               className="rounded-full p-2 mr-2"
               style={{ backgroundColor: theme.card }}
@@ -583,7 +657,7 @@ const OrderDetailsPage = () => {
               onClick={toggleEditMode}
             >
               {editMode ? 
-                <Check size={20} color="#ffffff" /> : 
+                <Save size={20} color="#ffffff" /> : 
                 <Edit2 size={20} color="#ffffff" />
               }
             </button>

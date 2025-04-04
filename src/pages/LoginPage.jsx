@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { hashPassword, verifyPassword } from '../utils/crypto';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -14,14 +15,17 @@ function LoginPage() {
   const handleLogin = (e) => {
     e.preventDefault();
     
+    // Получаем сохраненный хешированный пароль
+    const storedPassword = localStorage.getItem('userPassword');
+    
     // Проверяем учетные данные
-    if ((username === 'admin' && password === 'password') || 
-        (username === localStorage.getItem('userEmail') && password === localStorage.getItem('userPassword'))) {
+    if ((username === 'admin' && verifyPassword(password, hashPassword('password'))) || 
+        (username === localStorage.getItem('userEmail') && verifyPassword(password, storedPassword))) {
       
       // Сохраняем информацию о входе и пользователе в localStorage
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userEmail', username);
-      localStorage.setItem('userPassword', password);
+      localStorage.setItem('userPassword', hashPassword(password)); // Сохраняем хешированный пароль
       
       // Вызываем функцию обратного вызова для обновления состояния в родительском компоненте
       login();
