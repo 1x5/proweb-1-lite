@@ -1,6 +1,15 @@
 // Сервис для работы с заказами
 const ORDERS_KEY = 'furniture_orders';
 
+// Функция для очистки старых фотографий
+const cleanupOldPhotos = (orders) => {
+  // Оставляем только последние 10 фотографий для каждого заказа
+  return orders.map(order => ({
+    ...order,
+    photos: (order.photos || []).slice(-10)
+  }));
+};
+
 // Получение всех заказов
 export const getOrders = () => {
   const orders = localStorage.getItem(ORDERS_KEY);
@@ -15,24 +24,46 @@ export const getOrderById = (id) => {
 
 // Сохранение заказа (добавление или обновление)
 export const saveOrder = (order) => {
-  const orders = getOrders();
-  
-  // Если заказ с таким ID уже существует, обновляем его
-  const index = orders.findIndex(o => o.id === order.id);
-  
-  if (index !== -1) {
-    orders[index] = order;
-  } else {
-    // Иначе добавляем новый заказ с новым ID
-    const maxId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) : 0;
-    orders.push({
-      ...order,
-      id: order.id || maxId + 1
-    });
+  try {
+    const orders = getOrders();
+    const index = orders.findIndex(o => o.id === order.id);
+    
+    if (index !== -1) {
+      orders[index] = order;
+    } else {
+      const maxId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) : 0;
+      orders.push({
+        ...order,
+        id: order.id || maxId + 1
+      });
+    }
+    
+    try {
+      localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        // Если превышена квота, очищаем старые фотографии
+        const cleanedOrders = cleanupOldPhotos(orders);
+        try {
+          localStorage.setItem(ORDERS_KEY, JSON.stringify(cleanedOrders));
+        } catch (e2) {
+          // Если все еще не хватает места, удаляем все фотографии из старых заказов
+          const ordersWithoutPhotos = cleanedOrders.map(o => ({
+            ...o,
+            photos: o.id === order.id ? o.photos : []
+          }));
+          localStorage.setItem(ORDERS_KEY, JSON.stringify(ordersWithoutPhotos));
+        }
+      } else {
+        throw e;
+      }
+    }
+    
+    return order;
+  } catch (error) {
+    console.error('Ошибка при сохранении заказа:', error);
+    throw error;
   }
-  
-  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-  return order;
 };
 
 // Удаление заказа

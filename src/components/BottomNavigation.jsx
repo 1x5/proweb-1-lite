@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
 const BottomNavigation = ({ activePage }) => {
-  const { darkMode, theme } = useTheme();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   
   return (

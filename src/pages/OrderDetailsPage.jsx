@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrder, deleteOrder } from '../services/OrderService';
 import { useTheme } from '../contexts/ThemeContext';
+import heic2any from 'heic2any';
 
 // Добавляем стили анимации
 const fadeInOutKeyframes = `
@@ -77,6 +78,10 @@ const OrderDetailsPage = () => {
         balance: 0
       });
       setEditMode(true);
+      // Очищаем состояние фотографий при создании нового заказа
+      setPhotos([]);
+      setPreviewPhoto(null);
+      setUploadProgress({});
     } else {
       // Загружаем существующий заказ
       setIsNewOrder(false);
@@ -218,71 +223,119 @@ const OrderDetailsPage = () => {
     });
   };
   
-  // Обработчик загрузки файлов
-  const handleFileUpload = (e) => {
+  // Функция для сжатия изображения
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Максимальные размеры
+          const maxWidth = 800;
+          const maxHeight = 800;
+
+          let width = img.width;
+          let height = img.height;
+
+          // Изменяем размеры с сохранением пропорций
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Конвертируем в JPEG с качеством 0.7
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(compressedDataUrl);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Обновляем обработчик загрузки файлов
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     
-    files.forEach(file => {
-      // Проверяем, что файл - изображение
-      if (!file.type.startsWith('image/')) {
-        alert('Пожалуйста, загружайте только изображения');
-        return;
-      }
-      
+    for (const file of files) {
       const fileId = Date.now() + '_' + file.name;
       
-      // Создаем объект для отслеживания прогресса загрузки
       setUploadProgress(prev => ({
         ...prev,
         [fileId]: 0
       }));
       
-      // Эмулируем процесс загрузки (в реальном приложении здесь был бы запрос к серверу)
-      const simulateUpload = () => {
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += Math.floor(Math.random() * 10) + 1;
-          if (progress >= 100) {
-            progress = 100;
-            clearInterval(interval);
-            
-            // Создаем URL для предпросмотра изображения
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const newPhoto = {
-                id: fileId,
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                url: e.target.result,
-                date: new Date().toISOString()
-              };
-              
-              setPhotos(prevPhotos => [...prevPhotos, newPhoto]);
-              
-              // Удаляем прогресс загрузки через 1 секунду
-              setTimeout(() => {
-                setUploadProgress(prev => {
-                  const newProgress = {...prev};
-                  delete newProgress[fileId];
-                  return newProgress;
-                });
-              }, 1000);
-            };
-            reader.readAsDataURL(file);
-          } else {
-            setUploadProgress(prev => ({
-              ...prev,
-              [fileId]: progress
-            }));
+      try {
+        let imageFile = file;
+        
+        // Проверяем, является ли файл HEIC
+        if (file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic')) {
+          try {
+            const convertedBlob = await heic2any({
+              blob: file,
+              toType: 'image/jpeg',
+              quality: 0.8
+            });
+            imageFile = new File([convertedBlob], file.name.replace(/\.heic$/i, '.jpg'), {
+              type: 'image/jpeg'
+            });
+          } catch (error) {
+            console.error('Ошибка при конвертации HEIC:', error);
+            alert('Ошибка при конвертации HEIC изображения');
+            continue;
           }
-        }, 200);
-      };
-      
-      simulateUpload();
-    });
+        } else if (!file.type.startsWith('image/')) {
+          alert('Пожалуйста, загружайте только изображения');
+          continue;
+        }
+        
+        // Сжимаем изображение
+        const compressedDataUrl = await compressImage(imageFile);
+        
+        const newPhoto = {
+          id: fileId,
+          name: imageFile.name,
+          type: 'image/jpeg',
+          url: compressedDataUrl,
+          date: new Date().toISOString()
+        };
+        
+        setPhotos(prevPhotos => [...prevPhotos, newPhoto]);
+        
+        // Имитируем загрузку
+        setUploadProgress(prev => ({
+          ...prev,
+          [fileId]: 100
+        }));
+        
+        setTimeout(() => {
+          setUploadProgress(prev => {
+            const newProgress = {...prev};
+            delete newProgress[fileId];
+            return newProgress;
+          });
+        }, 1000);
+        
+      } catch (error) {
+        console.error('Ошибка при обработке изображения:', error);
+        alert('Ошибка при обработке изображения');
+      }
+    }
     
-    // Очищаем input, чтобы можно было загрузить тот же файл повторно
     e.target.value = '';
   };
   
@@ -994,7 +1047,7 @@ const OrderDetailsPage = () => {
                 {Object.keys(uploadProgress).length > 0 && (
                   <div className="mb-3">
                     {Object.entries(uploadProgress).map(([fileId, progress]) => (
-                      <div key={fileId} className="mb-2">
+                      <div key={`progress-${fileId}`} className="mb-2">
                         <div className="flex justify-between mb-1">
                           <span style={{ color: theme.textSecondary, fontSize: '0.875rem' }}>
                             Загрузка: {fileId.split('_')[1]}
@@ -1026,7 +1079,7 @@ const OrderDetailsPage = () => {
                   <div className="grid grid-cols-3 gap-2">
                     {photos.map(photo => (
                       <div 
-                        key={photo.id} 
+                        key={`photo-${photo.id}`}
                         className="relative aspect-square rounded overflow-hidden"
                         onClick={() => handleOpenPreview(photo)}
                       >
