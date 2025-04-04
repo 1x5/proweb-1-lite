@@ -256,7 +256,7 @@ const HomePage = () => {
   // Компонент для отображения заказа в компактном режиме
   const CompactOrderCard = ({ order, isMobile }) => (
     <div
-      className="rounded-xl p-2 transition-transform duration-300 mb-1"
+      className="rounded-xl p-2 transition-transform duration-300 mb-3"
       style={{ 
         backgroundColor: theme.card,
         transform: swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)'
@@ -322,9 +322,9 @@ const HomePage = () => {
   };
   
   return (
-    <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: theme.bg }}>
       {/* Верхняя панель */}
-      <div className="sticky top-0 z-10" style={{ backgroundColor: theme.bg }}>
+      <div className="bg-inherit" style={{ backgroundColor: theme.bg }}>
         <div className="p-3 flex justify-between items-center">
           <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Заказы</h1>
           
@@ -429,7 +429,7 @@ const HomePage = () => {
       )}
       
       {/* Список заказов */}
-      <div className="flex-1 overflow-y-auto px-3" style={{ paddingBottom: '80px' }}>
+      <div className="flex-1 overflow-y-auto px-3 pb-5">
         {filteredOrders.map(order => (
           <div key={order.id} className="mb-3 relative overflow-hidden rounded-xl">
             {/* Кнопка удаления (видна при свайпе) */}

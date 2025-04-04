@@ -146,7 +146,7 @@ const SettingsPage = ({ onLogout }) => {
       </div>
       
       {/* Основное содержимое */}
-      <div className="flex-1 overflow-auto px-3 pb-20">
+      <div className="flex-1 overflow-auto px-3 pb-5">
         {/* Авторизация */}
         <div className="my-4">
           <h2 className="text-lg font-bold mb-2" style={{ color: theme.textPrimary }}>

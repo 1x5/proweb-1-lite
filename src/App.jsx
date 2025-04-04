@@ -1,33 +1,34 @@
 import { 
   RouterProvider, 
-  createBrowserRouter,
-  future
+  createBrowserRouter
 } from 'react-router-dom';
+import { ThemeProvider } from './contexts/ThemeContext';
+import HomePage from './pages/HomePage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 
-// Конфигурация для будущих изменений React Router v7
-const router = createBrowserRouter(
-  [
-    {
-      path: '/',
-      element: <HomePage />,
-    },
-    {
-      path: '/order/:id',
-      element: <OrderDetailsPage />,
-    }
-  ],
+// Конфигурация маршрутов
+const router = createBrowserRouter([
   {
-    future: {
-      v7_startTransition: true,
-      v7_relativeSplatPath: true
-    }
+    path: '/',
+    element: <HomePage />,
+  },
+  {
+    path: '/order/:id',
+    element: <OrderDetailsPage />,
   }
-);
+]);
 
 function App() {
   return (
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <div 
+        className="hide-safari-bar" 
+        style={{ 
+          backgroundColor: theme.bg
+        }}
+      >
+        <RouterProvider router={router} />
+      </div>
     </ThemeProvider>
   );
 }

@@ -9,11 +9,13 @@ const BottomNavigation = ({ activePage }) => {
   
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 flex justify-around items-center"
+      className="sticky bottom-0 left-0 right-0 flex justify-around items-center"
       style={{ 
         backgroundColor: theme.bg,
         padding: '8px 0',
-        zIndex: 1000
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        zIndex: 50,
+        boxShadow: '0 -1px 3px rgba(0,0,0,0.1)'
       }}
     >
       <Link 
