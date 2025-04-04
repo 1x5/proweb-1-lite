@@ -34,9 +34,12 @@ function LoginPage() {
   };
   
   return (
-    <div className="flex flex-col items-center justify-center h-screen px-4" style={{ backgroundColor: theme.bg }}>
+    <div 
+      className="flex items-center justify-center min-h-screen px-4 fixed inset-0 overflow-hidden" 
+      style={{ backgroundColor: theme.bg }}
+    >
       <div 
-        className="w-full max-w-md p-6 rounded-xl mx-4"
+        className="w-full max-w-md p-6 rounded-xl"
         style={{ backgroundColor: theme.card }}
       >
         <h1 

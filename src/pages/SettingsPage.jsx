@@ -4,6 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { useTheme } from '../contexts/ThemeContext';
 
+// Добавляем стили анимации
+const fadeInOutKeyframes = `
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.8); }
+  20% { opacity: 1; transform: scale(1.1); }
+  30% { transform: scale(1); }
+  90% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+`;
+
 const SettingsPage = ({ onLogout }) => {
   const { darkMode, toggleDarkMode, theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
@@ -108,6 +119,7 @@ const SettingsPage = ({ onLogout }) => {
   
   return (
     <div className="flex flex-col h-screen" style={{ backgroundColor: theme.bg }}>
+      <style>{fadeInOutKeyframes}</style>
       {/* Верхняя панель */}
       <div className="p-3 flex justify-between items-center" style={{ backgroundColor: darkMode ? '#1a1a1a' : theme.bg }}>
         <div className="flex items-center">
@@ -123,6 +135,15 @@ const SettingsPage = ({ onLogout }) => {
         </div>
         
         <div className="flex items-center">
+          {saveMessage && (
+            <div className="mr-2 flex items-center justify-center rounded-full p-2" style={{ 
+              backgroundColor: theme.green,
+              animation: 'fadeInOut 1s ease-in-out'
+            }}>
+              <Check size={20} color="#ffffff" />
+            </div>
+          )}
+          
           <button 
             className="rounded-full p-2 mr-2"
             style={{ backgroundColor: theme.card }}
@@ -245,28 +266,10 @@ const SettingsPage = ({ onLogout }) => {
           </div>
         </div>
         
-        {/* Информация о безопасности */}
-        <div className="my-4 p-3 rounded-xl" style={{ backgroundColor: theme.card }}>
-          <h3 className="text-sm font-bold mb-2" style={{ color: theme.textPrimary }}>
-            Рекомендации по безопасности
-          </h3>
-          <ul className="text-sm" style={{ color: theme.textSecondary }}>
-            <li className="mb-1">• Используйте сложный пароль (буквы, цифры, символы)</li>
-            <li className="mb-1">• Меняйте пароль регулярно</li>
-            <li>• Не сообщайте свои учетные данные третьим лицам</li>
-          </ul>
-        </div>
-        
-        {/* Блок выхода из системы */}
-        <div className="my-4 p-3 rounded-xl" style={{ backgroundColor: theme.card }}>
-          <h2 className="text-lg font-bold mb-2" style={{ color: theme.textPrimary }}>
-            Аккаунт
-          </h2>
-          
-          <div className="h-px w-full mb-3" style={{ backgroundColor: theme.cardBorder }}></div>
-          
+        {/* Кнопка выхода из системы */}
+        <div className="my-4">
           <button 
-            className="w-full p-3 rounded text-center flex items-center justify-center"
+            className="w-full p-3 rounded-xl text-center flex items-center justify-center"
             style={{ backgroundColor: theme.red, color: '#ffffff' }}
             onClick={handleLogoutClick}
           >
@@ -274,34 +277,9 @@ const SettingsPage = ({ onLogout }) => {
             Выйти из системы
           </button>
         </div>
-        
-        <div className="mb-6 text-center text-xs" style={{ color: theme.textSecondary }}>
-          © 2025 Мебель Технологии
-          <br />
-          Все права защищены
-          <br />
-          Версия 1.0.1
-        </div>
       </div>
       
       <BottomNavigation activePage="settings" />
-      
-      {/* Сообщение о сохранении */}
-      {saveMessage && (
-        <div 
-          className="fixed bottom-20 left-0 right-0 mx-auto w-64 p-3 rounded-lg text-center"
-          style={{ 
-            backgroundColor: saveMessage.includes('Некорректный') || saveMessage.includes('должен') 
-              ? theme.red 
-              : theme.green, 
-            color: '#ffffff',
-            zIndex: 1000,
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-          }}
-        >
-          {saveMessage}
-        </div>
-      )}
     </div>
   );
 };
