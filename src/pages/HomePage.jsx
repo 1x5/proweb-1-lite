@@ -256,10 +256,11 @@ const HomePage = () => {
   // Компонент для отображения заказа в компактном режиме
   const CompactOrderCard = ({ order, isMobile }) => (
     <div
-      className="rounded-xl p-2 transition-transform duration-300 mb-3"
+      className="rounded-xl p-2 transition-transform duration-300"
       style={{ 
         backgroundColor: theme.card,
-        transform: swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)'
+        transform: swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)',
+        marginBottom: '0.2rem'
       }}
       onClick={() => {
         if (swipedOrderId === order.id) {
@@ -431,7 +432,7 @@ const HomePage = () => {
       {/* Список заказов */}
       <div className="flex-1 overflow-y-auto px-3 pb-5">
         {filteredOrders.map(order => (
-          <div key={order.id} className="mb-3 relative overflow-hidden rounded-xl">
+          <div key={order.id} className={`relative overflow-hidden rounded-xl ${!compactMode && 'mb-3'}`}>
             {/* Кнопка удаления (видна при свайпе) */}
             <div 
               className="absolute right-0 top-0 bottom-0 flex items-center"
