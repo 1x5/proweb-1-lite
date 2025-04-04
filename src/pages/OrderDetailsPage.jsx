@@ -453,44 +453,46 @@ const OrderDetailsPage = () => {
   // Обновляем функцию handlePasteLinkClick
   const handlePasteLinkClick = async (expenseId) => {
     try {
-      // Проверяем, поддерживается ли новый API
-      if (navigator.clipboard?.read) {
-        const clipboardItems = await navigator.clipboard.read();
-        for (const clipboardItem of clipboardItems) {
-          const textBlob = await clipboardItem.getType('text/plain');
-          const text = await new Response(textBlob).text();
-          if (text && text.trim()) {
-            updateExpenseLink(expenseId, text.trim());
-          }
-        }
-      } 
-      // Пробуем использовать старый API для iOS
-      else if (navigator.clipboard?.readText) {
+      // Пробуем напрямую прочитать из буфера обмена
+      if (navigator.clipboard?.readText) {
         const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          updateExpenseLink(expenseId, text.trim());
+          return;
+        }
+      }
+      
+      // Если не получилось, пробуем через execCommand
+      const tempInput = document.createElement('input');
+      tempInput.style.position = 'fixed';
+      tempInput.style.opacity = 0;
+      tempInput.style.pointerEvents = 'none';
+      document.body.appendChild(tempInput);
+      
+      tempInput.focus();
+      const successful = document.execCommand('paste');
+      
+      if (successful) {
+        const text = tempInput.value;
+        if (text && text.trim()) {
+          updateExpenseLink(expenseId, text.trim());
+        }
+      } else {
+        // Если ничего не сработало, показываем prompt
+        const text = window.prompt('Вставьте ссылку из буфера обмена:');
         if (text && text.trim()) {
           updateExpenseLink(expenseId, text.trim());
         }
       }
-      // Для iOS используем execCommand
-      else {
-        const textArea = document.createElement('textarea');
-        textArea.style.position = 'fixed';
-        textArea.style.top = '0';
-        textArea.style.left = '0';
-        textArea.style.opacity = '0';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        
-        const successful = document.execCommand('paste');
-        const text = textArea.value;
-        document.body.removeChild(textArea);
-        
-        if (successful && text && text.trim()) {
-          updateExpenseLink(expenseId, text.trim());
-        }
-      }
+      
+      document.body.removeChild(tempInput);
     } catch (err) {
       console.error('Ошибка при чтении буфера обмена:', err);
+      // Если все методы не сработали, показываем prompt
+      const text = window.prompt('Вставьте ссылку из буфера обмена:');
+      if (text && text.trim()) {
+        updateExpenseLink(expenseId, text.trim());
+      }
     }
   };
   
