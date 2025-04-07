@@ -68,10 +68,15 @@ export const saveOrder = (order) => {
 
 // Удаление заказа
 export const deleteOrder = (id) => {
-  const orders = getOrders();
-  const updatedOrders = orders.filter(order => order.id !== parseInt(id));
-  localStorage.setItem(ORDERS_KEY, JSON.stringify(updatedOrders));
-  return updatedOrders;
+  try {
+    const orders = getOrders();
+    const updatedOrders = orders.filter(order => order.id !== (typeof id === 'string' ? parseInt(id) : id));
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(updatedOrders));
+    return true;
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    return false;
+  }
 };
 
 // Начальные данные для демонстрации

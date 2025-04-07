@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Sun, Moon, Calendar, List, LayoutGrid, Trash2 } from 'lucide-react';
+import { Search, Sun, Moon, List, LayoutGrid, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSwipeable } from 'react-swipeable';
 import { useTheme } from '../contexts/ThemeContext';
 import { getOrders, deleteOrder } from '../services/OrderService';
 import BottomNavigation from '../components/BottomNavigation';
@@ -104,12 +105,36 @@ const HomePage = () => {
   };
   
   // Обработчик удаления заказа
-  const handleDeleteOrder = (orderId, e) => {
-    e.stopPropagation(); // Предотвращаем переход к деталям заказа
-    
-    if (window.confirm('Вы уверены, что хотите удалить этот заказ?')) {
+  const handleDeleteOrder = (orderId) => {
+    try {
+      // Удаляем заказ
       deleteOrder(orderId);
-      setOrders(getOrders());
+      
+      // Получаем обновленный список заказов
+      const updatedOrders = getOrders();
+      
+      // Обновляем состояния
+      setOrders(updatedOrders);
+      
+      // Применяем текущие фильтры к обновленному списку
+      let filteredResult = updatedOrders;
+      if (selectedFilter !== 'Все') {
+        filteredResult = filteredResult.filter(order => order.status === selectedFilter);
+      }
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredResult = filteredResult.filter(order => 
+          order.name.toLowerCase().includes(query) || 
+          (order.customer && order.customer.toLowerCase().includes(query))
+        );
+      }
+      setFilteredOrders(filteredResult);
+      
+      // Сбрасываем состояния UI
+      setSwipedOrderId(null);
+      setShowDeleteConfirm(null);
+    } catch (error) {
+      console.error('Error deleting order:', error);
     }
   };
   
@@ -156,156 +181,158 @@ const HomePage = () => {
     }
   };
   
-  // Компонент для отображения заказа в обычном режиме
-  const RegularOrderCard = ({ order, isMobile }) => (
-    <div
-      className="rounded-xl p-3 transition-transform duration-300"
-      style={{ 
-        backgroundColor: theme.card,
-        transform: swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)'
-      }}
-      onClick={() => {
-        if (swipedOrderId === order.id) {
-          setSwipedOrderId(null);
-        } else {
-          handleOrderClick(order.id);
-        }
-      }}
-    >
-      <div className="flex justify-between items-start mb-1">
-        <div>
-          <h2 className="font-bold" style={{ 
-            color: theme.textPrimary,
-            fontSize: isMobile ? '1rem' : '1.125rem'
-          }}>{order.name}</h2>
-          <p style={{ 
-            color: theme.textSecondary,
-            fontSize: isMobile ? '0.8rem' : '0.875rem'
-          }}>{order.customer}</p>
-        </div>
-        <span
-          style={{ 
-            color: '#ffffff', 
-            backgroundColor: getStatusColor(order.status),
-            padding: '2px 8px',
-            borderRadius: '4px',
-            fontSize: isMobile ? '0.75rem' : '0.85rem',
-            whiteSpace: 'nowrap'
+  const SwipeableOrderCard = ({ order, children }) => {
+    const swipeHandlers = useSwipeable({
+      onSwipedLeft: () => setSwipedOrderId(order.id),
+      onSwipedRight: () => setSwipedOrderId(null),
+      trackMouse: true,
+      preventDefaultTouchmoveEvent: true,
+      delta: 10
+    });
+
+    const handleDelete = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      handleDeleteOrder(order.id);
+    };
+
+    return (
+      <div className="relative overflow-hidden rounded-xl">
+        <div
+          {...swipeHandlers}
+          className="relative z-10 transition-transform duration-200"
+          style={{
+            transform: swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)',
+            backgroundColor: theme.card
           }}
+          onClick={() => handleOrderClick(order.id)}
         >
-          {order.status}
-        </span>
-      </div>
-      
-      <div className="h-px w-full my-2" style={{ backgroundColor: theme.cardBorder }}></div>
-      
-      <div className="flex justify-between items-center mb-1">
-        <div className="flex items-center">
-          <Calendar size={isMobile ? 14 : 16} color={theme.textSecondary} className="mr-1" />
-          <span style={{ 
-            color: theme.textSecondary, 
-            fontSize: isMobile ? '0.8rem' : '0.9rem'
-          }}>Дата:</span>
+          {children}
         </div>
-        <span style={{ 
-          color: theme.textPrimary, 
-          fontSize: isMobile ? '0.8rem' : '0.9rem'
-        }}>{formatDate(order.endDate)}</span>
+        {swipedOrderId === order.id && (
+          <button
+            type="button"
+            className="absolute right-0 top-0 bottom-0 w-20 flex items-center justify-center z-0 cursor-pointer"
+            style={{ backgroundColor: theme.red }}
+            onClick={handleDelete}
+          >
+            <Trash2 size={16} color="#ffffff" />
+          </button>
+        )}
       </div>
-      
-      <div className="flex justify-between items-center">
-        <span style={{ 
-          color: theme.textSecondary, 
-          fontSize: isMobile ? '0.8rem' : '0.9rem'
-        }}>Стоимость:</span>
-        <span style={{ 
-          color: theme.textPrimary, 
-          fontSize: isMobile ? '0.8rem' : '0.9rem'
-        }}>{order.price}₽</span>
-      </div>
-      
-      <div className="flex justify-between items-center">
-        <span style={{ 
-          color: theme.textSecondary, 
-          fontSize: isMobile ? '0.8rem' : '0.9rem'
-        }}>Прибыль:</span>
-        <div className="flex items-center">
-          <span style={{ 
-            color: theme.green, 
-            fontSize: isMobile ? '0.8rem' : '0.9rem',
-            marginRight: '4px'
-          }}>
-            +{order.profit}₽
-          </span>
-          <span 
+    );
+  };
+  
+  const RegularOrderCard = ({ order, isMobile }) => (
+    <SwipeableOrderCard order={order}>
+      <div className="p-2.5">
+        <div className="flex justify-between items-start mb-1">
+          <div>
+            <h2 className="font-bold" style={{ 
+              color: theme.textPrimary,
+              fontSize: '0.95rem'
+            }}>{order.name}</h2>
+          </div>
+          <span
             style={{ 
-              color: order.profitPercent < 50 ? theme.red : theme.green, 
-              fontSize: isMobile ? '0.7rem' : '0.8rem',
-              backgroundColor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-              padding: '1px 4px',
-              borderRadius: '2px'
+              color: '#ffffff', 
+              backgroundColor: getStatusColor(order.status),
+              padding: '1px 6px',
+              borderRadius: '4px',
+              fontSize: '0.75rem',
+              whiteSpace: 'nowrap'
             }}
           >
-            {order.profitPercent}%
+            {order.status}
           </span>
         </div>
+        
+        <div className="h-px w-full my-1.5" style={{ backgroundColor: theme.cardBorder }}></div>
+        
+        <div className="flex justify-between items-center mb-0.5">
+          <span style={{ color: theme.textSecondary, fontSize: '0.8rem' }}>Дата:</span>
+          <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>{formatDate(order.startDate)}</span>
+        </div>
+
+        <div className="flex justify-between items-center mb-0.5">
+          <span style={{ color: theme.textSecondary, fontSize: '0.8rem' }}>Стоимость:</span>
+          <span style={{ color: theme.textPrimary, fontSize: '0.8rem' }}>{order.price?.toLocaleString()}₽</span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span style={{ color: theme.textSecondary, fontSize: '0.8rem' }}>Прибыль:</span>
+          <div className="flex items-center gap-2">
+            <span style={{ color: theme.green, fontSize: '0.8rem' }}>+{order.profit?.toLocaleString()}₽</span>
+            <span style={{ 
+              color: '#fff',
+              backgroundColor: order.profitPercent < 50 ? theme.red : theme.green,
+              padding: '0px 4px',
+              borderRadius: '3px',
+              fontSize: '0.75rem'
+            }}>
+              {order.profitPercent}%
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
+    </SwipeableOrderCard>
   );
   
-  // Компонент для отображения заказа в компактном режиме
-  const CompactOrderCard = ({ order, isMobile }) => (
-    <div
-      className="rounded-xl p-2 transition-transform duration-300"
-      style={{ 
-        backgroundColor: theme.card,
-        transform: swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)',
-        marginBottom: '0.2rem'
-      }}
-      onClick={() => {
-        if (swipedOrderId === order.id) {
-          setSwipedOrderId(null);
-        } else {
-          handleOrderClick(order.id);
-        }
-      }}
-    >
-      <div className="flex justify-between items-center">
-        <div className="flex-1 mr-2 flex items-center min-w-0">
-          {/* Цветовая полоса статуса */}
-          <div 
-            className="w-1 h-4 rounded-full mr-2 flex-shrink-0"
-            style={{ 
-              backgroundColor: getStatusColor(order.status)
-            }}
-          />
-          <h2 className="font-bold truncate" style={{ 
-            color: theme.textPrimary,
-            fontSize: isMobile ? '0.9rem' : '1rem'
-          }}>{order.name}</h2>
-        </div>
-        
-        <div className="flex items-center space-x-2 flex-shrink-0">
-          <div className="flex items-center">
-            <Calendar size={isMobile ? 12 : 14} color={theme.textSecondary} className="mr-1" />
-            <span style={{ 
-              color: theme.textPrimary, 
-              fontSize: isMobile ? '0.7rem' : '0.8rem',
-              whiteSpace: 'nowrap'
-            }}>{formatDate(order.endDate)}</span>
+  const CompactOrderCard = ({ order, isMobile }) => {
+    // Форматирование даты в формат дд.мм
+    const formatShortDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      return `${day}.${month}`;
+    };
+
+    return (
+      <SwipeableOrderCard order={order}>
+        <div className="py-3 px-3 rounded-xl" style={{ backgroundColor: theme.card }}>
+          <div className="flex items-center w-full">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              {/* Цветовая полоса статуса */}
+              <div 
+                className="w-1 h-4 rounded-sm flex-shrink-0"
+                style={{ backgroundColor: getStatusColor(order.status) }}
+              />
+              <h2 className="font-medium truncate" style={{ 
+                color: theme.textPrimary,
+                fontSize: '0.9rem'
+              }}>{order.name}</h2>
+            </div>
+            <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+              <span style={{ 
+                color: theme.textSecondary,
+                fontSize: '0.8rem'
+              }}>
+                {formatShortDate(order.startDate)}
+              </span>
+              <span style={{ 
+                color: theme.textPrimary,
+                fontSize: '0.8rem'
+              }}>
+                {order.price?.toLocaleString()}₽
+              </span>
+              <span style={{ 
+                color: '#fff',
+                backgroundColor: order.profitPercent < 50 ? 'rgba(239, 68, 68, 0.7)' : 'rgba(34, 197, 94, 0.7)',
+                padding: '0px 4px',
+                borderRadius: '3px',
+                fontSize: '0.75rem'
+              }}>
+                {order.profitPercent}%
+              </span>
+            </div>
           </div>
-          
-          <div className="flex items-center">
-            <span style={{ 
-              color: theme.textPrimary, 
-              fontSize: isMobile ? '0.7rem' : '0.8rem',
-              whiteSpace: 'nowrap'
-            }}>{order.price}₽</span>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+      </SwipeableOrderCard>
+    );
+  };
   
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -323,10 +350,10 @@ const HomePage = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen" style={{ backgroundColor: theme.bg }}>
+    <div className="flex flex-col h-screen bg-opacity-50" style={{ backgroundColor: theme.bg }}>
       {/* Верхняя панель */}
-      <div className="bg-inherit" style={{ backgroundColor: theme.bg }}>
-        <div className="p-3 flex justify-between items-center">
+      <div className="flex-none p-3" style={{ backgroundColor: theme.bg }}>
+        <div className="flex justify-between items-center">
           <h1 className="text-lg font-bold" style={{ color: theme.textPrimary }}>Заказы</h1>
           
           <div className="flex items-center space-x-2">
@@ -430,30 +457,9 @@ const HomePage = () => {
       )}
       
       {/* Список заказов */}
-      <div className="flex-1 overflow-y-auto px-3 pb-5">
+      <div className={`flex-1 overflow-y-auto ${compactMode ? 'px-2 space-y-1' : 'px-3 space-y-1.5'} pb-5`}>
         {filteredOrders.map(order => (
-          <div key={order.id} className={`relative overflow-hidden rounded-xl ${!compactMode && 'mb-3'}`}>
-            {/* Кнопка удаления (видна при свайпе) */}
-            <div 
-              className="absolute right-0 top-0 bottom-0 flex items-center"
-              style={{ 
-                transform: swipedOrderId === order.id ? 'translateX(0)' : 'translateX(100%)',
-                transition: 'transform 0.3s ease',
-                zIndex: 1
-              }}
-            >
-              <button
-                className="h-full px-4 flex items-center justify-center"
-                style={{ backgroundColor: theme.red }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowDeleteConfirm(order.id);
-                }}
-              >
-                <Trash2 size={isMobile ? 18 : 20} color="#ffffff" />
-              </button>
-            </div>
-            
+          <div key={order.id} className="relative overflow-hidden rounded-xl">
             {/* Карточка заказа */}
             <div
               onTouchStart={(e) => handleTouchStart(e, order.id)}
@@ -493,7 +499,7 @@ const HomePage = () => {
                         color: '#ffffff',
                         fontSize: isMobile ? '0.85rem' : '1rem'
                       }}
-                      onClick={(e) => handleDeleteOrder(order.id, e)}
+                      onClick={(e) => handleDeleteOrder(order.id)}
                     >
                       Удалить
                     </button>

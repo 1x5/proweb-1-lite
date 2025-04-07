@@ -51,6 +51,15 @@ button {
   min-height: 6rem;
 }
 
+/* Анимации для свайпа */
+.swipe-action-button {
+  transition: transform 0.2s ease-out;
+}
+
+.swipe-action-button:active {
+  transform: scale(0.95);
+}
+
 /* Только для отступа от нижней панели */
 @supports (-webkit-touch-callout: none) {
   .hide-safari-bar {
