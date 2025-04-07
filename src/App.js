@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
   createBrowserRouter, 
   RouterProvider, 
   createRoutesFromElements, 
   Route, 
-  Navigate,
-  useNavigate
+  Navigate
 } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
@@ -25,90 +24,28 @@ const ProtectedRoute = ({ element }) => {
   return element;
 };
 
-// Компонент для глобальных горячих клавиш
-const GlobalHotkeys = () => {
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Проверяем, что не находимся в поле ввода
-      const isInputActive = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
-      
-      // Cmd+N или Ctrl+N - создать новый заказ
-      if ((e.metaKey || e.ctrlKey) && e.key === 'n' && !isInputActive) {
-        e.preventDefault();
-        navigate('/order/new');
-      }
-      
-      // Cmd+, или Ctrl+, - открыть настройки
-      if ((e.metaKey || e.ctrlKey) && e.key === ',' && !isInputActive) {
-        e.preventDefault();
-        navigate('/settings');
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [navigate]);
-  
-  return null;
-};
-
-// Компонент-обертка для передачи функции logout
+// Компонент для настроек с функционалом выхода
 const SettingsWithLogout = ({ onLogout }) => {
-  const navigate = useNavigate();
-  
-  const handleLogout = () => {
-    onLogout();
-    navigate('/login');
-  };
-  
-  return <SettingsPage onLogout={handleLogout} />;
+  return <SettingsPage onLogout={onLogout} />;
 };
 
 function App() {
-  // Принудительно очищаем localStorage при первой загрузке приложения
-  useEffect(() => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('user');
-  }, []);
-  
   const handleLogin = () => {
     localStorage.setItem('isLoggedIn', 'true');
   };
-  
+
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('user');
+    localStorage.setItem('isLoggedIn', 'false');
   };
-  
-  // Создаем маршруты с использованием нового API React Router v6.4+
+
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <>
+      <Route>
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-        <Route path="/" element={
-          <>
-            <GlobalHotkeys />
-            <ProtectedRoute element={<HomePage onLogout={handleLogout} />} />
-          </>
-        } />
-        <Route path="/order/:id" element={
-          <>
-            <GlobalHotkeys />
-            <ProtectedRoute element={<OrderDetailsPage />} />
-          </>
-        } />
-        <Route path="/settings" element={
-          <>
-            <GlobalHotkeys />
-            <ProtectedRoute element={<SettingsWithLogout onLogout={handleLogout} />} />
-          </>
-        } />
-      </>
+        <Route path="/" element={<ProtectedRoute element={<HomePage />} />} />
+        <Route path="/order/:id" element={<ProtectedRoute element={<OrderDetailsPage />} />} />
+        <Route path="/settings" element={<ProtectedRoute element={<SettingsWithLogout onLogout={handleLogout} />} />} />
+      </Route>
     )
   );
 
