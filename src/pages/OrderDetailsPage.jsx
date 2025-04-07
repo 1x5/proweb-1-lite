@@ -456,19 +456,105 @@ const OrderDetailsPage = () => {
     }
   };
   
+  // Функция для пересчета всех значений
+  const recalculateValues = (updatedProduct) => {
+    if (!updatedProduct) return null;
+    
+    const totalCost = updatedProduct.expenses.reduce((sum, expense) => sum + parseFloat(expense.cost || 0), 0);
+    const price = parseFloat(updatedProduct.price || 0);
+    const prepayment = parseFloat(updatedProduct.prepayment || 0);
+    const profit = price - totalCost;
+    const profitPercent = price > 0 ? Math.round((profit / price) * 100 * 10) / 10 : 0;
+    const balance = price - prepayment;
+
+    return {
+      ...updatedProduct,
+      cost: totalCost,
+      profit: profit,
+      profitPercent: profitPercent,
+      balance: balance
+    };
+  };
+
+  // Обработчик изменения цены
+  const handlePriceChange = (e) => {
+    if (!product) return;
+    
+    const newPrice = parseFloat(e.target.value) || 0;
+    const updatedProduct = {
+      ...product,
+      price: newPrice
+    };
+    
+    const recalculatedProduct = recalculateValues(updatedProduct);
+    if (recalculatedProduct) {
+      setProduct(recalculatedProduct);
+    }
+  };
+
   // Обработчик изменения предоплаты
   const handlePrepaymentChange = (e) => {
-    const prepayment = parseFloat(e.target.value) || 0;
-    const price = parseFloat(product.price || 0);
-    const balance = price - prepayment;
+    if (!product) return;
     
-    setProduct({
+    const newPrepayment = parseFloat(e.target.value) || 0;
+    const updatedProduct = {
       ...product,
-      prepayment: prepayment,
-      balance: balance
-    });
+      prepayment: newPrepayment
+    };
+    
+    const recalculatedProduct = recalculateValues(updatedProduct);
+    if (recalculatedProduct) {
+      setProduct(recalculatedProduct);
+    }
   };
-  
+
+  // Обработчик изменения расхода
+  const handleExpenseChange = (expenseId, field, value) => {
+    if (!product) return;
+    
+    const updatedExpenses = product.expenses.map(expense => {
+      if (expense.id === expenseId) {
+        return {
+          ...expense,
+          [field]: field === 'cost' ? parseFloat(value) || 0 : value
+        };
+      }
+      return expense;
+    });
+    
+    const updatedProduct = {
+      ...product,
+      expenses: updatedExpenses
+    };
+    
+    const recalculatedProduct = recalculateValues(updatedProduct);
+    if (recalculatedProduct) {
+      setProduct(recalculatedProduct);
+    }
+  };
+
+  // Обработчик добавления расхода
+  const handleAddExpense = () => {
+    if (!product) return;
+    
+    const newExpense = {
+      id: Date.now().toString(),
+      name: '',
+      cost: 0,
+      link: ''
+    };
+    
+    const updatedProduct = {
+      ...product,
+      expenses: [...product.expenses, newExpense]
+    };
+    
+    const recalculatedProduct = recalculateValues(updatedProduct);
+    if (recalculatedProduct) {
+      setProduct(recalculatedProduct);
+    }
+  };
+
   // Функция для открытия чата в мессенджере
   const openMessenger = () => {
     if (!product.phone) return;
@@ -483,20 +569,6 @@ const OrderDetailsPage = () => {
       // Открываем Telegram
       window.open(`https://t.me/+${formattedPhone}`, '_blank');
     }
-  };
-  
-  const handleAddExpense = () => {
-    const newExpense = {
-      id: Date.now().toString(),
-      name: '',
-      cost: 0,
-      link: '',
-      isNew: true
-    };
-    setProduct({
-      ...product,
-      expenses: [...product.expenses, newExpense]
-    });
   };
   
   // Обновляем функцию handlePasteLinkClick
@@ -784,7 +856,7 @@ const OrderDetailsPage = () => {
                       <input 
                         type="number" 
                         value={product.price || ''}
-                        onChange={(e) => setProduct({...product, price: parseFloat(e.target.value) || 0})}
+                        onChange={handlePriceChange}
                         className="w-full p-1.5 rounded text-sm"
                         style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
                         placeholder="0"
@@ -889,14 +961,7 @@ const OrderDetailsPage = () => {
                               <input 
                                 type="text" 
                                 value={expense.name}
-                                onChange={(e) => {
-                                  const updatedExpenses = [...product.expenses];
-                                  const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
-                                  if (index !== -1) {
-                                    updatedExpenses[index].name = e.target.value;
-                                    setProduct({...product, expenses: updatedExpenses});
-                                  }
-                                }}
+                                onChange={(e) => handleExpenseChange(expense.id, 'name', e.target.value)}
                                 className="p-1 rounded"
                                 style={{ 
                                   backgroundColor: theme.inputBg,
@@ -911,12 +976,7 @@ const OrderDetailsPage = () => {
                                 onClick={async () => {
                                   try {
                                     const text = await navigator.clipboard.readText();
-                                    const updatedExpenses = [...product.expenses];
-                                    const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
-                                    if (index !== -1) {
-                                      updatedExpenses[index].link = text;
-                                      setProduct({...product, expenses: updatedExpenses});
-                                    }
+                                    handleExpenseChange(expense.id, 'link', text.trim());
                                   } catch (err) {
                                     console.error('Failed to read clipboard:', err);
                                   }
@@ -969,14 +1029,7 @@ const OrderDetailsPage = () => {
                               <input 
                                 type="number" 
                                 value={expense.cost || ''}
-                                onChange={(e) => {
-                                  const updatedExpenses = [...product.expenses];
-                                  const index = updatedExpenses.findIndex(exp => exp.id === expense.id);
-                                  if (index !== -1) {
-                                    updatedExpenses[index].cost = parseFloat(e.target.value) || 0;
-                                    setProduct({...product, expenses: updatedExpenses});
-                                  }
-                                }}
+                                onChange={(e) => handleExpenseChange(expense.id, 'cost', e.target.value)}
                                 className="p-1 rounded w-20 text-right mr-2"
                                 style={{ 
                                   backgroundColor: theme.inputBg,
