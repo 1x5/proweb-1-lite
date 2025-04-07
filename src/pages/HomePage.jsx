@@ -266,11 +266,11 @@ const HomePage = () => {
           <div className="flex items-center gap-2">
             <span style={{ color: theme.green, fontSize: '0.8rem' }}>+{order.profit?.toLocaleString()}₽</span>
             <span style={{ 
-              color: '#fff',
-              backgroundColor: order.profitPercent < 50 ? theme.red : theme.green,
-              padding: '0px 4px',
-              borderRadius: '3px',
-              fontSize: '0.75rem'
+              color: order.profitPercent < 50 ? theme.red : theme.green,
+              fontSize: '0.75rem',
+              backgroundColor: '#2D2D2D',
+              padding: '1px 4px',
+              borderRadius: '4px'
             }}>
               {order.profitPercent}%
             </span>
@@ -292,37 +292,34 @@ const HomePage = () => {
 
     return (
       <SwipeableOrderCard order={order}>
-        <div className="py-3 px-3 rounded-xl" style={{ backgroundColor: theme.card }}>
+        <div className="py-1.5 px-3 rounded-xl" style={{ backgroundColor: theme.card }}>
           <div className="flex items-center w-full">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {/* Цветовая полоса статуса */}
               <div 
-                className="w-1 h-4 rounded-sm flex-shrink-0"
+                className="w-1 h-3 rounded-sm flex-shrink-0"
                 style={{ backgroundColor: getStatusColor(order.status) }}
               />
               <h2 className="font-medium truncate" style={{ 
                 color: theme.textPrimary,
-                fontSize: '0.9rem'
+                fontSize: '0.85rem'
               }}>{order.name}</h2>
             </div>
-            <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+            <div className="flex items-center gap-2 flex-shrink-0 ml-3">
               <span style={{ 
                 color: theme.textSecondary,
-                fontSize: '0.8rem'
+                fontSize: '0.75rem'
               }}>
                 {formatShortDate(order.startDate)}
               </span>
               <span style={{ 
                 color: theme.textPrimary,
-                fontSize: '0.8rem'
+                fontSize: '0.75rem'
               }}>
                 {order.price?.toLocaleString()}₽
               </span>
               <span style={{ 
-                color: '#fff',
-                backgroundColor: order.profitPercent < 50 ? 'rgba(239, 68, 68, 0.7)' : 'rgba(34, 197, 94, 0.7)',
-                padding: '0px 4px',
-                borderRadius: '3px',
+                color: order.profitPercent < 50 ? theme.red : theme.green,
                 fontSize: '0.75rem'
               }}>
                 {order.profitPercent}%
