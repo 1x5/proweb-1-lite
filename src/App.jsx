@@ -1,35 +1,30 @@
-import { 
-  RouterProvider, 
-  createBrowserRouter
-} from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
-
-// Конфигурация маршрутов
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <HomePage />,
-  },
-  {
-    path: '/order/:id',
-    element: <OrderDetailsPage />,
-  }
-]);
+import SettingsPage from './pages/SettingsPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <ThemeProvider>
-      <div 
-        className="hide-safari-bar" 
-        style={{ 
-          backgroundColor: theme.bg
-        }}
-      >
-        <RouterProvider router={router} />
-      </div>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <Router>
+          <div>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+              <Route path="/order/:id" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
+              <Route path="/order/new" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            </Routes>
+          </div>
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

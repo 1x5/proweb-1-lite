@@ -508,7 +508,7 @@ const OrderDetailsPage = () => {
     }
   };
 
-  // Обработчик изменения расхода
+  // eslint-disable-next-line no-unused-vars
   const handleExpenseChange = (expenseId, field, value) => {
     if (!product) return;
     
@@ -652,8 +652,9 @@ const OrderDetailsPage = () => {
   
   return (
     <>
-      <style>{fadeInOutKeyframes + progressAnimation}</style>
-      <div className="fixed inset-0 flex flex-col relative" style={{ backgroundColor: theme.bg }}>
+      <style>{fadeInOutKeyframes}</style>
+      <style>{progressAnimation}</style>
+      <div className="relative" style={{ backgroundColor: theme.bg }}>
         {/* Полоса успешного сохранения */}
         {(showSuccessBar || isSaving) && (
           <div 
