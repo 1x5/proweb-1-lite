@@ -35,7 +35,8 @@ export const ThemeProvider = ({ children }) => {
     green: darkMode ? '#4ade80' : '#16a34a',
     red: darkMode ? '#ef4444' : '#dc2626',
     navBg: darkMode ? '#1a1a1a' : '#f0f0f0',
-    inputBg: darkMode ? '#444444' : '#f0f0f0'
+    inputBg: darkMode ? '#444444' : '#f0f0f0',
+    percentBackground: darkMode ? '#333333' : '#f0f0f0'
   };
   
   return (

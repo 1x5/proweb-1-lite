@@ -268,7 +268,7 @@ const HomePage = () => {
             <span style={{ 
               color: order.profitPercent < 50 ? theme.red : theme.green,
               fontSize: '0.75rem',
-              backgroundColor: '#2D2D2D',
+              backgroundColor: theme.percentBackground,
               padding: '1px 4px',
               borderRadius: '4px'
             }}>
