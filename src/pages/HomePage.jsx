@@ -296,7 +296,7 @@ const HomePage = () => {
           <div className="flex items-center w-full">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {/* Цветовая полоса статуса */}
-              <div 
+              <div
                 className="w-1 h-3 rounded-sm flex-shrink-0"
                 style={{ backgroundColor: getStatusColor(order.status) }}
               />
@@ -317,12 +317,6 @@ const HomePage = () => {
                 fontSize: '0.75rem'
               }}>
                 {order.price?.toLocaleString()}₽
-              </span>
-              <span style={{ 
-                color: order.profitPercent < 50 ? theme.red : theme.green,
-                fontSize: '0.75rem'
-              }}>
-                {order.profitPercent}%
               </span>
             </div>
           </div>
