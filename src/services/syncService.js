@@ -231,6 +231,39 @@ class SyncService {
     }
   }
 
+  async syncOnDelete(orderId) {
+    console.log('🟥 =====================================');
+    console.log('🟥 НАЧАЛО СИНХРОНИЗАЦИИ ПРИ УДАЛЕНИИ');
+    console.log('🟥 Заказ ID:', orderId);
+    console.log('🟥 =====================================');
+    
+    if (!navigator.onLine) {
+      console.log('❌ Нет подключения к интернету');
+      this.notifyStatusChange('error');
+      return false;
+    }
+
+    try {
+      this.notifyStatusChange('syncing');
+      
+      console.log('🔄 Удаление заказа на сервере...');
+      await apiService.deleteOrder(orderId);
+      
+      console.log('✅ ЗАКАЗ УСПЕШНО УДАЛЕН');
+      this.notifyStatusChange('success');
+      
+      return true;
+    } catch (error) {
+      console.error('❌ ОШИБКА ПРИ УДАЛЕНИИ ЗАКАЗА:', error);
+      this.notifyStatusChange('error');
+      return false;
+    } finally {
+      console.log('🟥 =====================================');
+      console.log('🟥 КОНЕЦ СИНХРОНИЗАЦИИ ПРИ УДАЛЕНИИ');
+      console.log('🟥 =====================================');
+    }
+  }
+
   startAutoSync(interval = 300000) {
     console.log(`⏰ Запуск автоматической синхронизации (интервал: ${interval}мс)`);
     this.syncInterval = setInterval(() => {

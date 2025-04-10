@@ -8748,3 +8748,465 @@
 === Исходящий ответ ===
 [2025-04-10T18:16:31.284Z] Статус: 200
 [2025-04-10T18:16:31.284Z] Тело ответа: [{"id":1,"name":"Новый заказ","price":1000,"cost":0,"profit":1000,"profitPercent":100,"prepayment":0,"balance":1000,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744308974058","name":"","cost":0,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T17:51:39.800Z","updatedAt":"2025-04-10T18:16:31.238Z"}]
+[2025-04-10T20:12:31.932Z] Успешное подключение к базе данных.
+[2025-04-10T20:12:31.977Z] Database synced
+[2025-04-10T20:12:31.978Z] Server is running on port 3001
+[2025-04-10T20:12:47.826Z] 
+=== Входящий запрос ===
+[2025-04-10T20:12:47.826Z] Метод: GET
+[2025-04-10T20:12:47.826Z] Путь: /api/orders/1
+[2025-04-10T20:12:47.826Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9"
+}
+[2025-04-10T20:12:47.826Z] Тело запроса: {}
+[2025-04-10T20:12:47.826Z] Параметры запроса: {}
+[2025-04-10T20:12:47.852Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:47.852Z] Статус: 200
+[2025-04-10T20:12:47.853Z] Тело ответа: {
+  "id": 1,
+  "name": "Новый заказ",
+  "price": "1000.00",
+  "cost": "0.00",
+  "profit": "1000.00",
+  "profitPercent": 100,
+  "prepayment": "0.00",
+  "balance": "1000.00",
+  "status": "Ожидает",
+  "startDate": "2025-04-10T00:00:00.000Z",
+  "endDate": "2025-04-17T00:00:00.000Z",
+  "duration": 7,
+  "phone": "",
+  "messenger": "WhatsApp",
+  "expenses": [
+    {
+      "id": "1744315712425",
+      "cost": 0,
+      "link": "",
+      "name": "",
+      "isNew": true
+    }
+  ],
+  "photos": [],
+  "createdAt": "2025-04-10T20:08:36.736Z",
+  "updatedAt": "2025-04-10T20:08:36.761Z"
+}
+[2025-04-10T20:12:47.854Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:47.854Z] Статус: 200
+[2025-04-10T20:12:47.854Z] Тело ответа: {"id":1,"name":"Новый заказ","price":"1000.00","cost":"0.00","profit":"1000.00","profitPercent":100,"prepayment":"0.00","balance":"1000.00","status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744315712425","cost":0,"link":"","name":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T20:08:36.736Z","updatedAt":"2025-04-10T20:08:36.761Z"}
+[2025-04-10T20:12:47.883Z] 
+=== Входящий запрос ===
+[2025-04-10T20:12:47.883Z] Метод: POST
+[2025-04-10T20:12:47.883Z] Путь: /api/orders/sync
+[2025-04-10T20:12:47.883Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "388",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "authorization": "Bearer null",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9"
+}
+[2025-04-10T20:12:47.883Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "1",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 1000,
+      "cost": 0,
+      "profit": 1000,
+      "profitPercent": 100,
+      "prepayment": 0,
+      "balance": 1000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744315965291",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T20:12:47.883Z] Параметры запроса: {}
+[2025-04-10T20:12:47.897Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:47.898Z] Статус: 200
+[2025-04-10T20:12:47.898Z] Тело ответа: [
+  {
+    "id": 1,
+    "name": "Новый заказ",
+    "price": 1000,
+    "cost": 0,
+    "profit": 1000,
+    "profitPercent": 100,
+    "prepayment": 0,
+    "balance": 1000,
+    "status": "Ожидает",
+    "startDate": "2025-04-10T00:00:00.000Z",
+    "endDate": "2025-04-17T00:00:00.000Z",
+    "duration": 7,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744315965291",
+        "name": "",
+        "cost": 0,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "createdAt": "2025-04-10T20:08:36.736Z",
+    "updatedAt": "2025-04-10T20:12:47.890Z"
+  }
+]
+[2025-04-10T20:12:47.898Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:47.898Z] Статус: 200
+[2025-04-10T20:12:47.898Z] Тело ответа: [{"id":1,"name":"Новый заказ","price":1000,"cost":0,"profit":1000,"profitPercent":100,"prepayment":0,"balance":1000,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744315965291","name":"","cost":0,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T20:08:36.736Z","updatedAt":"2025-04-10T20:12:47.890Z"}]
+[2025-04-10T20:12:53.658Z] 
+=== Входящий запрос ===
+[2025-04-10T20:12:53.659Z] Метод: GET
+[2025-04-10T20:12:53.659Z] Путь: /api/orders/2
+[2025-04-10T20:12:53.659Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9"
+}
+[2025-04-10T20:12:53.659Z] Тело запроса: {}
+[2025-04-10T20:12:53.659Z] Параметры запроса: {}
+[2025-04-10T20:12:53.661Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:53.662Z] Статус: 200
+[2025-04-10T20:12:53.662Z] Тело ответа: {
+  "id": 2,
+  "name": "Новый заказ",
+  "price": "1000.00",
+  "cost": "0.00",
+  "profit": "1000.00",
+  "profitPercent": 100,
+  "prepayment": "0.00",
+  "balance": "1000.00",
+  "status": "Ожидает",
+  "startDate": "2025-04-10T00:00:00.000Z",
+  "endDate": "2025-04-17T00:00:00.000Z",
+  "duration": 7,
+  "phone": "",
+  "messenger": "WhatsApp",
+  "expenses": [
+    {
+      "id": "1744315810111",
+      "cost": 0,
+      "link": "",
+      "name": "",
+      "isNew": true
+    }
+  ],
+  "photos": [],
+  "createdAt": "2025-04-10T20:10:12.111Z",
+  "updatedAt": "2025-04-10T20:10:12.141Z"
+}
+[2025-04-10T20:12:53.662Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:53.662Z] Статус: 200
+[2025-04-10T20:12:53.662Z] Тело ответа: {"id":2,"name":"Новый заказ","price":"1000.00","cost":"0.00","profit":"1000.00","profitPercent":100,"prepayment":"0.00","balance":"1000.00","status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744315810111","cost":0,"link":"","name":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T20:10:12.111Z","updatedAt":"2025-04-10T20:10:12.141Z"}
+[2025-04-10T20:12:53.670Z] 
+=== Входящий запрос ===
+[2025-04-10T20:12:53.671Z] Метод: POST
+[2025-04-10T20:12:53.671Z] Путь: /api/orders/sync
+[2025-04-10T20:12:53.671Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "396",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "authorization": "Bearer null",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9"
+}
+[2025-04-10T20:12:53.671Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "2",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 1000,
+      "cost": 0,
+      "profit": 1000,
+      "profitPercent": 100,
+      "prepayment": 212112,
+      "balance": -211112,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744315965291",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 2
+    }
+  ]
+}
+[2025-04-10T20:12:53.671Z] Параметры запроса: {}
+[2025-04-10T20:12:53.678Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:53.678Z] Статус: 200
+[2025-04-10T20:12:53.678Z] Тело ответа: [
+  {
+    "id": 2,
+    "name": "Новый заказ",
+    "price": 1000,
+    "cost": 0,
+    "profit": 1000,
+    "profitPercent": 100,
+    "prepayment": 212112,
+    "balance": -211112,
+    "status": "Ожидает",
+    "startDate": "2025-04-10T00:00:00.000Z",
+    "endDate": "2025-04-17T00:00:00.000Z",
+    "duration": 7,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744315965291",
+        "name": "",
+        "cost": 0,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "createdAt": "2025-04-10T20:10:12.111Z",
+    "updatedAt": "2025-04-10T20:12:53.675Z"
+  }
+]
+[2025-04-10T20:12:53.678Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:12:53.678Z] Статус: 200
+[2025-04-10T20:12:53.678Z] Тело ответа: [{"id":2,"name":"Новый заказ","price":1000,"cost":0,"profit":1000,"profitPercent":100,"prepayment":212112,"balance":-211112,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744315965291","name":"","cost":0,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T20:10:12.111Z","updatedAt":"2025-04-10T20:12:53.675Z"}]
+[2025-04-10T20:15:05.698Z] 
+=== Входящий запрос ===
+[2025-04-10T20:15:05.698Z] Метод: DELETE
+[2025-04-10T20:15:05.698Z] Путь: /api/orders/2
+[2025-04-10T20:15:05.698Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9"
+}
+[2025-04-10T20:15:05.699Z] Тело запроса: {}
+[2025-04-10T20:15:05.699Z] Параметры запроса: {}
+[2025-04-10T20:15:05.718Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:15:05.718Z] Статус: 204
+[2025-04-10T20:15:05.718Z] Тело ответа: undefined
+[2025-04-10T20:15:19.557Z] 
+=== Входящий запрос ===
+[2025-04-10T20:15:19.557Z] Метод: GET
+[2025-04-10T20:15:19.557Z] Путь: /api/orders/1
+[2025-04-10T20:15:19.557Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9",
+  "if-none-match": "W/\"1d3-K3uBDD7P9U9OKS1zZ5RsnWsBgGI\""
+}
+[2025-04-10T20:15:19.557Z] Тело запроса: {}
+[2025-04-10T20:15:19.557Z] Параметры запроса: {}
+[2025-04-10T20:15:19.568Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:15:19.568Z] Статус: 200
+[2025-04-10T20:15:19.568Z] Тело ответа: {
+  "id": 1,
+  "name": "Новый заказ",
+  "price": "1000.00",
+  "cost": "0.00",
+  "profit": "1000.00",
+  "profitPercent": 100,
+  "prepayment": "0.00",
+  "balance": "1000.00",
+  "status": "Ожидает",
+  "startDate": "2025-04-10T00:00:00.000Z",
+  "endDate": "2025-04-17T00:00:00.000Z",
+  "duration": 7,
+  "phone": "",
+  "messenger": "WhatsApp",
+  "expenses": [
+    {
+      "id": "1744315965291",
+      "cost": 0,
+      "link": "",
+      "name": "",
+      "isNew": true
+    }
+  ],
+  "photos": [],
+  "createdAt": "2025-04-10T20:08:36.736Z",
+  "updatedAt": "2025-04-10T20:12:47.890Z"
+}
+[2025-04-10T20:15:19.568Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:15:19.568Z] Статус: 200
+[2025-04-10T20:15:19.568Z] Тело ответа: {"id":1,"name":"Новый заказ","price":"1000.00","cost":"0.00","profit":"1000.00","profitPercent":100,"prepayment":"0.00","balance":"1000.00","status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744315965291","cost":0,"link":"","name":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T20:08:36.736Z","updatedAt":"2025-04-10T20:12:47.890Z"}
+[2025-04-10T20:15:19.574Z] 
+=== Входящий запрос ===
+[2025-04-10T20:15:19.574Z] Метод: POST
+[2025-04-10T20:15:19.574Z] Путь: /api/orders/sync
+[2025-04-10T20:15:19.574Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "415",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "authorization": "Bearer null",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,ru;q=0.9"
+}
+[2025-04-10T20:15:19.574Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "1",
+      "name": "Новый заказ123123",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 1000,
+      "cost": 2313,
+      "profit": -1313,
+      "profitPercent": -131,
+      "prepayment": 0,
+      "balance": 1000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744316111765",
+          "name": "ываыва1",
+          "cost": 2313,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T20:15:19.574Z] Параметры запроса: {}
+[2025-04-10T20:15:19.583Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:15:19.583Z] Статус: 200
+[2025-04-10T20:15:19.584Z] Тело ответа: [
+  {
+    "id": 1,
+    "name": "Новый заказ123123",
+    "price": 1000,
+    "cost": 2313,
+    "profit": -1313,
+    "profitPercent": -131,
+    "prepayment": 0,
+    "balance": 1000,
+    "status": "Ожидает",
+    "startDate": "2025-04-10T00:00:00.000Z",
+    "endDate": "2025-04-17T00:00:00.000Z",
+    "duration": 7,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744316111765",
+        "name": "ываыва1",
+        "cost": 2313,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "createdAt": "2025-04-10T20:08:36.736Z",
+    "updatedAt": "2025-04-10T20:15:19.580Z"
+  }
+]
+[2025-04-10T20:15:19.584Z] 
+=== Исходящий ответ ===
+[2025-04-10T20:15:19.584Z] Статус: 200
+[2025-04-10T20:15:19.584Z] Тело ответа: [{"id":1,"name":"Новый заказ123123","price":1000,"cost":2313,"profit":-1313,"profitPercent":-131,"prepayment":0,"balance":1000,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744316111765","name":"ываыва1","cost":2313,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T20:08:36.736Z","updatedAt":"2025-04-10T20:15:19.580Z"}]

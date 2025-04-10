@@ -3,6 +3,8 @@ import { Search, Sun, Moon, List, LayoutGrid } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { getOrders, deleteOrder } from '../services/OrderService';
+import syncService from '../services/syncService';
+import { toast } from 'react-hot-toast';
 import BottomNavigation from '../components/BottomNavigation';
 import RegularOrderCard from '../components/RegularOrderCard';
 import CompactOrderCard from '../components/CompactOrderCard';
@@ -109,10 +111,21 @@ const HomePage = () => {
   };
   
   // Обработчик удаления заказа
-  const handleDeleteOrder = (orderId) => {
+  const handleDeleteOrder = async (orderId) => {
     try {
-      // Удаляем заказ
-      deleteOrder(orderId);
+      // Удаляем заказ локально
+      await deleteOrder(orderId);
+      
+      // Синхронизируем с сервером
+      const syncResult = await syncService.syncOnDelete(orderId);
+      
+      if (syncResult) {
+        toast.success('Заказ успешно удален');
+      } else if (!syncService.isOnline) {
+        toast('Заказ удален локально и будет синхронизирован при восстановлении соединения');
+      } else {
+        toast.error('Ошибка при удалении заказа на сервере');
+      }
       
       // Получаем обновленный список заказов
       const { orders: updatedOrders } = getOrders();
@@ -139,6 +152,7 @@ const HomePage = () => {
       setShowDeleteConfirm(null);
     } catch (error) {
       console.error('Error deleting order:', error);
+      toast.error('Ошибка при удалении заказа');
     }
   };
   

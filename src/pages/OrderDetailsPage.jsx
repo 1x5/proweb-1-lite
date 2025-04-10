@@ -627,16 +627,35 @@ const OrderDetailsPage = () => {
   };
   
   // Функция удаления заказа
-  const handleDeleteOrder = () => {
+  const handleDeleteOrder = async () => {
     if (!product) return;
     
-    deleteOrder(product.id);
-    setShowSuccessBar(false);
-    
-    // Перенаправляем на главную страницу
-    setTimeout(() => {
-      navigate('/');
-    }, 500);
+    try {
+      // Удаляем заказ локально
+      await deleteOrder(product.id);
+      
+      // Синхронизируем с сервером
+      const syncResult = await syncService.syncOnDelete(product.id);
+      
+      if (syncResult) {
+        toast.success('Заказ успешно удален');
+      } else if (!syncService.isOnline) {
+        toast('Заказ удален локально и будет синхронизирован при восстановлении соединения');
+      } else {
+        toast.error('Ошибка при удалении заказа на сервере');
+      }
+      
+      setShowSuccessBar(false);
+      setShowDeleteConfirm(false);
+      
+      // Перенаправляем на главную страницу
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
+    } catch (error) {
+      console.error('Ошибка при удалении заказа:', error);
+      toast.error('Ошибка при удалении заказа');
+    }
   };
   
   // Функция для получения цвета статуса
