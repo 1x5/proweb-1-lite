@@ -10,15 +10,34 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { syncService } from './services/syncService';
 import { Toaster, toast } from 'react-hot-toast';
 
+// Функция для логирования
+const log = (message) => {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}\n`;
+  console.log(logMessage);
+  
+  // Отправляем лог на сервер для записи в файл
+  fetch('http://localhost:3001/api/logs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message: logMessage }),
+  }).catch(err => console.error('Ошибка при отправке лога:', err));
+};
+
 const App = () => {
   const [syncError, setSyncError] = useState(null);
 
-  // Добавляем тестовое уведомление
   useEffect(() => {
+    // Тестовые уведомления при запуске
     toast('Тестовое уведомление');
     toast.success('Тест успешного уведомления');
     toast.error('Тест ошибки');
     toast.warning('Тест предупреждения');
+
+    // Логируем запуск приложения
+    log('Приложение запущено');
   }, []);
 
   useEffect(() => {

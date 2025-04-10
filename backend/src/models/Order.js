@@ -13,19 +13,23 @@ const Order = sequelize.define('Order', {
   },
   price: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   cost: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   profit: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   profitPercent: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   prepayment: {
     type: DataTypes.DECIMAL(10, 2),
@@ -34,7 +38,8 @@ const Order = sequelize.define('Order', {
   },
   balance: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   status: {
     type: DataTypes.STRING,

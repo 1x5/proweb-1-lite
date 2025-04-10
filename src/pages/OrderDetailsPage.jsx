@@ -106,12 +106,12 @@ const OrderDetailsPage = () => {
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         duration: 7,
-        price: 0,
+        price: 1000, // Начальная цена
         cost: 0,
         profit: 0,
         profitPercent: 0,
         prepayment: 0,
-        balance: 0,
+        balance: 1000, // Начальный баланс равен цене
         phone: '',
         messenger: 'WhatsApp',
         expenses: [{
@@ -122,7 +122,8 @@ const OrderDetailsPage = () => {
           isNew: true
         }],
         photos: [],
-        notes: ''
+        notes: '',
+        version: 0
       });
       setEditMode(true);
       // Очищаем состояние фотографий при создании нового заказа
@@ -164,13 +165,86 @@ const OrderDetailsPage = () => {
     }
   }, [id, navigate]);
   
+  // Инициализация нового заказа
+  useEffect(() => {
+    if (isNewOrder) {
+      const newOrder = {
+        id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: 'Новый заказ',
+        customer: '',
+        status: 'Ожидает',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        duration: 7,
+        price: 1000, // Начальная цена
+        cost: 0,
+        profit: 0,
+        profitPercent: 0,
+        prepayment: 0,
+        balance: 1000, // Начальный баланс равен цене
+        phone: '',
+        messenger: 'WhatsApp',
+        expenses: [{
+          id: Date.now().toString(),
+          name: '',
+          cost: 0,
+          link: '',
+          isNew: true
+        }],
+        photos: [],
+        notes: '',
+        version: 0
+      };
+      setProduct(newOrder);
+    }
+  }, [isNewOrder]);
+  
   // Оборачиваем handleSaveOrder в useCallback
   const handleSaveOrder = useCallback(async (redirectToHome = true) => {
-    setIsSaving(true);
+    console.log('🔵 =====================================');
+    console.log('🔵 НАЧАЛО СОХРАНЕНИЯ ЗАКАЗА');
+    console.log('🔵 =====================================');
+    console.log('📋 Данные заказа:', JSON.stringify(product, null, 2));
+    
     try {
-      if (!product) return;
+      setIsSaving(true);
+      if (!product) {
+        console.log('❌ Ошибка: product не определен');
+        return;
+      }
+      
+      // Валидация обязательных полей
+      console.log('🔍 Проверка обязательных полей...');
+      if (!product.name || product.name.trim() === '') {
+        console.log('❌ Ошибка: название заказа не заполнено');
+        toast.error('Введите название заказа');
+        return;
+      }
+      
+      // Проверка цены (разрешаем 0)
+      if (product.price === undefined || product.price < 0) {
+        console.log('❌ Ошибка: некорректная цена заказа');
+        toast.error('Укажите корректную цену заказа');
+        return;
+      }
+
+      // Валидация расходов (разрешаем пустой массив)
+      console.log('🔍 Проверка расходов...');
+      const invalidExpenses = product.expenses.filter(expense => 
+        expense.name && expense.name.trim() !== '' && 
+        (expense.cost === undefined || expense.cost < 0)
+      );
+      
+      if (invalidExpenses.length > 0) {
+        console.log('❌ Ошибка: некорректные расходы:', invalidExpenses);
+        toast.error('Укажите корректную стоимость для заполненных расходов');
+        return;
+      }
+      
+      console.log('✅ Валидация пройдена успешно');
       
       // Пересчитываем прибыль и процент прибыли
+      console.log('🧮 Пересчет финансовых показателей...');
       const totalCost = product.expenses.reduce((sum, expense) => sum + parseFloat(expense.cost || 0), 0);
       const price = parseFloat(product.price || 0);
       const profit = price - totalCost;
@@ -180,14 +254,26 @@ const OrderDetailsPage = () => {
       const prepayment = parseFloat(product.prepayment || 0);
       const balance = price - prepayment;
       
+      console.log('📊 Финансовые показатели:', {
+        totalCost,
+        price,
+        profit,
+        profitPercent,
+        prepayment,
+        balance
+      });
+      
       const updatedProduct = {
         ...product,
         cost: totalCost,
         profit: profit,
         profitPercent: profitPercent,
         photos: photos,
-        balance: balance
+        balance: balance,
+        version: (parseInt(product.version || 0) + 1)
       };
+      
+      console.log('📝 Обновленные данные заказа:', JSON.stringify(updatedProduct, null, 2));
       
       // Получаем текущие заказы
       const { orders } = getOrders();
@@ -196,6 +282,7 @@ const OrderDetailsPage = () => {
       
       // Если это новый заказ, добавляем его в конец списка с новым числовым id
       if (isNewOrder) {
+        console.log('🆕 Создание нового заказа...');
         // Находим максимальный числовой id среди существующих заказов
         const maxId = orders.reduce((max, order) => {
           const orderId = parseInt(order.id);
@@ -208,11 +295,14 @@ const OrderDetailsPage = () => {
           id: (maxId + 1).toString()
         };
         
+        console.log('📝 Новый ID заказа:', newOrder.id);
+        
         // Сохраняем локально
         await saveOrders([...orders, newOrder]);
         setProduct(newOrder);
         savedOrder = newOrder;
       } else {
+        console.log('📝 Обновление существующего заказа...');
         // Если существующий, обновляем его
         const updatedOrders = orders.filter(o => o.id !== product.id);
         await saveOrders([...updatedOrders, updatedProduct]);
@@ -220,14 +310,20 @@ const OrderDetailsPage = () => {
         savedOrder = updatedProduct;
       }
       
+      console.log('✅ Заказ сохранен локально');
+      
       // Синхронизируем с сервером
+      console.log('🔄 Начало синхронизации с сервером...');
       const syncResult = await syncService.syncOnSave(savedOrder);
       
       if (syncResult) {
+        console.log('✅ Синхронизация успешна');
         toast.success('Заказ сохранен и синхронизирован');
       } else if (!syncService.isOnline) {
+        console.log('⚠️ Офлайн режим - заказ будет синхронизирован позже');
         toast.warning('Заказ сохранен локально и будет синхронизирован при восстановлении соединения');
       } else {
+        console.log('❌ Ошибка синхронизации');
         toast.error('Ошибка синхронизации с сервером');
       }
       
@@ -236,6 +332,7 @@ const OrderDetailsPage = () => {
       
       // Если нужно перейти на главную страницу
       if (redirectToHome) {
+        console.log('🏠 Перенаправление на главную страницу...');
         setTimeout(() => {
           navigate('/');
         }, 500);
@@ -243,10 +340,13 @@ const OrderDetailsPage = () => {
       
       return savedOrder;
     } catch (error) {
-      console.error('Error saving order:', error);
+      console.error('❌ Ошибка при сохранении:', error);
       toast.error('Ошибка при сохранении заказа');
     } finally {
       setIsSaving(false);
+      console.log('🔵 =====================================');
+      console.log('🔵 КОНЕЦ СОХРАНЕНИЯ ЗАКАЗА');
+      console.log('🔵 =====================================');
     }
   }, [product, photos, isNewOrder, navigate]);
   

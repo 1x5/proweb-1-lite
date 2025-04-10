@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 const orderController = require('../controllers/orderController');
+const { validateOrder } = require('../middleware/validation');
 
 // Логирование всех запросов
 router.use((req, res, next) => {
@@ -12,8 +15,25 @@ router.use((req, res, next) => {
   next();
 });
 
+// Маршрут для обработки логов
+router.post('/logs', (req, res) => {
+  const { message } = req.body;
+  if (!message) {
+    return res.status(400).json({ error: 'Message is required' });
+  }
+
+  const logPath = path.join(__dirname, '../../logs/app.log');
+  fs.appendFile(logPath, message, (err) => {
+    if (err) {
+      console.error('Ошибка при записи лога:', err);
+      return res.status(500).json({ error: 'Failed to write log' });
+    }
+    res.json({ success: true });
+  });
+});
+
 // Синхронизация заказов (должен быть перед /:id)
-router.post('/sync', orderController.syncOrders);
+router.post('/sync', validateOrder, orderController.syncOrders);
 
 // Получить все заказы
 router.get('/', orderController.getAllOrders);

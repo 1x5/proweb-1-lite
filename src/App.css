@@ -1,0 +1,37 @@
+/* Стили для уведомлений */
+.Toastify__toast {
+  font-family: inherit;
+  min-height: 50px;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+
+.Toastify__toast--success {
+  background: #059669;
+  color: white;
+}
+
+.Toastify__toast--error {
+  background: #DC2626;
+  color: white;
+}
+
+.Toastify__toast--warning {
+  background: #D97706;
+  color: white;
+}
+
+.Toastify__toast-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+} 

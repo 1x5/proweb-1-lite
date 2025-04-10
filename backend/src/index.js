@@ -1,61 +1,87 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const sequelize = require('./db/connection');
 const orderRoutes = require('./routes/orderRoutes');
+const { validateOrder } = require('./middleware/validation');
 
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
-// Логирование запросов
-app.use((req, res, next) => {
-  console.log('Incoming request:', {
-    method: req.method,
-    path: req.path,
-    headers: req.headers,
-    body: req.body,
-    query: req.query
-  });
-  next();
-});
+// Создаем поток для записи логов
+const logStream = fs.createWriteStream(
+  path.join(__dirname, '../../logs/app.log'),
+  { flags: 'a' }
+);
 
-// Настройка CORS
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 
-          'http://192.168.3.64:3000', 'http://192.168.3.64:3001', 'http://192.168.3.64:3002'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  credentials: true
-}));
+// Функция для логирования
+const log = (message) => {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}\n`;
+  console.log(logMessage);
+  logStream.write(logMessage);
+};
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Global error handler:', err);
-  res.status(500).json({ 
-    error: 'Internal server error',
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
+// Логирование всех входящих запросов
+app.use((req, res, next) => {
+  log('\n=== Входящий запрос ===');
+  log(`Метод: ${req.method}`);
+  log(`Путь: ${req.path}`);
+  log(`Заголовки: ${JSON.stringify(req.headers, null, 2)}`);
+  log(`Тело запроса: ${JSON.stringify(req.body, null, 2)}`);
+  log(`Параметры запроса: ${JSON.stringify(req.query, null, 2)}`);
+  
+  // Сохраняем оригинальные методы
+  const originalSend = res.send;
+  const originalJson = res.json;
+  
+  // Переопределяем res.send
+  res.send = function(body) {
+    log('\n=== Исходящий ответ ===');
+    log(`Статус: ${res.statusCode}`);
+    log(`Тело ответа: ${body}`);
+    return originalSend.call(this, body);
+  };
+  
+  // Переопределяем res.json
+  res.json = function(body) {
+    log('\n=== Исходящий ответ ===');
+    log(`Статус: ${res.statusCode}`);
+    log(`Тело ответа: ${JSON.stringify(body, null, 2)}`);
+    return originalJson.call(this, body);
+  };
+  
+  next();
 });
 
 // Routes
 app.use('/api/orders', orderRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+// Global error handler
+app.use((err, req, res, next) => {
+  log(`❌ Ошибка: ${err.message}`);
+  log(`Стек: ${err.stack}`);
+  res.status(500).json({ error: err.message });
 });
 
-// Sync database and start server
-sequelize.sync().then(() => {
-  console.log('Database synced');
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
-}).catch(error => {
-  console.error('Unable to sync database:', error);
-}); 
+// Подключение к базе данных и запуск сервера
+sequelize.authenticate()
+  .then(() => {
+    log('Успешное подключение к базе данных.');
+    return sequelize.sync();
+  })
+  .then(() => {
+    log('Database synced');
+    app.listen(PORT, () => {
+      log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    log(`Ошибка: ${err.message}`);
+  }); 

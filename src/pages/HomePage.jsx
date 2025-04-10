@@ -199,15 +199,11 @@ const HomePage = () => {
                   className="absolute top-full right-0 mt-1 rounded-lg shadow-lg z-10"
                   style={{ backgroundColor: theme.card, minWidth: '120px' }}
                 >
-                  {statuses.map(status => (
+                  {statuses.map((status, index) => (
                     <button
-                      key={status}
-                      className="block w-full text-left px-4 py-2 first:rounded-t-lg last:rounded-b-lg"
-                      style={{ 
-                        backgroundColor: status === selectedFilter ? (status === 'Все' ? theme.accent : getStatusColor(status)) : 'transparent',
-                        color: status === selectedFilter ? '#ffffff' : theme.textPrimary,
-                        fontSize: isMobile ? '0.85rem' : '1rem'
-                      }}
+                      key={`status-${index}`}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
+                      style={{ color: theme.textPrimary }}
                       onClick={() => handleFilterChange(status)}
                     >
                       {status}
@@ -216,186 +212,103 @@ const HomePage = () => {
                 </div>
               )}
             </div>
-
+            
             {/* Иконка поиска */}
-            <button
+            <button 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: theme.card }}
               onClick={() => setShowSearch(!showSearch)}
-              className="p-2 rounded-full"
-              style={{ backgroundColor: theme.card }}
             >
-              <Search size={20} style={{ color: theme.textSecondary }} />
+              <Search size={20} style={{ color: theme.textPrimary }} />
             </button>
-
-            {/* Переключатель темы */}
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full"
+            
+            {/* Иконка темы */}
+            <button 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
               style={{ backgroundColor: theme.card }}
+              onClick={toggleDarkMode}
             >
               {darkMode ? (
-                <Sun size={20} style={{ color: theme.textSecondary }} />
+                <Sun size={20} style={{ color: theme.textPrimary }} />
               ) : (
-                <Moon size={20} style={{ color: theme.textSecondary }} />
+                <Moon size={20} style={{ color: theme.textPrimary }} />
               )}
             </button>
-
-            {/* Переключатель вида */}
-            <button
-              onClick={() => setCompactMode(!compactMode)}
-              className="p-2 rounded-full"
+            
+            {/* Иконка компактного режима */}
+            <button 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
               style={{ backgroundColor: theme.card }}
+              onClick={() => setCompactMode(!compactMode)}
             >
               {compactMode ? (
-                <LayoutGrid size={20} style={{ color: theme.textSecondary }} />
+                <List size={20} style={{ color: theme.textPrimary }} />
               ) : (
-                <List size={20} style={{ color: theme.textSecondary }} />
+                <LayoutGrid size={20} style={{ color: theme.textPrimary }} />
               )}
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Поле поиска */}
-      {showSearch && (
-        <div className="p-3 mb-2" style={{ backgroundColor: theme.bg }}>
-          <div 
-            className="flex items-center rounded-xl px-3 py-2"
-            style={{ backgroundColor: theme.card }}
-          >
+        
+        {/* Поле поиска */}
+        {showSearch && (
+          <div className="mt-3">
             <input
               type="text"
+              placeholder="Поиск..."
+              className="w-full p-2 rounded-lg"
+              style={{ backgroundColor: theme.card, color: theme.textPrimary }}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-2 rounded-xl"
-              style={{ 
-                backgroundColor: theme.card,
-                color: theme.textPrimary,
-                border: 'none'
-              }}
-              placeholder="Поиск заказов..."
             />
-          </div>
-        </div>
-      )}
-      
-      {/* Список заказов */}
-      <div className={`flex-1 overflow-y-auto ${compactMode ? 'px-2 space-y-1' : 'px-3 space-y-1.5'} pb-5`}>
-        {filteredOrders.map((order) => (
-          <div key={order.id} className="relative overflow-hidden rounded-xl">
-            {/* Карточка заказа */}
-            <div style={{ position: 'relative', zIndex: 2 }}>
-              {compactMode ? 
-                <CompactOrderCard 
-                  key={`compact-${order.id}`}
-                  order={order} 
-                  isMobile={isMobile} 
-                  theme={theme} 
-                  getStatusColor={getStatusColor}
-                  onClick={handleOrderClick}
-                  onDelete={{
-                    swipedOrderId,
-                    setSwipedOrderId,
-                    handleDeleteOrder
-                  }}
-                /> : 
-                <RegularOrderCard 
-                  key={`regular-${order.id}`}
-                  order={order} 
-                  isMobile={isMobile} 
-                  theme={theme} 
-                  formatDate={formatDate} 
-                  getStatusColor={getStatusColor}
-                  onClick={handleOrderClick}
-                  onDelete={{
-                    swipedOrderId,
-                    setSwipedOrderId,
-                    handleDeleteOrder
-                  }}
-                />
-              }
-            </div>
-            
-            {/* Подтверждение удаления */}
-            {showDeleteConfirm === order.id && (
-              <div 
-                key={`delete-confirm-${order.id}`}
-                className="absolute inset-0 flex items-center justify-center rounded-xl"
-                style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div 
-                  className="p-4 rounded-lg text-center"
-                  style={{ backgroundColor: theme.card, maxWidth: '80%' }}
-                >
-                  <p style={{ 
-                    color: theme.textPrimary, 
-                    marginBottom: '12px',
-                    fontSize: isMobile ? '0.9rem' : '1rem'
-                  }}>
-                    Удалить заказ "{order.name}"?
-                  </p>
-                  <div className="flex space-x-2">
-                    <button
-                      className="flex-1 py-2 rounded"
-                      style={{ 
-                        backgroundColor: theme.red, 
-                        color: '#ffffff',
-                        fontSize: isMobile ? '0.85rem' : '1rem'
-                      }}
-                      onClick={(e) => handleDeleteOrder(order.id)}
-                    >
-                      Удалить
-                    </button>
-                    <button
-                      className="flex-1 py-2 rounded"
-                      style={{ 
-                        backgroundColor: theme.card, 
-                        color: theme.textSecondary,
-                        fontSize: isMobile ? '0.85rem' : '1rem'
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDeleteConfirm(null);
-                        setSwipedOrderId(null);
-                      }}
-                    >
-                      Отмена
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-        
-        {filteredOrders.length === 0 && (
-          <div 
-            className="flex flex-col items-center justify-center mt-10 p-4 rounded-lg"
-            style={{ backgroundColor: theme.card }}
-          >
-            <p style={{ 
-              color: theme.textSecondary, 
-              marginBottom: '8px',
-              fontSize: isMobile ? '0.9rem' : '1rem'
-            }}>
-              Нет заказов с выбранным статусом
-            </p>
-            <button
-              className="px-4 py-2 rounded text-sm"
-              style={{ 
-                backgroundColor: theme.accent, 
-                color: '#ffffff',
-                fontSize: isMobile ? '0.85rem' : '1rem'
-              }}
-              onClick={() => setSelectedFilter('Все')}
-            >
-              Показать все заказы
-            </button>
           </div>
         )}
       </div>
       
-      <BottomNavigation activePage="home" />
+      {/* Список заказов */}
+      <div className="flex-1 overflow-y-auto p-3">
+        {filteredOrders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">Нет заказов</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredOrders.map((order) => (
+              <div key={order.id}>
+                {compactMode ? (
+                  <CompactOrderCard
+                    order={order}
+                    theme={theme}
+                    getStatusColor={getStatusColor}
+                    onClick={handleOrderClick}
+                    onDelete={{
+                      swipedOrderId,
+                      setSwipedOrderId,
+                      handleDeleteOrder
+                    }}
+                  />
+                ) : (
+                  <RegularOrderCard
+                    order={order}
+                    theme={theme}
+                    getStatusColor={getStatusColor}
+                    formatDate={formatDate}
+                    onClick={handleOrderClick}
+                    onDelete={{
+                      swipedOrderId,
+                      setSwipedOrderId,
+                      handleDeleteOrder
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* Нижняя навигация */}
+      <BottomNavigation />
     </div>
   );
 };

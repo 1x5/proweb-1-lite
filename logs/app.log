@@ -1,0 +1,1881 @@
+[2025-04-10T16:55:45.028Z] Успешное подключение к базе данных.
+[2025-04-10T16:55:45.073Z] Database synced
+[2025-04-10T16:55:45.075Z] Server is running on port 3001
+[2025-04-10T16:55:58.091Z] 
+=== Входящий запрос ===
+[2025-04-10T16:55:58.092Z] Метод: POST
+[2025-04-10T16:55:58.092Z] Путь: /api/orders/sync
+[2025-04-10T16:55:58.092Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:55:58.092Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "41",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304156548",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:55:58.093Z] Параметры запроса: {}
+[2025-04-10T16:55:58.100Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:55:58.100Z] Статус: 400
+[2025-04-10T16:55:58.100Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:55:58.101Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:55:58.101Z] Статус: 400
+[2025-04-10T16:55:58.101Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:56:03.118Z] 
+=== Входящий запрос ===
+[2025-04-10T16:56:03.118Z] Метод: POST
+[2025-04-10T16:56:03.118Z] Путь: /api/orders/sync
+[2025-04-10T16:56:03.118Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:56:03.118Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "41",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304156548",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:56:03.118Z] Параметры запроса: {}
+[2025-04-10T16:56:03.120Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:56:03.120Z] Статус: 400
+[2025-04-10T16:56:03.120Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:56:03.120Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:56:03.120Z] Статус: 400
+[2025-04-10T16:56:03.120Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:56:13.163Z] 
+=== Входящий запрос ===
+[2025-04-10T16:56:13.164Z] Метод: POST
+[2025-04-10T16:56:13.164Z] Путь: /api/orders/sync
+[2025-04-10T16:56:13.164Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:56:13.164Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "41",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304156548",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:56:13.164Z] Параметры запроса: {}
+[2025-04-10T16:56:13.172Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:56:13.172Z] Статус: 400
+[2025-04-10T16:56:13.173Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:56:13.173Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:56:13.173Z] Статус: 400
+[2025-04-10T16:56:13.173Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:56:28.199Z] 
+=== Входящий запрос ===
+[2025-04-10T16:56:28.199Z] Метод: POST
+[2025-04-10T16:56:28.199Z] Путь: /api/orders/sync
+[2025-04-10T16:56:28.199Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:56:28.199Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "41",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304156548",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:56:28.199Z] Параметры запроса: {}
+[2025-04-10T16:56:28.200Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:56:28.200Z] Статус: 400
+[2025-04-10T16:56:28.200Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:56:28.200Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:56:28.201Z] Статус: 400
+[2025-04-10T16:56:28.201Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:57:13.023Z] Успешное подключение к базе данных.
+[2025-04-10T16:57:13.035Z] Database synced
+[2025-04-10T16:57:13.037Z] Server is running on port 3001
+[2025-04-10T16:57:24.225Z] 
+=== Входящий запрос ===
+[2025-04-10T16:57:24.225Z] Метод: POST
+[2025-04-10T16:57:24.225Z] Путь: /api/orders/sync
+[2025-04-10T16:57:24.225Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:57:24.225Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "42",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304242746",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:57:24.226Z] Параметры запроса: {}
+[2025-04-10T16:57:24.235Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:24.235Z] Статус: 400
+[2025-04-10T16:57:24.235Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:57:24.235Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:24.235Z] Статус: 400
+[2025-04-10T16:57:24.235Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:57:29.249Z] 
+=== Входящий запрос ===
+[2025-04-10T16:57:29.249Z] Метод: POST
+[2025-04-10T16:57:29.249Z] Путь: /api/orders/sync
+[2025-04-10T16:57:29.249Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:57:29.249Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "42",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304242746",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:57:29.249Z] Параметры запроса: {}
+[2025-04-10T16:57:29.256Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:29.256Z] Статус: 400
+[2025-04-10T16:57:29.256Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:57:29.256Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:29.256Z] Статус: 400
+[2025-04-10T16:57:29.256Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:57:39.273Z] 
+=== Входящий запрос ===
+[2025-04-10T16:57:39.274Z] Метод: POST
+[2025-04-10T16:57:39.274Z] Путь: /api/orders/sync
+[2025-04-10T16:57:39.274Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:57:39.274Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "42",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304242746",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:57:39.274Z] Параметры запроса: {}
+[2025-04-10T16:57:39.278Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:39.279Z] Статус: 400
+[2025-04-10T16:57:39.279Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:57:39.279Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:39.279Z] Статус: 400
+[2025-04-10T16:57:39.280Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:57:54.313Z] 
+=== Входящий запрос ===
+[2025-04-10T16:57:54.313Z] Метод: POST
+[2025-04-10T16:57:54.313Z] Путь: /api/orders/sync
+[2025-04-10T16:57:54.313Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:57:54.313Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "42",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304242746",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:57:54.373Z] Параметры запроса: {}
+[2025-04-10T16:57:54.376Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:54.376Z] Статус: 400
+[2025-04-10T16:57:54.377Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:57:54.377Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:57:54.377Z] Статус: 400
+[2025-04-10T16:57:54.377Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:58:22.319Z] 
+=== Входящий запрос ===
+[2025-04-10T16:58:22.320Z] Метод: POST
+[2025-04-10T16:58:22.320Z] Путь: /api/orders/sync
+[2025-04-10T16:58:22.320Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "366",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:58:22.320Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "43",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 0,
+      "cost": 0,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 0,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304242746",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": ""
+    }
+  ]
+}
+[2025-04-10T16:58:22.320Z] Параметры запроса: {}
+[2025-04-10T16:58:22.329Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:58:22.329Z] Статус: 400
+[2025-04-10T16:58:22.329Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:58:22.329Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:58:22.329Z] Статус: 400
+[2025-04-10T16:58:22.329Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T16:59:31.201Z] 
+=== Входящий запрос ===
+[2025-04-10T16:59:31.201Z] Метод: POST
+[2025-04-10T16:59:31.201Z] Путь: /api/orders/sync
+[2025-04-10T16:59:31.201Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "471",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T16:59:31.201Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "44",
+      "name": "Новый заказ2",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 10000,
+      "cost": 1111,
+      "profit": 8889,
+      "profitPercent": 89,
+      "prepayment": 1000,
+      "balance": 9000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304314163",
+          "name": "ываы1",
+          "cost": 1000,
+          "link": "",
+          "isNew": true
+        },
+        {
+          "id": "1744304366519",
+          "name": "1авыа",
+          "cost": 111,
+          "link": ""
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T16:59:31.201Z] Параметры запроса: {}
+[2025-04-10T16:59:31.204Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:59:31.204Z] Статус: 400
+[2025-04-10T16:59:31.204Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T16:59:31.204Z] 
+=== Исходящий ответ ===
+[2025-04-10T16:59:31.204Z] Статус: 400
+[2025-04-10T16:59:31.204Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T17:00:14.106Z] Успешное подключение к базе данных.
+[2025-04-10T17:00:14.130Z] Database synced
+[2025-04-10T17:00:26.044Z] Успешное подключение к базе данных.
+[2025-04-10T17:00:26.056Z] Database synced
+[2025-04-10T17:00:26.057Z] Server is running on port 3001
+[2025-04-10T17:00:55.696Z] 
+=== Входящий запрос ===
+[2025-04-10T17:00:55.696Z] Метод: POST
+[2025-04-10T17:00:55.696Z] Путь: /api/orders/sync
+[2025-04-10T17:00:55.696Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "17890",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:00:55.696Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "45",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 12123,
+      "cost": 123,
+      "profit": 12000,
+      "profitPercent": 99,
+      "prepayment": 123,
+      "balance": 12000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304439660",
+          "name": "ссс",
+          "cost": 123,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [
+        {
+          "id": "1744304452595_IMG_8201.jpg",
+          "name": "IMG_8201.jpg",
+          "type": "image/jpeg",
+          "url": "data:image/jpeg;base64,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",
+          "date": "2025-04-10T17:00:52.630Z"
+        }
+      ],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T17:00:55.698Z] Параметры запроса: {}
+[2025-04-10T17:00:55.720Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:00:55.720Z] Статус: 400
+[2025-04-10T17:00:55.720Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T17:00:55.721Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:00:55.721Z] Статус: 400
+[2025-04-10T17:00:55.721Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T17:01:00.740Z] 
+=== Входящий запрос ===
+[2025-04-10T17:01:00.740Z] Метод: POST
+[2025-04-10T17:01:00.740Z] Путь: /api/orders/sync
+[2025-04-10T17:01:00.740Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "17890",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:01:00.740Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "45",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 12123,
+      "cost": 123,
+      "profit": 12000,
+      "profitPercent": 99,
+      "prepayment": 123,
+      "balance": 12000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744304439660",
+          "name": "ссс",
+          "cost": 123,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [
+        {
+          "id": "1744304452595_IMG_8201.jpg",
+          "name": "IMG_8201.jpg",
+          "type": "image/jpeg",
+          "url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAEOAyADASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAMEBQIGAQcI/8QATBAAAQMDAQMHCAcFBAoCAwAAAAECAwQFERIGITETFEFRUmGRFRdVYnGBodEHIjKSlLHSM0JywfAWIzVzJDZTVHSChLLh8TQ3RpPC/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAGxEBAQEAAwEBAAAAAAAAAAAAABEBITFBYXH/2gAMAwEAAhEDEQA/APy8AFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANy20NBdre+GONIa6NMo7WuH9+M+Jhl20xVUtxiSkXTIi51dDU6VXuGCe12WasrnRTNWOOFf71V6O4VkFLWXRtHaoEa3OnXrVdS9K714HpbvytTbqiKhlYsrFxK1vFd29Paee2Wcxt5RH8Vjcjfb/AOsmp4i9JFYrLiCojdVT4y7dnHuzhDl1utd6p3yWxFhnYmeTXdn2p8jFubJY7lUNmRUfyiqueneXtmGSuvDXMRdLWrrXoxj5k+CKxUUNXdeb1UepqNdluVTensNXktm+e805s/leU5PGp+NWcdZDaVY7a2oVn2VdJjxKH/5T/wBb/wD2BrVsGzlBULBPTPR6Ii7nPX+ZQ2goaKlipZKOLk2zNV32lXKbscV7znan/GXfwNJ9o/8A4Fs/yv5IXRDfaClo6WhfTxaHSsVXrqVc7m9a96kmz9kZXZqatirAm5rcqmtfkaVxtz7klriTdG2NVkd1JhpDFcmT32loqT6tLAqoiIu5yoi7xORnMoKZdqFoli/uNapo1Lw0548S/UM2apql9PJTP1sXC4c/5kEX+uq/5rv+1TPvP+O1H+YQbddS7O26ZIqimejlbqTS567vHuKV8obfDbaeqoYVYkruKucuUx3qfNrf8Uj/AMlPzU7u/wDqzbvd+Sl0cW610cFAlxuirybv2cXa6vaTR1Wz1c/m7qN1PqXDZMImPeil+vqKGG1UUlTSrURKxEbjg3chmeU7F6Kd8PmBmXW3PtlasDnamqmpjutCma19usNzWDkoXxrEjkXV7vkpkmdV6G1UNrWyOrq6BX6HqiuRzuGURNyL3nTP7MVEjYWRSMc9dKOy7cviTWp9NHsrK6rjdJAkn1mt4rvTHxI6Os2eWsiSOikY9XJpc9Moi9HSppGTcra6iua0carJqxo61ya3MbTZIWeUUWoqHpnQiZx7E4eJHOkse18S1T2uy9NKomEx0FLaNkrL1MsiLh2FYvWmCdCzWS2Cro5Hwxvpp2p9VqNxqX2cCpZrT5Sle6V3J08SZe7+Rmnp9nXRpY6zXEsqI5VexOLkwn/kZzqolr9nIn8i2gdIxNyyac/muSrd7VBFTMuFA5XUsnFFX7Kk3lOw+infD5itvNDJaZKKmpJIWvwrc4xnKfIqME2dn6Clrkqucxa+TYit+sqY49RjHotk+Fb/AAJ/Mmdqwqamkq6lkELcveuEN69Wajt9oZJEzMyPRrpNS7+Od2cCBrdnrYtRIn+nVKYY1f3E/r+Qrnuk2PpnvcrnOkyqr0rlwiPOF21W59zrEhaulqJqe7HBCkej2WXVS18ca4mcxNPXwX+YxXT59nbe7m/NnVDmrhz8at/tVfyMy7pal5OS3Oeiv3ujxub49JnORWuVrkVFRcKinwUeqhstq8l01bUNWNqRo+VUcv18p/XAhSt2bmdyK0bo2ru5RW4+KLk+3Zkrtl6BzEVWNaxX46Pq7jzRdRp3m0eTZWPifylPLvY7p9hZtdopkovKNzcrYP3WcNX8ya5I6LZOjjnRUk1orUXiib/5H2+I99gt74t8LWpqx14TH8wPrazZupdyDqR0KLuSRW4x70U5vlno7fa45IGKsiyIiyK5VymF6OB509PemSM2Yo2y51orc5/hUnYggo7XbLfDVXBjp5Z0y2NN6J0/1klpksl5etNFSvpplRVa5vcY1NG2mqIZbhTyrTuyuMKmpMbscO49Faqm0yyvjtsPN6lWLpdK3P8AMuDPt1rpKpKu3ysRtbCqoyTUu/f1Zx/7MN8T45XROaqPaulU7y0lRU2+7umeuqeOVde/7S53+J6ZbZT19xp7sxW8g5ut6dbk4f8An2E7GRdLfS2y1U7HxItbLvc7Uv1U6d2cdxnUjaqteygilVGvVVRjnYbnid3eu8oXGSZFVWIuln8KHy0VMVJdIZ5lVGMVcqiZ6FHqtq325thlfW19TEitaqNjY7Kqqnm5XrLK+RUxqcq4Ld4qYqy5zTwqrmOVMKqY6CkNAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2aO70tttj46SOTnkifWkciYT2b+gxgBdt1zmt9bzhqq5HL/eNVftJ8yS411M+4NrbcksL86nI5ETDutMKpnAD0flm03GNq3OkVJmpjUxF3+9FycVN9pKWmdT2inWLWn1pFTCp7OlfeefBaL9mr4rdcEqJmvc3SqfURFXf7TjnkflrnuHcnzjlcY341Z8SmCC/ea6K43BaiFr2tVqJh6Ii7vYS3a5w19LRxRNka6Bml2pEwu5OG/uMsCjfr9o2y2xlJSNkY5Wo17nIibsdG8y7XVx0NxiqZUcrGKuUam/gVAKNRlzgbtD5RVsnJa1dpwmrhjrKtfVMqrlLUxo5GPfqRHcSqANK+XGG51jJoWva1saNw9ERc5XqXvOq65wVVnpKNjZEkgxqVyJhd3RvMsCjYtd7jp6ZaKuh5emXh0q0tNrNnKV3LQ0skkib2tXKoi+9TzoLRZr619wq31D2taruhvQhWAIN213mgprWtFWQSyo5yqqI1FReHWvcTNvNihckkNtfyjd7VVjU3+J5wFotV9fLX1rqp6aHLjSjf3UTga8N8oa2nbDd6dXuYmEkanH+aHngSjdq7hZoqKSnoaLU6RMK96Lu78rvM+13SW11CyMTWx257FXc4pAUeifV7NTu5aSmkY9d6tRFTPguChdrrHWsjp6aBIaaL7KYTK/IzAWga1hu0FqfO6ZkjuURETQiLwz1qZIILNfXS3CrfUS8V3Nb2U6i5PdIJdn4be1knKxuyqqiaeK9/eZQFAsUNbNb6ptRCqak3Ki8HJ1FcAekdcrBXKk1XSPZMv2sZ3r7l3mbd6+iq+Tjo6RImRbkfjCr3YM0Fo9g65Mt1lt/LQ8rFLGjXp3Y+JTbW7NQu5eOke6RN6N0qu/2KuDMrro2rttJSJErVp0RFcq8d2DOFReul0muk6PemhjdzGIu5Czab2lHCtJVRcvSu/d4q0yASq9I2v2cpncvBSPdKm9qKi7l964K93vsNzt0cKRPZKj9TtyaenguTDBaN2lvNFPQsorrTq9sSYZI3iSx3Sy21HSW+mkfOqYRz84TxPOgUdyyvnmfLIuXvcrnL3qeiqHus+zMdNrVJ6nK47KLx+G73mBSSxQ1ccs0ayMY7KtTpLF2uTrnWctpVjEajWtVc4QCiXLVUU1LXslq4uUiTOUxnHfgpggtXOenqa+WWlj5OJyphuMdHUVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABfstBFca/kJnPazQrssVEXd7QKANxtJs46RGJWVWpVwm7p+6QVFmzfXW6lc5WphdT9+Ewiqq49pYMoG66n2egk5tJNUSPTc6Zv2UX+vaU621LR1sMfKcpBOqKyRvSir+ZIM4Ho5bRY4a1KN9VVJMqoiN3cV4b9ISz2N1fzJKqq5fVp07uPt0lg84DTpLUypuNTC6VY4KZXK96710ouC9S2uxVsqw09XVPejVXG5OHtaIPPA0aa3xTWmsq3Oej4FRGoiphcr07iO0UUdwuLKeVzmsciqqsXC7kJBSBpQ26GS2V1Srn66d6IxEVMLv6dxJY7L5Te58znMgZuy3i5epBBkg17dbKSomrUqZJWRU2/LFTOMrx3dxbjtdhmpZallXVLFDjWu7dn/lLB50G3V2y2eSJa6hnnk0PRn18Imd3cnWR09uoqaiZWXSST+9TMcMf2lTrEGQDYmt1DV0UlVa5JEdCmZIZOKJ1oY5ABoJQReQVr9T+V5bRjKacHyz0EVwqpIpnPa1sSvTQqIuUx8xBQBp2y1x1MMlZVy8jSRLhXdLl6kLcFDY7lKkFLNPDLnckmMPTpwWDBBtx2amdtC+3K+Xkmtyjspq4Z6jptDs9JIkTK6pR7l0pqTdn7ogwgaC2ebywtua5HORft43InHJbdDs9DLzZ8lTI5Nzpm40ov9dykgxAac1oSnu0FM+RXwTq3RI3dqapdqrZZrVKrKuaeVzly2NmMtb3lg8+DWr7XTpRpX26V0tPnD2u+0xe85W1w1NqSsoXSOfH+3icqKqd6YTgSDLBqPtcNHakqa18jZ5f2MTcJ71yhlgDRtlHRV7uQknkhnVPqZwrXKRRWyaW2S3Br2JHG7SrVXevD5lRqq1yORcKi5RQJKqmlo6h8EzcPYuFIjcvqpV2+huKtRJJG6HqnSqf0phjQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADpjFkdhAOeJK2nkd0Y9pYjibGm5N/WdgVkpV6Xp4H3mvr/AsACvzX1/gOa+v8CwAK/NfX+A5r6/wLAAr819f4Dmvr/AsACvzX1/gOa+v8CwAK/NfX+A5r6/wLAAr819f4Dmvr/AsACvzX1/gOa+v8CwAK/NfX+A5r6/wLAAr819f4Dmvr/AsACvzX1/gOa+v8CwAK/NfX+A5r6/wLAAr819f4Fy1y+TavnGnlPqq3TnHEjAETIdEzZNWcOR2Md5qNumm6VNdyO+ePQjdW9u5N+cdxQAFfmvr/AANCSq5SkooFZvpXZ1Z+1v4dxXAFioqucXhtw0acOa7k854Y6fcG1Wm9eUtGfrq7k892OJXAonpquSluE1UxGubOrtcbkyioq5wXobtR071fDa443qipqa/H8jKBaLdurW0FNPC+Bs7ZnIqo5d3h0lmC8QQSpIy2wNVOlm5fHBlgUTxVPJ0NXSqzPOXI7VnGnfn3lhl0WGal5KHRT0yLiLV9pVTiq47+ooAlE9PU8glamjVztFTjjTnPjxOKebkLbU0enVzjH184047ukjAEsc+izy2/TnlJNfKZ4cN2PcXXXhqxQxrQwP5JiMzImrh+RmgUaPldzY5GR0dNHyjVa5WMxuUxua+v8CwALtDcGUlv5o+lZOmvXl67vAnivEMKuWO3QsVzVbln1V3+4ywWiWSbXaIqBG45ORX688ePR7ytTxchURzI5V5N6Owm7OFJAQXWXHRe3XLks6m45PV3Y44JmXanZKkiWynRUXOUTC+ODMBaLlHXrS3Oauc1ZVlaqYc7emVTpx3dRJ5VZ6Po/wD9ZnglFyouT6iopJXRRtSldlrWJjKbt3wKdfmurZalV0coudPHG7rAFEtJNzWiqqZU1pUNRM5xpx3dItU62yr5dMyJpVFYi6UX28SIAd3OV1yrHVCq5iKiIjVXVj2cCpzX1/gWABBzZcaeUXC9GD5zX1/gWABNUT8vaqehRunkXK7XnOrj0e8o819f4FgAV+a+v8BzX1/gWABX5r6/wHNfX+BYAFfmvr/Ac19f4FgAV+a+v8BzX1/gWABX5r6/wHNfX+BYAFfmvr/Ac19f4FgAV+a+v8BzX1/gWABX5r6/wHNfX+BYAFfmvr/Ac19f4FgAV+a+v8BzX1/gWABX5r6/wHNfX+BYAFfmvr/Ac19f4FgAVVpnpwVFInNc1cORUL58VqOTCplAKAJZoVZ9Zu9v5EQAAAAAAAADiXYo0jZjp6StTt1Sp3by4APiuRA5cJkjA65TuGvu+JwAO9fd8Rr7vicADvX3fEa+74nAA7193xGvu+J9hgmqZEigifLIvBrGq5V9yGlDsptDUSNjjsdfly4RXU7mp4qmAMzX3fEa+74nrtqPo6qtlrKy5VNwhlV0jY+SaxUXKoq8e7B44DvX3fEa+74nAA7193xHKdxwAJUcin0iJGrlAPoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAW6agWWPl53pBTp++5PtdyJ0gVERVXCJlVLkVqq5Ga1jSJnalcjfzJFuMdMmi3wpF0LK/e9fkUpJpJnK6WRz3L0uXIFvyfCxcS3GnT+DL/yC0VGu6O5xqvrxuaUQBf8AJE7kzBLBP/lyJ/Mpywywu0yxuYvU5MHCKqLlFwXIrpUMZyc2KiLpZKmfj0AUwaC0lPWtV9C7RIm9ad67/wDlXpKDmq1ytcioqblRegD4AAAAAAAAAAAAAAAADqON8r0ZGxXuXgiJlSWaiqaduqWB7G9apuAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUymFKUrOTeqdHQXSGpbmNF6lAqgAAAAAAAsUqb3KWCvS/v+4sAcSdBwdydBwAAAAAAD0+wuyL9rLwsUjljo6dEfUPbxwvBqd6/M8wftP0dQus/wBG89xpoOVq6hZJGNRMq9yfVY3xT4qBPc9s9lthFW1W+i5SeNER8VMiIjV9Z68V8VMeT6bWaV5KwLq6NVVu/wC0mtn0V0EUDrjtXcXOnlXXI1JUjY1y71y5eK+zBcqvoo2YudGslpqpIXfuSxzJKxV788fcqEH5ptVtjc9rKiN9ZoihizycEedLV6+9e8wDV2i2ertmro+grmJqT60cjfsyN6FQyigAAAAAHcfScHcfSB2AAAAAAADqNqOla1eCuRD0FyuS2yobTwU8WhGIu9Dz8bkbI1y8EVFPQXC3Nuk7amGqiRisRN5cRzT1nlWjq2zwRpybMtVqdO/5EdFI2hsS1bImOkc/Cq5O/BJBSMtNHVOmqI3cozDUTr3/ADI6FjK6yLRtmYyRr84d1ZyUKa+yz1McLqeLS9yNXd1mfdo2RXOZjGo1uUVETvQ0aexup6iOZ1VFpjcjl9xnXWVk1ymkjcjmqqIip07ib1yKYAIoAAAAAAAAAWKGm53UpGq6WImp7uy1OKgS0lNGyHnlWn90i4Yzpkd1ewhqquWrk1yLhE3NanBqdSHVdVc6m+qmmKNNMbOpCsAAAAAAAAB9a5WuRzVVFTeip0Gi1W3aPQ7DaxqfVdwSVOpe8zT61zmORzVVFRcoqdABUVrlaqYVNyop8NCtRKylbXsT66LpnROheh3vM8AAAAAAAAAAABZoqCeuerYWphvFyrhEKxsU7li2aqHsVWufJjKe4YNCjt8tBQOSF0XOXrvkcu5E8Dukhr0e5lZUQTwvRUVvT+Ri1FXFJZKena9VlY/LkxwTf8yC3Tsp6+GWRyoxrt69Rqot1liqIeUki0vjaqqiIv1kQyjet1Uku0Ezo3KscqLjvx/6MWoajKiRqcEeqfEmqjABAAAAAAAAAAAAAAAABqWukp1glrqtMxRLhG9pf6wTR3WhqJEhmoI2RO3I5MZT4Hy1qysts1uV6Mkcupmen+sEMFhrHzo2ZiRxov1n6k4dxfxEFzoeYVaxIuWKmpir1FM0b5Vx1Vd/dKisjbp1J0qZxNUAAAAAAAAOJkzE72HZxL+yd7AKQAAAAAAALFL+/wC4sFel/f8AcWAOJOg4O5Og4AAAAAAB/QGwdRDR/RvQ1Uq4ihgkkeqdCI5yr+R/P5+1fRjV0972EqLLI/D4eUhkb06HouF+Kp7gPyvaPaOv2luclZWSuVquXkos/Vjb0Iifz6TmwbQXDZy5R1tDM5qtVNceV0yJ1OTpIrzZ6yxXOWgronRyRruVU3PTocnWiizWetvtyioKCFZJZF3rjcxOlzl6EQD9a+k+CmvOwdPemRoj4ljljcvFGvwip8U8D8WP2n6TJqey/R/TWVJEWSXk4mJ0uazCquPcnifiwAAAAAAO4+k4O4+kDsAAAAAAAH1rVc5GpxVcGzNbrVRObFVVMvKacrhN35GRD+3j/iT8zW2ggmkuCOZE9ycmm9rVXpUuD4ttt9TTTPoqiRz4m6lRybvy7iOit1K6gWsrJXMj1aU0oTWeGWKlrlkjexFj3amqmdyhrHy7Lo2NqudynBqZXiVHMdLZZpGxsqZtTlwm5ePgZ1bTc0rJINWpGLuXuJqGlqG10CrBIiJI3Kqxes+3r/Fp/an5ITxVEAEAAAAAAAAA0E/0Sz9UlW7wYn/kzy/dl0VEdN/u8TWL7cZX8wKAAAA7hj5adkeca3I3PtNyqrKS1S81ioWSaWpqc7GV+AgwAbPl6L0dF4p8h5ei9HReKfIswYwNny7Cu51uix070+RXvVLDTzxyQJpZMzVp6hBnAAgu2qRvOVp5P2dQ3k3dy9C+JUkjdFK6N32mqqKfGuVjkc1cK1copdu7U58sqJhszGyIntT55AogAAAAAAAAAAa7vq7Lt9aX+f8A4Mg2KlNOzFKnW/8Am4uDHABBfsi4u0PflPgpXrk019QnVI78yW0Li6wfxfyPl1bpulQnrqpfBUABAAAAAAAAAAAAAACejo5q6bk4W5XiqrwRCA26blafZ5X07HLLO9UVWplUTh/L4jBytvtlGqJUV7uVToj6F92SR89skZofcqpzepVdj8jH5pU/7vL9xRzSp/3eX7ilo01s9NVRq+31aSOT9x+5TJkjfFI6N7Va5q4VF6CeGKsglbLHDM1zVyioxS/tBGnKU9TjSszPrJ3pj5gY4AIAAAAAAcS/snew7OJf2TvYBSAAAAAAABYpf3/cWCvS/v8AuLAHEnQcHcnQcAAAAAAA19m9pK7Zi6NrqJyLlNMkTvsyN6l+ZkAD9rj+kjYu90zEvNPyT0TeyopuVRq9OFRF/kczfSTsZY6V6WSmSWRU3R09PyLXL0ZVUT8lPxYAau0W0VftNdHV9c9M40xxt+zG3qQygAAAAAAAdx9Jwdx9IHYAAAAAAABox36vjYjdbXY3Zc3KmcAL9Rea2piWJ70RruOlMZI6O5VVC1WwvTSq5VqplMlQCjTXaCvVPtMT/lM6SR80jpJHK57lyqr0nIFAAAAAAAAAAASQNR9RG1eDnonxJ7subpUfxlVjlY9rk4ouS5eG4ukypvRyo5F68og8FIAAT0X/AM6D/Mb+ZtXO9VFHXPgjZGrWom9UXPAxaJcV0H+Y38y3f0VLq9VTGWtVO/cXwS/2kq/9nF4L8x/aSr/2cXgvzMgC6Nf+0lX/ALOLwX5nW0L1kWlevF0eV+BjGvfkwlG1dypFvTwF4RkAAihfuaf3VE7pWnQoF+6/VdTR9inblOpQKAAAAAAAAAAAF+jvNVRQpCzQ5iLuRycCgANf+0lX/s4vBfmP7SVf+zi8F+ZkAt0a67R1mN0cSe5fmZUsj5pXSPXLnLlVOQSgAAAAAAAAAAAAAAAAXKS61dFHycT00ZyiOTOCmANP+0Nf1x/dH9oa/rj+6ZgLdGn/AGhr+uP7pTq62etkR878qiYRETCIQAlAAAAAAAAA4l/ZO9h2cS/snewCkAAAAAAACxS/v+4sFel/f9xYA4k6Dg7k6DgAAept2wNbcLRTXR12tNHDVI7k0q6h0blwuF/dx8QPLA9FbNi627XSvoKe4W5OYN1S1D5l5JW5xlHI1d3twWqz6PK+ktlVcGXez1cdJHykjaapc9yJ7NP5geTB6GybHVt4oHXKaqpbdb2u086q5NDXO6m9aluu+ju6UdsqbrHW0FVQQRcolRDMrkkTOFRuE4p349oHkwetpfo7r6m20lfJeLPSR1caSRNqalzHKns0/kVavYe70d6obZI6mctwXFPUskV0L+/KJn4AecBclts0V4da3OjWZs/IK5FXTq1ac8M4z3F92yV1/tPJs7BGyprYnYcsSroRMIucqiYTf0gYgPZp9G1ZUPdBbr1aa+rjXEtPBUZcxM4VeG9E6TOg2Iu9RtBWWaJadZKHfUTrIrYY0xxVypn4AedB6i67B11qs0918qWqsggc1r0pKh0jkVy4T91E6es8uAO4+k4O4+kDsAAAfWtV70anFVwW0tlQ6tfSorFcze5+V0onXkCmC1TW+Wqe9GPYkcf2pVXDU95YbZJpd8FRBKzflzXbk9ogzQXaa1y1VPy6TQRs1af7xypv8CZbFM3TmqpU1b25kXf7NwgzAWXUE6Vy0bUR8qL+7w4ZLPkWRyqyKpp5ZW8Y2v3oIM0F1tqndWyUnKRI+NupzlVdON3d3kjrNK2KSRtTTPSNquVGPVVwnuEGcCzSUEtZqVitZGz7Uj1w1CSotkkMKzxyxzxIuHOjdnT7QKQL0FqlnpmT84p42PzjlHqi7l9hUmiWGZ0ava/SuNTFyi+wDgAAAAAL9f8A31HSVKb/AKnJu7lb/wCCgX7eqVEMtA5cLJ9eNV6Hp8xgoA+uarXK1yYVFwqHwAi4XKGqy/Scm1s9NFMrUwjnJvMoAa/l1no+D+vcPLrPR8H9e4yAW6Nfy81N7aCFFTgv9IZ9XVy1s6yzLleCInBEIASgAAJqSDnNXFD23Ii+zpO7jMk9fNIn2VdhMdSbk/InpE5nQy1jtz5EWOHr71M8AAAAAAAFp1uqEnhhajXvmajm6ehF6wKoLbLdNLWOponMkcz7Tmr9VPeSSWmRInPgnhqNG9zY3ZVBBQBao7dPXNesOn6mMoq44kz7PJpdyNRBO9m9zI3ZVBBngsUlFJVq9WuaxjEy971wjSWe2ujgdPFPFPG1frLGu9vtApAmlpXw08M7larZs6URd6Y6yV1tnZSx1L9LWyuRrUVd+/pAqAlqqd9JUOgkVqubxVvAkmoJoallPhHySNRzUZv4gVgaXkWTPJpU06zon7JH/W9ntKlXSSUU3JSq1XaUX6qiCAAAAAAANN1jmY7S+rpGr1OkVF/IDMBedaZ21sdJykSvkZra5FXTjf3dxJ5FkRUY+pp2TLwiV+8QZoJXU0zanm6xryucae8u+RZM8nzmn5fH7LX9b2e0QZoO1glSfkFYvKZ06enJr0tpeykqmzrAkrmt0o5yZZ7eoQYoLMlBUQ1TKeRqNdIqI1c7lyvWcPpJW1i0qIjpEdp+rwVQIQWpbdNFXto3OZyjlREVFXG/3FlLHMr9CVdJrzjTyi5z4CDMBZWhlSKok1MxTv0O3rvXONxWAAAAcS/snew7OJf2TvYBSAAAAAAABYpf3/cWCrTLiRU60LQHEnQcEj03ZIwB7DaP/wCvdlf+o/70PHlqe5VlTRU9FNO59PS6uRjXGGZXK4A9VsPFI2w7UzujckS2t7UeqfVVd+7PWcbHf6rbWf8ABN/NTz7b/dGWVbMyse2gc7U6FMIirnO9ePEgpblWUVPU09NUOjiq2aJmpjD29Sgev2rpqq47JbO1ltY+e3wUvJSNiRXJFMn2tSJwVest7N266Uf0a7STVccsVLNG3kWSIqZVPtORF6OCZ6cdx4+z7SXiwK/yZXSU7ZPtsTCtd34XcT122O0NxZPHV3SaSOoZokjXGlW9WMYT3Ae3rmWh2y2zflKwV90dzFNDqV7kRibty4J6qNrL5sQtJTyUVAr3clRTNVJInZ3q5VVVXO7+lPB0m220tBSRUlLdpooIWo1jERuGp1cCpPtDeKm6RXSe4TS1kOOTleuVZjqTggHtKm5bFptfJG+wVi1fPtKypVLpV+v7WM8M9BpyI+o2s22oKJ6NuVTTtSnRHYc9Eampre/GD8tfWVD61a10qrULJyqydOrOc+JLLdrhPdFuj6uTnquR/LtXS7KdOUA2tjbNe37X0KUtNUQSQTtdK9zFYjGov1sr7Mpjpzg9TzxX/SVfbFJQPraa7SJFM2N+lzEREXVnqTfk8nUbf7U1MKRSXiZGoqLliI1Vx1qibzPbtFd21VXVNrpGz1rVZUSIiI57erON3uA95eKfZ6j2E2ipNn1nfHBVQMmklcjmvdrT7K9XE/MC1FcqyG3z2+OdzaWoc10sSYw9W8FKoA7j6TgkYm7IHQAA7h/bx/xJ+Z6C5Ly0dXDSfVma5HTN6Xtx0fI86iq1UVFwqb0JUq6hKnnCSuSXtdJc0XmsfNYEZAiuVkqrI1vHHQpLs/BO2eWTS5sWhUXKblXoMyKqngmWWKRWPXiqdJM+7Vz3I5ah27qwiCiV3+rzP+IX8iSs42z/ACmfmZ3LyLAkGteTR2rT3h9RK/k9T1XkkRGdyCjc3uu9xjYuJnxYj9uEMugpqpbhEjI3tc16KqqiphOnJXfPK+fl3SKsmc6uC5LD7tXvZodUOx3YQUajmu8s3B2F08iqZxu+yhQtP2K7/hXld1xq3sex07lbJ9rv6CGOaSFHpG9W62q12OlF6BRoox81ga2BFcscqrI1vHuUWqOSJlTNKitp+SVHatyOXoQoQVM1LJrhkVjuG7pO6mvqqtEbNMrmp0cEFFiq/wAEof4pPzM87dNI+JkTnKrGZ0t6snBAAAAAAD61zmORzVw5Fyip0HwAaNSxtwgWthROVan9/Gn/AHIZxLT1EtLMksTsOTwVOpS4+mhuDVlokRk3F9Oq/FvyL2M4H1zXMcrXIrXJuVFTeh8IAAAAAAWaKkWqkVXrohjTMj14InzO6a3ulZy9Q9IKftu/e7kTpPlXWtkjSnp2clTtXKN6XL1qBzXVSVMyIxuiGNNMbOpPmVgAAAAAAAele5HQNggVGVb6Zuly9KdKJ1KeaJXVMz5I3ukXVGiIxerHAuaL9Ax77bXQRovL/VVW9Koi70ObNDO24Mk0uYxmVkcqYREwUudT845xyipLx1JuUlnuVZUR8nLO5WrxRN2QL9va6aluSUyLl2NCJ1ZXd4FS109T5RiVjHs0Oy9VTCInTk6oaltPb6tEl0Su06MLhVwpFLdK2eNY5J3K1eKJuyBM5jp6mqmhRz6VsuZGMdjUmeos5p32mqWjgfT4061fv1JngimVT1M1K/XBIrHcFx0klRcKqqZommVzeOOCCjUbBE+2UdRUL/cQNcrk6XLnchxNUvq7YyZ/TVJhE4ImNyGS+omfCyF0irGz7LehAlRKkSRI9dCO1I3v6xRr3Ka3Nr5UnpZHyJjLkfhF3FhzmJfGoi6VfTYjyvBeg8/LLJPIskrlc93FVPss8sz0fI9XOaiIi9SIKiVlJVrVpG2ORJtXHHBevJav+UuW/evJtyQLdq9Y9HOXYxjPT4leaeWofrler3YxleoKjABAAABOJoX3/FJP4W/khnnc00lRIskr1c9eKqBvM/xqg/4VPyUyKilqkrXsdG9ZFeu/C7+8mttYvlKGWplw2NitRzuhMLhDjyvXNarG1LtPR1+JUaiPY290zJHoszYEY93r4MfmlXzvk+Tk5bV1Lx68ldXOc5XKqq5Vyqqu8t+Vq/k9HOXYxjPT4iq0nSxJtG3Lm6kZpV3RrwQU1PUR0txZLG/lFa3in2lz8TIyqrnO81aO5zMoqlslS7WjU5LK7/cKiVWuhp7bDP8AtuXRyIvFrc8FOq5zbbNPOiotTO5dHqN6/apjLPK6blnSOWRFzqVcrkTTSTyLJK9XvXiqiq2alrnbTRYRVwrFXHQVIP8AWL/qHfmpXbcatszpkmVJHJpV2E4ELJZI5UlY5Uei5R3eKNqBWJFc1fAs7eX/AGaKqZ3r1FWupoFt7auOnfTO5TQsbnKue/eVIq+qgc90czmrIupyp0qcz1dRVKizyufjhleAohABAOJf2TvYdkc64iXv3AUwAAAAAAAdMdoejuovIqKiKnBTPJ4JtP1HLu6F6gLJG5qpwJABCCYAQgmAEIJgBCCYAQgmAEIJgBCCYARo1V9hJwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB9a5WuRzVVFTgqHwAX23Fs7UZXQJOibkkTc9Pf0jmdFOv8Ao1ajF7E6afjwKAFF9bNVqv1OSk/hkQeRa9PtxNZ3ukb8ygBwL/kxsW+prYI06Uaut3gh9SooKXfTwOnk7c3BPY0zwBLUVU1U/XNIrl6E6E9iEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK1S/LkanQSyypGmE+0pTVcrlQAAAAAAAAAAAkjnczdxTqLDZ43dOPaUwBf1tX95PEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC/qb2k8Rqb2k8SgAL+pvaTxGpvaTxKAAv6m9pPEam9pPEoAC66WNvFye4ifU9DE96lcAFVVXKrlQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP0zZH6IvLVogud0r308dS1HxRQtTVpXgqqvX7D8zP1/Yz6WLVRWOltl5ZNDJSRtibKxmtr2omE4b0XAF/zI2D0lcfvR/pHmRsHpG4/ej/AEmr52djvSMv4aT5Dzs7HekZfw0nyIMrzI2D0jcfvR/pHmRsHpG4/ej/AEmr52djvSMv4aT5Dzs7HekZfw0nyAyvMjYPSNx+9H+keZGwekbj96P9Jq+dnY70jL+Gk+Q87Ox3pGX8NJ8gMrzI2D0jcfvR/pHmRsHpG4/ej/SavnZ2O9Iy/hpPkPOzsd6Rl/DSfIDK8yNg9I3H70f6R5kbB6RuP3o/0mr52djvSMv4aT5Dzs7HekZfw0nyAyvMjYPSNx+9H+keZGwekbj96P8ASavnZ2O9Iy/hpPkPOzsd6Rl/DSfIDK8yNg9I3H70f6R5kbB6RuP3o/0mr52djvSMv4aT5Dzs7HekZfw0nyAyvMjYPSNx+9H+keZGwekbj96P9Jq+dnY70jL+Gk+Q87Ox3pGX8NJ8gMrzI2D0jcfvR/pHmRsHpG4/ej/SavnZ2O9Iy/hpPkPOzsd6Rl/DSfIDK8yNg9I3H70f6R5kbB6RuP3o/wBJq+dnY70jL+Gk+Q87Ox3pGX8NJ8gMrzI2D0jcfvR/pHmRsHpG4/ej/SavnZ2O9Iy/hpPkPOzsd6Rl/DSfIDK8yNg9I3H70f6R5kbB6RuP3o/0mr52djvSMv4aT5Dzs7HekZfw0nyAyvMjYPSNx+9H+keZGwekbj96P9Jq+dnY70jL+Gk+Q87Ox3pGX8NJ8gMrzI2D0jcfvR/pHmRsHpG4/ej/AEmr52djvSMv4aT5Dzs7HekZfw0nyAyvMjYPSNx+9H+keZGwekbj96P9Jq+dnY70jL+Gk+Q87Ox3pGX8NJ8gMrzI2D0jcfvR/pHmRsHpG4/ej/SavnZ2O9Iy/hpPkPOzsd6Rl/DSfIDK8yNg9I3H70f6R5kbB6RuP3o/0mr52djvSMv4aT5Dzs7HekZfw0nyAxaj6D7Q6JUprrWxyY3LIjHJ4IifmflO0Vhq9mr1Na6xWufHhWvbwe1eCoftk/0vbIxRK6OpqJ3JwYyncir97CH43tdtHJtVtBNc3xckxyIyKPOVa1OGe/ivvAxAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/9k=",
+          "date": "2025-04-10T17:00:52.630Z"
+        }
+      ],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T17:01:00.741Z] Параметры запроса: {}
+[2025-04-10T17:01:00.743Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:01:00.743Z] Статус: 400
+[2025-04-10T17:01:00.744Z] Тело ответа: {
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Имя заказа обязательно",
+      "path": "name",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Цена должна быть числом",
+      "path": "price",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Неверный статус заказа",
+      "path": "status",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Версия должна быть положительным числом",
+      "path": "version",
+      "location": "body"
+    }
+  ]
+}
+[2025-04-10T17:01:00.744Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:01:00.744Z] Статус: 400
+[2025-04-10T17:01:00.744Z] Тело ответа: {"errors":[{"type":"field","msg":"Имя заказа обязательно","path":"name","location":"body"},{"type":"field","msg":"Цена должна быть числом","path":"price","location":"body"},{"type":"field","msg":"Неверный статус заказа","path":"status","location":"body"},{"type":"field","msg":"Версия должна быть положительным числом","path":"version","location":"body"}]}
+[2025-04-10T17:03:32.839Z] Успешное подключение к базе данных.
+[2025-04-10T17:03:32.851Z] Database synced
+[2025-04-10T17:03:32.853Z] Server is running on port 3001
+[2025-04-10T17:05:51.809Z] Успешное подключение к базе данных.
+[2025-04-10T17:05:51.820Z] Database synced
+[2025-04-10T17:05:51.822Z] Server is running on port 3001
+[2025-04-10T17:08:15.073Z] Успешное подключение к базе данных.
+[2025-04-10T17:08:15.084Z] Database synced
+[2025-04-10T17:08:15.086Z] Server is running on port 3001
+[2025-04-10T17:10:03.757Z] 
+=== Входящий запрос ===
+[2025-04-10T17:10:03.758Z] Метод: POST
+[2025-04-10T17:10:03.758Z] Путь: /api/orders/sync
+[2025-04-10T17:10:03.758Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "386",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:10:03.758Z] Тело запроса: [
+  {
+    "id": "46",
+    "name": "Новый заказ",
+    "customer": "",
+    "status": "Ожидает",
+    "startDate": "2025-04-10",
+    "endDate": "2025-04-17",
+    "duration": 7,
+    "price": 1000,
+    "cost": 1000,
+    "profit": 0,
+    "profitPercent": 0,
+    "prepayment": 0,
+    "balance": 1000,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744304979994",
+        "name": "1231123",
+        "cost": 1000,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "notes": "",
+    "version": 1
+  }
+]
+[2025-04-10T17:10:03.758Z] Параметры запроса: {}
+[2025-04-10T17:10:03.767Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:10:03.767Z] Статус: 400
+[2025-04-10T17:10:03.767Z] Тело ответа: {
+  "error": "Неверный формат данных"
+}
+[2025-04-10T17:10:03.768Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:10:03.768Z] Статус: 400
+[2025-04-10T17:10:03.768Z] Тело ответа: {"error":"Неверный формат данных"}
+[2025-04-10T17:10:08.785Z] 
+=== Входящий запрос ===
+[2025-04-10T17:10:08.785Z] Метод: POST
+[2025-04-10T17:10:08.785Z] Путь: /api/orders/sync
+[2025-04-10T17:10:08.785Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "386",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:10:08.785Z] Тело запроса: [
+  {
+    "id": "46",
+    "name": "Новый заказ",
+    "customer": "",
+    "status": "Ожидает",
+    "startDate": "2025-04-10",
+    "endDate": "2025-04-17",
+    "duration": 7,
+    "price": 1000,
+    "cost": 1000,
+    "profit": 0,
+    "profitPercent": 0,
+    "prepayment": 0,
+    "balance": 1000,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744304979994",
+        "name": "1231123",
+        "cost": 1000,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "notes": "",
+    "version": 1
+  }
+]
+[2025-04-10T17:10:08.785Z] Параметры запроса: {}
+[2025-04-10T17:10:08.787Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:10:08.787Z] Статус: 400
+[2025-04-10T17:10:08.787Z] Тело ответа: {
+  "error": "Неверный формат данных"
+}
+[2025-04-10T17:10:08.787Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:10:08.787Z] Статус: 400
+[2025-04-10T17:10:08.787Z] Тело ответа: {"error":"Неверный формат данных"}
+[2025-04-10T17:10:48.625Z] Успешное подключение к базе данных.
+[2025-04-10T17:10:48.636Z] Database synced
+[2025-04-10T17:10:48.638Z] Server is running on port 3001
+[2025-04-10T17:14:56.471Z] 
+=== Входящий запрос ===
+[2025-04-10T17:14:56.471Z] Метод: POST
+[2025-04-10T17:14:56.471Z] Путь: /api/orders/sync
+[2025-04-10T17:14:56.471Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "622",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:14:56.472Z] Тело запроса: [
+  {
+    "id": 1,
+    "name": "Стол обеденный",
+    "customer": "Иванов А.П.",
+    "status": "Выполнен",
+    "endDate": "2025-04-08",
+    "startDate": "2025-04-01",
+    "duration": 7,
+    "price": 13000,
+    "cost": 5700,
+    "profit": 7300,
+    "profitPercent": 56,
+    "expenses": [
+      {
+        "id": 1,
+        "name": "Материалы",
+        "cost": 4500,
+        "link": "https://example.com/materials"
+      },
+      {
+        "id": 2,
+        "name": "Транспорт",
+        "cost": 1200
+      }
+    ],
+    "notes": "Клиент просил светлое дерево. Доставка в пределах города включена в стоимость.",
+    "prepayment": 0,
+    "balance": 13000,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "photos": [],
+    "version": 1
+  }
+]
+[2025-04-10T17:14:56.472Z] Параметры запроса: {}
+[2025-04-10T17:14:56.485Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:14:56.485Z] Статус: 400
+[2025-04-10T17:14:56.485Z] Тело ответа: {
+  "error": "Неверный формат данных"
+}
+[2025-04-10T17:14:56.485Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:14:56.485Z] Статус: 400
+[2025-04-10T17:14:56.485Z] Тело ответа: {"error":"Неверный формат данных"}
+[2025-04-10T17:15:01.499Z] 
+=== Входящий запрос ===
+[2025-04-10T17:15:01.499Z] Метод: POST
+[2025-04-10T17:15:01.499Z] Путь: /api/orders/sync
+[2025-04-10T17:15:01.499Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "622",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:15:01.500Z] Тело запроса: [
+  {
+    "id": 1,
+    "name": "Стол обеденный",
+    "customer": "Иванов А.П.",
+    "status": "Выполнен",
+    "endDate": "2025-04-08",
+    "startDate": "2025-04-01",
+    "duration": 7,
+    "price": 13000,
+    "cost": 5700,
+    "profit": 7300,
+    "profitPercent": 56,
+    "expenses": [
+      {
+        "id": 1,
+        "name": "Материалы",
+        "cost": 4500,
+        "link": "https://example.com/materials"
+      },
+      {
+        "id": 2,
+        "name": "Транспорт",
+        "cost": 1200
+      }
+    ],
+    "notes": "Клиент просил светлое дерево. Доставка в пределах города включена в стоимость.",
+    "prepayment": 0,
+    "balance": 13000,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "photos": [],
+    "version": 1
+  }
+]
+[2025-04-10T17:15:01.500Z] Параметры запроса: {}
+[2025-04-10T17:15:01.502Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:15:01.502Z] Статус: 400
+[2025-04-10T17:15:01.502Z] Тело ответа: {
+  "error": "Неверный формат данных"
+}
+[2025-04-10T17:15:01.502Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:15:01.502Z] Статус: 400
+[2025-04-10T17:15:01.502Z] Тело ответа: {"error":"Неверный формат данных"}
+[2025-04-10T17:15:11.517Z] 
+=== Входящий запрос ===
+[2025-04-10T17:15:11.518Z] Метод: POST
+[2025-04-10T17:15:11.518Z] Путь: /api/orders/sync
+[2025-04-10T17:15:11.518Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "622",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:15:11.518Z] Тело запроса: [
+  {
+    "id": 1,
+    "name": "Стол обеденный",
+    "customer": "Иванов А.П.",
+    "status": "Выполнен",
+    "endDate": "2025-04-08",
+    "startDate": "2025-04-01",
+    "duration": 7,
+    "price": 13000,
+    "cost": 5700,
+    "profit": 7300,
+    "profitPercent": 56,
+    "expenses": [
+      {
+        "id": 1,
+        "name": "Материалы",
+        "cost": 4500,
+        "link": "https://example.com/materials"
+      },
+      {
+        "id": 2,
+        "name": "Транспорт",
+        "cost": 1200
+      }
+    ],
+    "notes": "Клиент просил светлое дерево. Доставка в пределах города включена в стоимость.",
+    "prepayment": 0,
+    "balance": 13000,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "photos": [],
+    "version": 1
+  }
+]
+[2025-04-10T17:15:11.519Z] Параметры запроса: {}
+[2025-04-10T17:15:11.523Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:15:11.523Z] Статус: 400
+[2025-04-10T17:15:11.523Z] Тело ответа: {
+  "error": "Неверный формат данных"
+}
+[2025-04-10T17:15:11.524Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:15:11.524Z] Статус: 400
+[2025-04-10T17:15:11.524Z] Тело ответа: {"error":"Неверный формат данных"}
+[2025-04-10T17:15:26.548Z] 
+=== Входящий запрос ===
+[2025-04-10T17:15:26.549Z] Метод: POST
+[2025-04-10T17:15:26.549Z] Путь: /api/orders/sync
+[2025-04-10T17:15:26.549Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "622",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:15:26.549Z] Тело запроса: [
+  {
+    "id": 1,
+    "name": "Стол обеденный",
+    "customer": "Иванов А.П.",
+    "status": "Выполнен",
+    "endDate": "2025-04-08",
+    "startDate": "2025-04-01",
+    "duration": 7,
+    "price": 13000,
+    "cost": 5700,
+    "profit": 7300,
+    "profitPercent": 56,
+    "expenses": [
+      {
+        "id": 1,
+        "name": "Материалы",
+        "cost": 4500,
+        "link": "https://example.com/materials"
+      },
+      {
+        "id": 2,
+        "name": "Транспорт",
+        "cost": 1200
+      }
+    ],
+    "notes": "Клиент просил светлое дерево. Доставка в пределах города включена в стоимость.",
+    "prepayment": 0,
+    "balance": 13000,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "photos": [],
+    "version": 1
+  }
+]
+[2025-04-10T17:15:26.549Z] Параметры запроса: {}
+[2025-04-10T17:15:26.552Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:15:26.552Z] Статус: 400
+[2025-04-10T17:15:26.552Z] Тело ответа: {
+  "error": "Неверный формат данных"
+}
+[2025-04-10T17:15:26.553Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:15:26.553Z] Статус: 400
+[2025-04-10T17:15:26.553Z] Тело ответа: {"error":"Неверный формат данных"}
+[2025-04-10T17:16:13.703Z] 
+=== Входящий запрос ===
+[2025-04-10T17:16:13.706Z] Метод: POST
+[2025-04-10T17:16:13.706Z] Путь: /api/orders/sync
+[2025-04-10T17:16:13.706Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "633",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:16:13.706Z] Тело запроса: {
+  "orders": [
+    {
+      "id": 1,
+      "name": "Стол обеденный",
+      "customer": "Иванов А.П.",
+      "status": "Выполнен",
+      "endDate": "2025-04-08",
+      "startDate": "2025-04-01",
+      "duration": 7,
+      "price": 13000,
+      "cost": 5700,
+      "profit": 7300,
+      "profitPercent": 56,
+      "expenses": [
+        {
+          "id": 1,
+          "name": "Материалы",
+          "cost": 4500,
+          "link": "https://example.com/materials"
+        },
+        {
+          "id": 2,
+          "name": "Транспорт",
+          "cost": 1200
+        }
+      ],
+      "notes": "Клиент просил светлое дерево. Доставка в пределах города включена в стоимость.",
+      "prepayment": 0,
+      "balance": 13000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "photos": [],
+      "version": 2
+    }
+  ]
+}
+[2025-04-10T17:16:13.706Z] Параметры запроса: {}
+[2025-04-10T17:16:13.753Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:16:13.753Z] Статус: 500
+[2025-04-10T17:16:13.753Z] Тело ответа: {
+  "error": "Заказ не найден"
+}
+[2025-04-10T17:16:13.754Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:16:13.754Z] Статус: 500
+[2025-04-10T17:16:13.754Z] Тело ответа: {"error":"Заказ не найден"}
+[2025-04-10T17:16:18.763Z] 
+=== Входящий запрос ===
+[2025-04-10T17:16:18.763Z] Метод: POST
+[2025-04-10T17:16:18.763Z] Путь: /api/orders/sync
+[2025-04-10T17:16:18.763Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "633",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:16:18.764Z] Тело запроса: {
+  "orders": [
+    {
+      "id": 1,
+      "name": "Стол обеденный",
+      "customer": "Иванов А.П.",
+      "status": "Выполнен",
+      "endDate": "2025-04-08",
+      "startDate": "2025-04-01",
+      "duration": 7,
+      "price": 13000,
+      "cost": 5700,
+      "profit": 7300,
+      "profitPercent": 56,
+      "expenses": [
+        {
+          "id": 1,
+          "name": "Материалы",
+          "cost": 4500,
+          "link": "https://example.com/materials"
+        },
+        {
+          "id": 2,
+          "name": "Транспорт",
+          "cost": 1200
+        }
+      ],
+      "notes": "Клиент просил светлое дерево. Доставка в пределах города включена в стоимость.",
+      "prepayment": 0,
+      "balance": 13000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "photos": [],
+      "version": 2
+    }
+  ]
+}
+[2025-04-10T17:16:18.764Z] Параметры запроса: {}
+[2025-04-10T17:16:18.769Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:16:18.769Z] Статус: 500
+[2025-04-10T17:16:18.769Z] Тело ответа: {
+  "error": "Заказ не найден"
+}
+[2025-04-10T17:16:18.769Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:16:18.769Z] Статус: 500
+[2025-04-10T17:16:18.769Z] Тело ответа: {"error":"Заказ не найден"}
+[2025-04-10T17:17:35.985Z] 
+=== Входящий запрос ===
+[2025-04-10T17:17:35.986Z] Метод: POST
+[2025-04-10T17:17:35.986Z] Путь: /api/orders/sync
+[2025-04-10T17:17:35.986Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "397",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:17:35.986Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "5",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 1000,
+      "cost": 1000,
+      "profit": 0,
+      "profitPercent": 0,
+      "prepayment": 0,
+      "balance": 1000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744305439916",
+          "name": "1вцв1",
+          "cost": 1000,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T17:17:35.991Z] Параметры запроса: {}
+[2025-04-10T17:17:36.052Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:17:36.052Z] Статус: 200
+[2025-04-10T17:17:36.052Z] Тело ответа: [
+  {
+    "id": 5,
+    "name": "Новый заказ",
+    "price": 1000,
+    "cost": 1000,
+    "profit": 0,
+    "profitPercent": 0,
+    "prepayment": 0,
+    "balance": 1000,
+    "status": "Ожидает",
+    "startDate": "2025-04-10T00:00:00.000Z",
+    "endDate": "2025-04-17T00:00:00.000Z",
+    "duration": 7,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744305439916",
+        "name": "1вцв1",
+        "cost": 1000,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "createdAt": "2025-04-10T15:00:08.557Z",
+    "updatedAt": "2025-04-10T17:17:36.036Z"
+  }
+]
+[2025-04-10T17:17:36.053Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:17:36.053Z] Статус: 200
+[2025-04-10T17:17:36.053Z] Тело ответа: [{"id":5,"name":"Новый заказ","price":1000,"cost":1000,"profit":0,"profitPercent":0,"prepayment":0,"balance":1000,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744305439916","name":"1вцв1","cost":1000,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T15:00:08.557Z","updatedAt":"2025-04-10T17:17:36.036Z"}]
+[2025-04-10T17:19:40.894Z] Успешное подключение к базе данных.
+[2025-04-10T17:19:40.912Z] Database synced
+[2025-04-10T17:19:40.916Z] Server is running on port 3001
+[2025-04-10T17:19:56.744Z] 
+=== Входящий запрос ===
+[2025-04-10T17:19:56.744Z] Метод: POST
+[2025-04-10T17:19:56.745Z] Путь: /api/orders/sync
+[2025-04-10T17:19:56.745Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "388",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:19:56.745Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "5",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 1000,
+      "cost": 0,
+      "profit": 1000,
+      "profitPercent": 100,
+      "prepayment": 0,
+      "balance": 1000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744305594902",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T17:19:56.745Z] Параметры запроса: {}
+[2025-04-10T17:19:56.804Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:19:56.804Z] Статус: 200
+[2025-04-10T17:19:56.804Z] Тело ответа: [
+  {
+    "id": 5,
+    "name": "Новый заказ",
+    "price": 1000,
+    "cost": 0,
+    "profit": 1000,
+    "profitPercent": 100,
+    "prepayment": 0,
+    "balance": 1000,
+    "status": "Ожидает",
+    "startDate": "2025-04-10T00:00:00.000Z",
+    "endDate": "2025-04-17T00:00:00.000Z",
+    "duration": 7,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744305594902",
+        "name": "",
+        "cost": 0,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "createdAt": "2025-04-10T15:00:08.557Z",
+    "updatedAt": "2025-04-10T17:19:56.795Z"
+  }
+]
+[2025-04-10T17:19:56.805Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:19:56.805Z] Статус: 200
+[2025-04-10T17:19:56.805Z] Тело ответа: [{"id":5,"name":"Новый заказ","price":1000,"cost":0,"profit":1000,"profitPercent":100,"prepayment":0,"balance":1000,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744305594902","name":"","cost":0,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T15:00:08.557Z","updatedAt":"2025-04-10T17:19:56.795Z"}]
+[2025-04-10T17:20:30.441Z] 
+=== Входящий запрос ===
+[2025-04-10T17:20:30.442Z] Метод: POST
+[2025-04-10T17:20:30.442Z] Путь: /api/orders/sync
+[2025-04-10T17:20:30.442Z] Заголовки: {
+  "host": "localhost:3001",
+  "connection": "keep-alive",
+  "content-length": "388",
+  "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+  "content-type": "application/json",
+  "accept": "*/*",
+  "origin": "http://localhost:3000",
+  "sec-fetch-site": "same-site",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://localhost:3000/",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en"
+}
+[2025-04-10T17:20:30.442Z] Тело запроса: {
+  "orders": [
+    {
+      "id": "6",
+      "name": "Новый заказ",
+      "customer": "",
+      "status": "Ожидает",
+      "startDate": "2025-04-10",
+      "endDate": "2025-04-17",
+      "duration": 7,
+      "price": 1000,
+      "cost": 0,
+      "profit": 1000,
+      "profitPercent": 100,
+      "prepayment": 0,
+      "balance": 1000,
+      "phone": "",
+      "messenger": "WhatsApp",
+      "expenses": [
+        {
+          "id": "1744305624724",
+          "name": "",
+          "cost": 0,
+          "link": "",
+          "isNew": true
+        }
+      ],
+      "photos": [],
+      "notes": "",
+      "version": 1
+    }
+  ]
+}
+[2025-04-10T17:20:30.442Z] Параметры запроса: {}
+[2025-04-10T17:20:30.466Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:20:30.466Z] Статус: 200
+[2025-04-10T17:20:30.466Z] Тело ответа: [
+  {
+    "id": 6,
+    "name": "Новый заказ",
+    "price": 1000,
+    "cost": 0,
+    "profit": 1000,
+    "profitPercent": 100,
+    "prepayment": 0,
+    "balance": 1000,
+    "status": "Ожидает",
+    "startDate": "2025-04-10T00:00:00.000Z",
+    "endDate": "2025-04-17T00:00:00.000Z",
+    "duration": 7,
+    "phone": "",
+    "messenger": "WhatsApp",
+    "expenses": [
+      {
+        "id": "1744305624724",
+        "name": "",
+        "cost": 0,
+        "link": "",
+        "isNew": true
+      }
+    ],
+    "photos": [],
+    "createdAt": "2025-04-10T14:45:21.147Z",
+    "updatedAt": "2025-04-10T17:20:30.462Z"
+  }
+]
+[2025-04-10T17:20:30.467Z] 
+=== Исходящий ответ ===
+[2025-04-10T17:20:30.467Z] Статус: 200
+[2025-04-10T17:20:30.467Z] Тело ответа: [{"id":6,"name":"Новый заказ","price":1000,"cost":0,"profit":1000,"profitPercent":100,"prepayment":0,"balance":1000,"status":"Ожидает","startDate":"2025-04-10T00:00:00.000Z","endDate":"2025-04-17T00:00:00.000Z","duration":7,"phone":"","messenger":"WhatsApp","expenses":[{"id":"1744305624724","name":"","cost":0,"link":"","isNew":true}],"photos":[],"createdAt":"2025-04-10T14:45:21.147Z","updatedAt":"2025-04-10T17:20:30.462Z"}]
