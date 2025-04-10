@@ -161,7 +161,7 @@ const OrderDetailsPage = () => {
       const totalCost = product.expenses.reduce((sum, expense) => sum + parseFloat(expense.cost || 0), 0);
       const price = parseFloat(product.price || 0);
       const profit = price - totalCost;
-      const profitPercent = price > 0 ? Math.round((profit / price) * 100 * 10) / 10 : 0;
+      const profitPercent = price > 0 ? Math.round((profit / price) * 100) : 0;
       
       // Рассчитываем остаток
       const prepayment = parseFloat(product.prepayment || 0);
@@ -464,7 +464,7 @@ const OrderDetailsPage = () => {
     const price = parseFloat(updatedProduct.price || 0);
     const prepayment = parseFloat(updatedProduct.prepayment || 0);
     const profit = price - totalCost;
-    const profitPercent = price > 0 ? Math.round((profit / price) * 100 * 10) / 10 : 0;
+    const profitPercent = price > 0 ? Math.round((profit / price) * 100) : 0;
     const balance = price - prepayment;
 
     return {

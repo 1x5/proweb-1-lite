@@ -12,8 +12,8 @@ const cleanupOldPhotos = (orders) => {
 
 // Получение всех заказов
 export const getOrders = () => {
-  const orders = localStorage.getItem(ORDERS_KEY);
-  return orders ? JSON.parse(orders) : getInitialOrders();
+  const orders = localStorage.getItem('orders');
+  return orders ? JSON.parse(orders) : [];
 };
 
 // Получение заказа по ID
@@ -39,21 +39,15 @@ export const saveOrder = (order) => {
     }
     
     try {
-      localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+      localStorage.setItem('orders', JSON.stringify(orders));
     } catch (e) {
       if (e.name === 'QuotaExceededError') {
-        // Если превышена квота, очищаем старые фотографии
-        const cleanedOrders = cleanupOldPhotos(orders);
-        try {
-          localStorage.setItem(ORDERS_KEY, JSON.stringify(cleanedOrders));
-        } catch (e2) {
-          // Если все еще не хватает места, удаляем все фотографии из старых заказов
-          const ordersWithoutPhotos = cleanedOrders.map(o => ({
-            ...o,
-            photos: o.id === order.id ? o.photos : []
-          }));
-          localStorage.setItem(ORDERS_KEY, JSON.stringify(ordersWithoutPhotos));
-        }
+        // Если все еще не хватает места, удаляем все фотографии из старых заказов
+        const ordersWithoutPhotos = orders.map(o => ({
+          ...o,
+          photos: o.id === order.id ? o.photos : []
+        }));
+        localStorage.setItem('orders', JSON.stringify(ordersWithoutPhotos));
       } else {
         throw e;
       }
@@ -71,7 +65,7 @@ export const deleteOrder = (id) => {
   try {
     const orders = getOrders();
     const updatedOrders = orders.filter(order => order.id !== (typeof id === 'string' ? parseInt(id) : id));
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(updatedOrders));
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
     return true;
   } catch (error) {
     console.error('Error deleting order:', error);
@@ -92,7 +86,7 @@ const getInitialOrders = () => [
     price: 13000,
     cost: 5700,
     profit: 7300,
-    profitPercent: 56.2,
+    profitPercent: 56,
     expenses: [
       {
         id: 1,
@@ -119,7 +113,7 @@ const getInitialOrders = () => [
     price: 35000,
     cost: 18500,
     profit: 16500,
-    profitPercent: 47.1,
+    profitPercent: 47,
     expenses: [
       {
         id: 1,
@@ -145,7 +139,7 @@ const getInitialOrders = () => [
     price: 85000,
     cost: 42000,
     profit: 43000,
-    profitPercent: 50.6,
+    profitPercent: 51,
     expenses: [
       {
         id: 1,
@@ -171,7 +165,7 @@ const getInitialOrders = () => [
     price: 27000,
     cost: 14800,
     profit: 12200,
-    profitPercent: 45.2,
+    profitPercent: 45,
     expenses: [
       {
         id: 1,
