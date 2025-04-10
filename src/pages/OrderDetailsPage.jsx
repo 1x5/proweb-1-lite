@@ -64,6 +64,7 @@ const OrderDetailsPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [product, setProduct] = useState(null);
   const [showSuccessBar, setShowSuccessBar] = useState(false);
+  const [showProgressBar, setShowProgressBar] = useState(false);
   const [syncStatus, setSyncStatus] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({});
@@ -83,15 +84,57 @@ const OrderDetailsPage = () => {
   // Доступные мессенджеры
   const messengers = ['WhatsApp', 'Telegram'];
   
-  // Оборачиваем handleSaveOrder в useCallback
+  // Подписка на изменения статуса синхронизации
+  useEffect(() => {
+    const unsubscribe = syncService.onSyncStatusChange((status) => {
+      console.log('🔄 Получен статус синхронизации:', status);
+      
+      if (status === 'syncing') {
+        console.log('🔄 Начало синхронизации');
+        setShowProgressBar(true);
+        setIsSaving(true);
+        setSyncStatus(null);
+      } else if (status === 'success') {
+        console.log('✅ Синхронизация успешна');
+        setSyncStatus('success');
+        setIsSaving(false);
+        setShowProgressBar(false);
+        setShowSuccessBar(true);
+        
+        // Показываем полосу успеха на 200 мс
+        setTimeout(() => {
+          setShowSuccessBar(false);
+        }, 200);
+      } else if (status === 'error') {
+        console.log('❌ Ошибка синхронизации');
+        setSyncStatus('error');
+        setIsSaving(false);
+        setShowProgressBar(false);
+        setShowSuccessBar(true);
+        
+        // Показываем полосу ошибки на 3 секунды
+        setTimeout(() => {
+          setShowSuccessBar(false);
+        }, 3000);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  
+  // Обработчик сохранения заказа
   const handleSaveOrder = useCallback(async (redirectToHome = true) => {
     console.log('🔵 =====================================');
     console.log('🔵 НАЧАЛО СОХРАНЕНИЯ ЗАКАЗА');
     console.log('🔵 =====================================');
-    console.log('📋 Данные заказа:', JSON.stringify(product, null, 2));
     
     try {
       setIsSaving(true);
+      setShowSuccessBar(true);
+      setSyncStatus(null);
+      
       if (!product) {
         console.log('❌ Ошибка: product не определен');
         return;
@@ -227,15 +270,10 @@ const OrderDetailsPage = () => {
       
       return savedOrder;
     } catch (error) {
-      console.error('❌ Ошибка при сохранении:', error);
-      toast.error('Ошибка при сохранении заказа');
-      setSyncStatus('error');
-      setShowSuccessBar(true);
-    } finally {
+      console.error('❌ Ошибка при сохранении заказа:', error);
       setIsSaving(false);
-      console.log('🔵 =====================================');
-      console.log('🔵 КОНЕЦ СОХРАНЕНИЯ ЗАКАЗА');
-      console.log('🔵 =====================================');
+      setShowSuccessBar(false);
+      toast.error('Ошибка при сохранении заказа');
     }
   }, [product, photos, isNewOrder, navigate]);
   
@@ -380,34 +418,6 @@ const OrderDetailsPage = () => {
     document.head.appendChild(styleSheet);
     return () => {
       document.head.removeChild(styleSheet);
-    };
-  }, []);
-  
-  // Подписываемся на изменения статуса синхронизации
-  useEffect(() => {
-    const unsubscribe = syncService.onSyncStatusChange((status) => {
-      console.log('📱 Получен статус синхронизации:', status);
-      
-      if (status === 'syncing') {
-        setShowSuccessBar(true);
-        setIsSaving(true);
-      } else if (status === 'success') {
-        setIsSaving(false);
-        // Показываем зеленую полосу на 2 секунды
-        setTimeout(() => {
-          setShowSuccessBar(false);
-        }, 2000);
-      } else if (status === 'error') {
-        setIsSaving(false);
-        // Показываем красную полосу на 3 секунды
-        setTimeout(() => {
-          setShowSuccessBar(false);
-        }, 3000);
-      }
-    });
-
-    return () => {
-      unsubscribe();
     };
   }, []);
   
@@ -824,19 +834,19 @@ const OrderDetailsPage = () => {
       <style>{progressAnimation}</style>
       <div className="relative" style={{ backgroundColor: theme.bg }}>
         {/* Полоса успешного сохранения */}
-        {(showSuccessBar || isSaving) && (
+        {(showSuccessBar || showProgressBar) && (
           <div 
             className="absolute top-0 left-0 right-0 h-[3px]"
             style={{ 
               backgroundColor: 'transparent',
-              animation: showSuccessBar ? 
+              animation: showProgressBar ? 
                 'slideDown 0.2s ease-in-out forwards' : 
-                'slideUp 0.2s ease-in-out forwards',
+                (showSuccessBar ? 'slideDown 0.2s ease-in-out forwards' : 'slideUp 0.2s ease-in-out forwards'),
               zIndex: 100,
               transition: 'opacity 0.2s ease-out'
             }}
           >
-            {isSaving ? (
+            {showProgressBar ? (
               <div 
                 style={{
                   height: '100%',
