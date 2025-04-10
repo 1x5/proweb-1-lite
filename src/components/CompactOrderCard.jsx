@@ -11,8 +11,23 @@ const CompactOrderCard = ({ order, isMobile, theme, getStatusColor, onClick, onD
     return `${day}.${month}`;
   };
 
+  const handleClick = () => {
+    console.log('CompactOrderCard handleClick:', {
+      orderId: order?.id,
+      hasOnClick: !!onClick
+    });
+    if (onClick && order?.id) {
+      onClick(order.id);
+    }
+  };
+
   return (
-    <SwipeableOrderCard order={order} theme={theme} onClick={onClick} onDelete={onDelete}>
+    <SwipeableOrderCard 
+      order={order} 
+      theme={theme} 
+      onClick={handleClick} 
+      onDelete={onDelete}
+    >
       <div className="py-1.5 px-3 rounded-xl" style={{ backgroundColor: theme.card }}>
         <div className="flex items-center w-full">
           <div className="flex items-center gap-3 min-w-0 flex-1">

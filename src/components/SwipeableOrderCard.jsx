@@ -11,24 +11,43 @@ const SwipeableOrderCard = ({ order, children, theme, onDelete, onClick }) => {
     delta: 10
   });
 
-  const handleDelete = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+  const handleClick = (e) => {
+    console.log('SwipeableOrderCard handleClick:', { 
+      orderId: order?.id,
+      swipedOrderId: onDelete?.swipedOrderId,
+      hasOnClick: !!onClick
+    });
+
+    if (onDelete?.swipedOrderId === order.id) {
+      console.log('Click blocked due to swipe');
+      return;
     }
-    onDelete?.handleDeleteOrder(order.id);
+    
+    e.stopPropagation();
+    
+    if (onClick && order?.id) {
+      console.log('Calling onClick with orderId:', order.id);
+      onClick(order.id);
+    }
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (onDelete?.handleDeleteOrder) {
+      onDelete.handleDeleteOrder(order.id);
+    }
   };
 
   return (
     <div className="relative overflow-hidden rounded-xl">
       <div
         {...swipeHandlers}
-        className="relative z-10 transition-transform duration-200"
+        className="relative z-10 transition-transform duration-200 cursor-pointer"
         style={{
           transform: onDelete?.swipedOrderId === order.id ? 'translateX(-80px)' : 'translateX(0)',
           backgroundColor: theme.card
         }}
-        onClick={() => onClick?.(order.id)}
+        onClick={handleClick}
       >
         {children}
       </div>

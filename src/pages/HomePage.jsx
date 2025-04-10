@@ -100,7 +100,12 @@ const HomePage = () => {
   
   // Обработчик перехода к деталям заказа
   const handleOrderClick = (orderId) => {
-    navigate(`/order/${orderId}`);
+    console.log('HomePage handleOrderClick:', { orderId, type: typeof orderId });
+    if (orderId) {
+      const url = `/order/${orderId}`;
+      console.log('Navigating to:', url);
+      navigate(url);
+    }
   };
   
   // Обработчик удаления заказа
@@ -275,12 +280,13 @@ const HomePage = () => {
       
       {/* Список заказов */}
       <div className={`flex-1 overflow-y-auto ${compactMode ? 'px-2 space-y-1' : 'px-3 space-y-1.5'} pb-5`}>
-        {filteredOrders.map(order => (
+        {filteredOrders.map((order) => (
           <div key={order.id} className="relative overflow-hidden rounded-xl">
             {/* Карточка заказа */}
             <div style={{ position: 'relative', zIndex: 2 }}>
               {compactMode ? 
                 <CompactOrderCard 
+                  key={`compact-${order.id}`}
                   order={order} 
                   isMobile={isMobile} 
                   theme={theme} 
@@ -293,6 +299,7 @@ const HomePage = () => {
                   }}
                 /> : 
                 <RegularOrderCard 
+                  key={`regular-${order.id}`}
                   order={order} 
                   isMobile={isMobile} 
                   theme={theme} 
@@ -311,6 +318,7 @@ const HomePage = () => {
             {/* Подтверждение удаления */}
             {showDeleteConfirm === order.id && (
               <div 
+                key={`delete-confirm-${order.id}`}
                 className="absolute inset-0 flex items-center justify-center rounded-xl"
                 style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
                 onClick={(e) => e.stopPropagation()}

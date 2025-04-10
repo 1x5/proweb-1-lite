@@ -90,20 +90,28 @@ const OrderDetailsPage = () => {
   // Загрузка данных заказа по ID
   useEffect(() => {
     if (id === 'new') {
-      // Создаем новый заказ
+      // Создаем новый заказ с уникальным временным id
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substr(2, 9);
+      const tempId = `temp-${timestamp}-${random}`;
+      
       setIsNewOrder(true);
       setProduct({
+        id: tempId,
         name: 'Новый заказ',
-        phone: '',
-        messenger: 'WhatsApp', // По умолчанию выбираем WhatsApp
-        cost: 0,
-        price: 0,
-        profit: 0,
-        profitPercent: 0,
+        customer: '',
         status: 'Ожидает',
-        duration: 7,
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        duration: 7,
+        price: 0,
+        cost: 0,
+        profit: 0,
+        profitPercent: 0,
+        prepayment: 0,
+        balance: 0,
+        phone: '',
+        messenger: 'WhatsApp',
         expenses: [{
           id: Date.now().toString(),
           name: '',
@@ -111,10 +119,8 @@ const OrderDetailsPage = () => {
           link: '',
           isNew: true
         }],
-        notes: '',
         photos: [],
-        prepayment: 0,
-        balance: 0
+        notes: ''
       });
       setEditMode(true);
       // Очищаем состояние фотографий при создании нового заказа
@@ -124,29 +130,34 @@ const OrderDetailsPage = () => {
     } else {
       // Загружаем существующий заказ
       setIsNewOrder(false);
-      const orderData = getOrderById(id);
-      if (orderData) {
-        // Добавляем поля предоплаты и остатка, если их нет
-        if (orderData.prepayment === undefined) {
-          orderData.prepayment = 0;
+      // Проверяем, что id существует и является числом
+      const orderId = id ? parseInt(id) : null;
+      console.log('Loading order:', { id, orderId });
+      if (orderId && !isNaN(orderId)) {
+        const orderData = getOrderById(orderId);
+        if (orderData) {
+          // Добавляем поля предоплаты и остатка, если их нет
+          if (orderData.prepayment === undefined) {
+            orderData.prepayment = 0;
+          }
+          if (orderData.balance === undefined) {
+            orderData.balance = orderData.price || 0;
+          }
+          // Добавляем поля телефона и мессенджера, если их нет
+          if (orderData.phone === undefined) {
+            orderData.phone = '';
+          }
+          if (orderData.messenger === undefined) {
+            orderData.messenger = 'WhatsApp';
+          }
+          setProduct(orderData);
+          // Загружаем фотографии, если они есть
+          if (orderData.photos && orderData.photos.length > 0) {
+            setPhotos(orderData.photos);
+          }
+        } else {
+          navigate('/');
         }
-        if (orderData.balance === undefined) {
-          orderData.balance = orderData.price || 0;
-        }
-        // Добавляем поля телефона и мессенджера, если их нет
-        if (orderData.phone === undefined) {
-          orderData.phone = '';
-        }
-        if (orderData.messenger === undefined) {
-          orderData.messenger = 'WhatsApp';
-        }
-        setProduct(orderData);
-        // Загружаем фотографии, если они есть
-        if (orderData.photos && orderData.photos.length > 0) {
-          setPhotos(orderData.photos);
-        }
-      } else {
-        navigate('/');
       }
     }
   }, [id, navigate]);
@@ -179,25 +190,31 @@ const OrderDetailsPage = () => {
       // Получаем текущие заказы
       const { orders } = getOrders();
       
-      // Если это новый заказ, добавляем его в конец списка
+      // Если это новый заказ, добавляем его в конец списка с новым числовым id
       if (isNewOrder) {
-        await saveOrders([...orders, updatedProduct]);
+        // Находим максимальный числовой id среди существующих заказов
+        const maxId = orders.reduce((max, order) => {
+          const orderId = parseInt(order.id);
+          return !isNaN(orderId) && orderId > max ? orderId : max;
+        }, 0);
+        
+        // Создаем новый заказ с следующим числовым id
+        const newOrder = {
+          ...updatedProduct,
+          id: (maxId + 1).toString()
+        };
+        
+        await saveOrders([...orders, newOrder]);
+        setProduct(newOrder);
       } else {
         // Если существующий, обновляем его
         const updatedOrders = orders.filter(o => o.id !== product.id);
         await saveOrders([...updatedOrders, updatedProduct]);
+        setProduct(updatedProduct);
       }
       
-      // Обновляем состояние
-      setProduct(updatedProduct);
       setEditMode(false);
       setShowSuccessBar(true);
-      
-      // Если это был новый заказ, обновляем URL
-      if (isNewOrder) {
-        setIsNewOrder(false);
-        navigate(`/order/${updatedProduct.id}`, { replace: true });
-      }
       
       // Если нужно перейти на главную страницу
       if (redirectToHome) {
@@ -209,7 +226,6 @@ const OrderDetailsPage = () => {
       return updatedProduct;
     } catch (error) {
       console.error('Error saving order:', error);
-      return null;
     } finally {
       setIsSaving(false);
     }

@@ -138,8 +138,22 @@ export const getOrderById = (id) => {
 // Сохранение заказов
 export const saveOrders = async (orders) => {
   try {
+    // Генерируем временные id для новых заказов
+    const ordersWithIds = orders.map(order => {
+      if (!order.id) {
+        // Генерируем уникальный временный id
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substr(2, 9);
+        return {
+          ...order,
+          id: `temp-${timestamp}-${random}`
+        };
+      }
+      return order;
+    });
+
     // Очищаем старые фотографии для каждого заказа
-    const cleanedOrders = orders.map(order => ({
+    const cleanedOrders = ordersWithIds.map(order => ({
       ...order,
       photos: cleanupOldPhotos(order.photos)
     }));
