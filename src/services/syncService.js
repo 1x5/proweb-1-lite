@@ -12,6 +12,7 @@ class SyncService {
     this.retryAttempts = 0;
     this.maxRetryAttempts = 3;
     this.retryDelay = 5000; // 5 секунд
+    this.statusListeners = new Set();
 
     // Слушаем изменения состояния сети
     window.addEventListener('online', () => {
@@ -25,35 +26,82 @@ class SyncService {
     });
   }
 
+  // Добавляем метод для подписки на изменения статуса
+  onSyncStatusChange(callback) {
+    this.statusListeners.add(callback);
+    return () => {
+      this.statusListeners.delete(callback);
+    };
+  }
+
+  // Добавляем метод для уведомления слушателей
+  notifyStatusChange(status) {
+    this.statusListeners.forEach(callback => callback(status));
+  }
+
   handleOnline = async () => {
     console.log('🟢 Соединение восстановлено');
     this.isOnline = true;
     this.startAutoSync();
     
     try {
+      if (this.offlineQueue.length === 0) {
+        console.log('✅ Нет заказов для синхронизации');
+        return;
+      }
+
       // Показываем статус синхронизации
-      if (this.onSyncStatusChange) {
-        this.onSyncStatusChange('syncing');
-      }
+      this.notifyStatusChange('syncing');
       
-      const result = await this.processOfflineQueue();
+      console.log(`🔄 Обработка ${this.offlineQueue.length} заказов из офлайн очереди...`);
       
-      if (this.onSyncStatusChange) {
-        this.onSyncStatusChange(result ? 'success' : 'error');
-      }
+      const failedOrders = [];
       
-      // Скрываем статус через 2 секунды
-      setTimeout(() => {
-        if (this.onSyncStatusChange) {
-          this.onSyncStatusChange(null);
+      while (this.offlineQueue.length > 0) {
+        const order = this.offlineQueue[0];
+        let retryCount = 0;
+        let success = false;
+        
+        while (retryCount < this.maxRetryAttempts && !success) {
+          try {
+            console.log(`📤 Попытка ${retryCount + 1} отправки заказа на сервер:`, order);
+            if (order && order.id) {
+              await this.syncWithBackend([order]);
+              this.offlineQueue.shift();
+              this.saveOfflineQueue();
+              console.log('✅ Заказ успешно синхронизирован');
+              success = true;
+            } else {
+              console.log('❌ Некорректные данные заказа:', order);
+              this.offlineQueue.shift();
+              this.saveOfflineQueue();
+              break;
+            }
+          } catch (error) {
+            console.error(`❌ Ошибка при синхронизации заказа (попытка ${retryCount + 1}):`, error);
+            retryCount++;
+            if (retryCount === this.maxRetryAttempts) {
+              failedOrders.push(order);
+              this.offlineQueue.shift();
+              this.saveOfflineQueue();
+            } else {
+              await new Promise(resolve => setTimeout(resolve, this.retryDelay));
+            }
+          }
         }
-      }, 2000);
+      }
+      
+      if (failedOrders.length > 0) {
+        console.log(`⚠️ ${failedOrders.length} заказов не удалось синхронизировать`);
+        this.notifyStatusChange('error');
+      } else {
+        console.log('✅ Все заказы успешно синхронизированы');
+        this.notifyStatusChange('success');
+      }
       
     } catch (error) {
-      console.error('❌ Ошибка при синхронизации после восстановления соединения:', error);
-      if (this.onSyncStatusChange) {
-        this.onSyncStatusChange('error');
-      }
+      console.error('❌ Критическая ошибка при синхронизации после восстановления соединения:', error);
+      this.notifyStatusChange('error');
     }
   };
 
@@ -107,6 +155,27 @@ class SyncService {
     console.log('🔄 Начало синхронизации с сервером...');
 
     try {
+      // Сначала проверяем существование заказов на сервере
+      for (const order of orders) {
+        if (!order || !order.id) {
+          console.log('❌ Некорректные данные заказа:', order);
+          continue;
+        }
+
+        try {
+          await apiService.getOrderById(order.id);
+          console.log(`✅ Заказ ${order.id} существует на сервере`);
+        } catch (error) {
+          if (error.status === 404) {
+            console.log(`➕ Заказ ${order.id} не найден на сервере, создаем новый`);
+            await apiService.createOrder(order);
+          } else {
+            throw error;
+          }
+        }
+      }
+
+      // Теперь синхронизируем все заказы
       const result = await apiService.syncOrders(orders);
       this.lastSyncTime = new Date();
       console.log('✅ Синхронизация успешно завершена:', result);
@@ -130,14 +199,20 @@ class SyncService {
       this.offlineQueue.push(order);
       this.saveOfflineQueue();
       console.log('💾 Заказ добавлен в офлайн очередь');
+      this.notifyStatusChange('error');
       return false;
     }
 
     try {
+      this.notifyStatusChange('syncing');
+      
       console.log('🔄 Отправка на сервер...');
       const result = await this.syncWithBackend([order]);
       console.log('✅ СИНХРОНИЗАЦИЯ УСПЕШНА');
       console.log('📊 Результат:', result);
+      
+      this.notifyStatusChange('success');
+      
       return result;
     } catch (error) {
       console.error('❌ ОШИБКА СИНХРОНИЗАЦИИ:', error);
@@ -145,6 +220,9 @@ class SyncService {
       this.offlineQueue.push(order);
       this.saveOfflineQueue();
       console.log('💾 Заказ добавлен в офлайн очередь');
+      
+      this.notifyStatusChange('error');
+      
       return false;
     } finally {
       console.log('🟦 =====================================');

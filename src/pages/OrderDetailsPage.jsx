@@ -26,13 +26,6 @@ const fadeInOutKeyframes = `
   50% { transform: scale(1.2); color: #22c55e; }
   100% { transform: scale(1); color: inherit; }
 }
-
-@keyframes slideDown {
-  0% { transform: translateY(-100%); }
-  15% { transform: translateY(0); }
-  85% { transform: translateY(0); }
-  100% { transform: translateY(-100%); }
-}
 `;
 
 const progressAnimation = `
@@ -214,7 +207,7 @@ const OrderDetailsPage = () => {
         setSyncStatus('success');
       } else if (!syncService.isOnline) {
         console.log('⚠️ Офлайн режим - заказ будет синхронизирован позже');
-        toast.warning('Заказ сохранен локально и будет синхронизирован при восстановлении соединения');
+        toast('Заказ сохранен локально и будет синхронизирован при восстановлении соединения');
         setSyncStatus('error');
       } else {
         console.log('❌ Ошибка синхронизации');
@@ -223,7 +216,6 @@ const OrderDetailsPage = () => {
       }
       
       setEditMode(false);
-      setShowSuccessBar(true);
       
       // Если нужно перейти на главную страницу
       if (redirectToHome) {
@@ -393,24 +385,29 @@ const OrderDetailsPage = () => {
   
   // Подписываемся на изменения статуса синхронизации
   useEffect(() => {
-    syncService.onSyncStatusChange = (status) => {
+    const unsubscribe = syncService.onSyncStatusChange((status) => {
+      console.log('📱 Получен статус синхронизации:', status);
+      
       if (status === 'syncing') {
-        setIsSaving(true);
-      } else if (status === 'success' || status === 'error') {
-        setIsSaving(false);
-        setSyncStatus(status);
         setShowSuccessBar(true);
-        
-        // Скрываем статус через 2 секунды
+        setIsSaving(true);
+      } else if (status === 'success') {
+        setIsSaving(false);
+        // Показываем зеленую полосу на 2 секунды
         setTimeout(() => {
           setShowSuccessBar(false);
-          setSyncStatus(null);
         }, 2000);
+      } else if (status === 'error') {
+        setIsSaving(false);
+        // Показываем красную полосу на 3 секунды
+        setTimeout(() => {
+          setShowSuccessBar(false);
+        }, 3000);
       }
-    };
+    });
 
     return () => {
-      syncService.onSyncStatusChange = null;
+      unsubscribe();
     };
   }, []);
   
@@ -833,9 +830,10 @@ const OrderDetailsPage = () => {
             style={{ 
               backgroundColor: 'transparent',
               animation: showSuccessBar ? 
-                'slideDown 0.3s ease-in-out forwards' : 
-                (isSaving ? undefined : 'slideUp 0.15s ease-in-out forwards'),
-              zIndex: 100
+                'slideDown 0.2s ease-in-out forwards' : 
+                'slideUp 0.2s ease-in-out forwards',
+              zIndex: 100,
+              transition: 'opacity 0.2s ease-out'
             }}
           >
             {isSaving ? (
@@ -851,7 +849,7 @@ const OrderDetailsPage = () => {
                     transparent 100%
                   )`,
                   backgroundSize: '200% 100%',
-                  animation: 'progress 1s linear infinite',
+                  animation: 'progress 0.8s linear infinite',
                   opacity: 0.8
                 }}
               />
@@ -861,7 +859,8 @@ const OrderDetailsPage = () => {
                   height: '100%',
                   width: '100%',
                   backgroundColor: syncStatus === 'success' ? theme.green : theme.red,
-                  opacity: 0.8
+                  opacity: 0.8,
+                  transition: 'opacity 0.2s ease-out'
                 }}
               />
             )}

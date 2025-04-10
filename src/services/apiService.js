@@ -114,38 +114,52 @@ export const apiService = {
 
   // Синхронизация заказов
   async syncOrders(orders) {
-    console.log('🟨 =====================================');
-    console.log('🟨 НАЧАЛО ОТПРАВКИ НА СЕРВЕР');
-    console.log('🟨 =====================================');
+    const maxRetries = 3;
+    let retryCount = 0;
     
-    console.log('📤 ОТПРАВЛЯЕМЫЕ ДАННЫЕ:');
-    console.log(JSON.stringify(orders, null, 2));
-    
-    try {
-      const response = await fetchWithTimeout(`${API_URL}/orders/sync`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orders }),
-      });
-      
-      if (!response.ok) {
-        console.log('❌ ОШИБКА СЕРВЕРА:');
-        console.log('Статус:', response.status);
-        console.log('Текст ошибки:', response.statusText);
-        const errorData = await response.json();
-        console.log('Детали:', errorData);
-        throw new Error('Ошибка синхронизации с сервером');
+    while (retryCount < maxRetries) {
+      try {
+        console.log('🔄 Отправка заказов на синхронизацию:', orders);
+        const response = await fetch(`${API_URL}/orders/sync`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ orders })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('❌ Ошибка синхронизации:', errorData);
+          
+          // Если это временная ошибка (5xx), пробуем еще раз
+          if (response.status >= 500 && retryCount < maxRetries - 1) {
+            retryCount++;
+            console.log(`🔄 Повторная попытка ${retryCount}/${maxRetries}...`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            continue;
+          }
+          
+          throw new Error(errorData.message || 'Ошибка синхронизации');
+        }
+
+        const data = await response.json();
+        console.log('✅ Синхронизация успешна:', data);
+        return data;
+      } catch (error) {
+        console.error('❌ Ошибка при синхронизации:', error);
+        
+        // Если это сетевая ошибка, пробуем еще раз
+        if (error.message.includes('NetworkError') && retryCount < maxRetries - 1) {
+          retryCount++;
+          console.log(`🔄 Повторная попытка ${retryCount}/${maxRetries}...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+          continue;
+        }
+        
+        throw error;
       }
-      
-      const data = await response.json();
-      console.log('✅ СИНХРОНИЗАЦИЯ УСПЕШНА');
-      console.log('📥 ОТВЕТ СЕРВЕРА:', data);
-      return data;
-    } catch (error) {
-      console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
-      throw error;
     }
   },
 }; 
