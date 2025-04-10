@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_API_URL=http://94.228.126.132:3001/api
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_HOST=cm9bbz8r7000upm9mfg5ed990
+      - DB_PORT=5432
+      - DB_NAME=cm9bbz8r6000n9mpm68117cc3
+      - DB_USER=cm9bbz8r5000l9mpm0swyf9d2
+      - DB_PASSWORD=DWj3TLHOqMQ8QU7Mnq0sFI4f
+      - PORT=3001
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    restart: always 

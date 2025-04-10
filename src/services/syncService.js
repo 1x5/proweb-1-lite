@@ -1,4 +1,5 @@
-import { getOrders, saveOrders } from '../services/OrderService';
+import { getOrders, saveOrders } from './OrderService';
+import { apiService } from './apiService';
 
 class SyncService {
   constructor() {
@@ -11,13 +12,15 @@ class SyncService {
     
     try {
       this.isSyncing = true;
+      
+      // Получаем локальные заказы
       const localOrders = getOrders();
       
-      // Здесь будет логика синхронизации с бэкендом
-      // 1. Получить данные с сервера
-      // 2. Сравнить с локальными данными
-      // 3. Объединить изменения
-      // 4. Сохранить обновленные данные
+      // Синхронизируем с бэкендом
+      const serverOrders = await apiService.syncOrders(localOrders);
+      
+      // Обновляем локальное хранилище
+      saveOrders(serverOrders);
       
       this.lastSyncTime = new Date();
       return true;
@@ -32,7 +35,9 @@ class SyncService {
   async syncOnSave(order) {
     try {
       // Сохраняем локально
-      saveOrders([...getOrders(), order]);
+      const localOrders = getOrders();
+      const updatedLocalOrders = [...localOrders, order];
+      saveOrders(updatedLocalOrders);
       
       // Синхронизируем с бэкендом
       await this.syncWithBackend();
@@ -42,6 +47,13 @@ class SyncService {
       console.error('Ошибка при сохранении и синхронизации:', error);
       return false;
     }
+  }
+
+  // Запускаем автоматическую синхронизацию каждые 5 минут
+  startAutoSync(interval = 300000) {
+    setInterval(() => {
+      this.syncWithBackend();
+    }, interval);
   }
 }
 
