@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://94.228.126.132:3001/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 export const apiService = {
   // Получить все заказы
@@ -83,7 +83,7 @@ export const apiService = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ orders }),
+        body: JSON.stringify({ orders: Array.isArray(orders) ? orders : [orders] }),
       });
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();

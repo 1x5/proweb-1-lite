@@ -16,13 +16,22 @@ const sequelize = new Sequelize(
       acquire: 30000,
       idle: 10000
     },
-    dialectOptions: {
+    dialectOptions: process.env.NODE_ENV === 'production' ? {
       ssl: {
         require: true,
         rejectUnauthorized: false
       }
-    }
+    } : {}
   }
 );
+
+// Проверка подключения
+sequelize.authenticate()
+  .then(() => {
+    console.log('Успешное подключение к базе данных.');
+  })
+  .catch(err => {
+    console.error('Ошибка подключения к базе данных:', err);
+  });
 
 module.exports = sequelize; 

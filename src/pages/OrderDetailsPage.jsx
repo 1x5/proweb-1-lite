@@ -8,6 +8,8 @@ import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrders, getOrders, deleteOrder } from '../services/OrderService';
 import { useTheme } from '../contexts/ThemeContext';
 import heic2any from 'heic2any';
+import { syncService } from '../services/syncService';
+import { toast } from 'react-hot-toast';
 
 // Добавляем стили анимации
 const fadeInOutKeyframes = `
@@ -190,6 +192,8 @@ const OrderDetailsPage = () => {
       // Получаем текущие заказы
       const { orders } = getOrders();
       
+      let savedOrder;
+      
       // Если это новый заказ, добавляем его в конец списка с новым числовым id
       if (isNewOrder) {
         // Находим максимальный числовой id среди существующих заказов
@@ -204,13 +208,27 @@ const OrderDetailsPage = () => {
           id: (maxId + 1).toString()
         };
         
+        // Сохраняем локально
         await saveOrders([...orders, newOrder]);
         setProduct(newOrder);
+        savedOrder = newOrder;
       } else {
         // Если существующий, обновляем его
         const updatedOrders = orders.filter(o => o.id !== product.id);
         await saveOrders([...updatedOrders, updatedProduct]);
         setProduct(updatedProduct);
+        savedOrder = updatedProduct;
+      }
+      
+      // Синхронизируем с сервером
+      const syncResult = await syncService.syncOnSave(savedOrder);
+      
+      if (syncResult) {
+        toast.success('Заказ сохранен и синхронизирован');
+      } else if (!syncService.isOnline) {
+        toast.warning('Заказ сохранен локально и будет синхронизирован при восстановлении соединения');
+      } else {
+        toast.error('Ошибка синхронизации с сервером');
       }
       
       setEditMode(false);
@@ -223,9 +241,10 @@ const OrderDetailsPage = () => {
         }, 500);
       }
       
-      return updatedProduct;
+      return savedOrder;
     } catch (error) {
       console.error('Error saving order:', error);
+      toast.error('Ошибка при сохранении заказа');
     } finally {
       setIsSaving(false);
     }

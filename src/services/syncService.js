@@ -8,6 +8,20 @@ class SyncService {
     this.syncInterval = null;
     this.isOnline = navigator.onLine;
     this.offlineQueue = [];
+    this.retryAttempts = 0;
+    this.maxRetryAttempts = 3;
+    this.retryDelay = 5000; // 5 секунд
+
+    // Загружаем сохраненную очередь из localStorage
+    const savedQueue = localStorage.getItem('offlineQueue');
+    if (savedQueue) {
+      try {
+        this.offlineQueue = JSON.parse(savedQueue);
+      } catch (error) {
+        console.error('Ошибка при загрузке очереди:', error);
+        this.offlineQueue = [];
+      }
+    }
 
     // Слушаем изменения состояния сети
     window.addEventListener('online', this.handleOnline.bind(this));
@@ -16,6 +30,7 @@ class SyncService {
 
   handleOnline() {
     this.isOnline = true;
+    this.retryAttempts = 0; // Сбрасываем счетчик попыток при восстановлении соединения
     // При восстановлении соединения синхронизируем накопленные изменения
     if (this.offlineQueue.length > 0) {
       this.processOfflineQueue();
@@ -24,25 +39,49 @@ class SyncService {
 
   handleOffline() {
     this.isOnline = false;
+    // Сохраняем очередь в localStorage
+    this.saveOfflineQueue();
+  }
+
+  saveOfflineQueue() {
+    try {
+      localStorage.setItem('offlineQueue', JSON.stringify(this.offlineQueue));
+    } catch (error) {
+      console.error('Ошибка при сохранении очереди:', error);
+    }
   }
 
   async processOfflineQueue() {
     if (!this.isOnline || this.offlineQueue.length === 0) return;
 
     try {
+      // Создаем копию очереди
+      const queueCopy = [...this.offlineQueue];
+      
       // Обрабатываем каждое действие из очереди
-      for (const action of this.offlineQueue) {
-        await this.syncWithBackend();
+      for (const action of queueCopy) {
+        try {
+          if (action.type === 'save') {
+            await this.syncOnSave(action.order);
+          } else {
+            await this.syncWithBackend();
+          }
+          // Удаляем успешно обработанное действие из очереди
+          this.offlineQueue = this.offlineQueue.filter(item => item !== action);
+          this.saveOfflineQueue();
+        } catch (error) {
+          console.error('Ошибка при обработке действия:', error);
+          // Продолжаем с следующим действием
+          continue;
+        }
       }
-      // Очищаем очередь после успешной синхронизации
-      this.offlineQueue = [];
     } catch (error) {
       console.error('Ошибка при обработке офлайн очереди:', error);
     }
   }
 
   async syncWithBackend() {
-    if (this.isSyncing) return;
+    if (this.isSyncing) return false;
     
     try {
       this.isSyncing = true;
@@ -53,22 +92,35 @@ class SyncService {
       }
       
       // Получаем локальные заказы
-      const localOrders = getOrders();
+      const { orders: localOrders } = getOrders();
       
       // Синхронизируем с бэкендом
       const serverOrders = await apiService.syncOrders(localOrders);
       
       // Обновляем локальное хранилище
-      saveOrders(serverOrders);
+      await saveOrders(serverOrders);
       
       this.lastSyncTime = new Date();
+      this.retryAttempts = 0; // Сбрасываем счетчик попыток при успешной синхронизации
       return true;
     } catch (error) {
       console.error('Ошибка синхронизации:', error);
+      
       if (!this.isOnline) {
         // Добавляем в очередь для последующей синхронизации
-        this.offlineQueue.push({ type: 'sync', timestamp: new Date() });
+        this.offlineQueue.push({ 
+          type: 'sync', 
+          timestamp: new Date() 
+        });
+        this.saveOfflineQueue();
+      } else if (this.retryAttempts < this.maxRetryAttempts) {
+        // Пробуем повторить синхронизацию через некоторое время
+        this.retryAttempts++;
+        setTimeout(() => {
+          this.syncWithBackend();
+        }, this.retryDelay * this.retryAttempts);
       }
+      
       return false;
     } finally {
       this.isSyncing = false;
@@ -77,40 +129,66 @@ class SyncService {
 
   async syncOnSave(order) {
     try {
-      // Сохраняем локально
-      const localOrders = getOrders();
-      const updatedLocalOrders = [...localOrders, order];
-      saveOrders(updatedLocalOrders);
-      
+      // Если нет подключения, добавляем в очередь и сохраняем локально
       if (!this.isOnline) {
-        // Если нет подключения, добавляем в очередь
         this.offlineQueue.push({ 
           type: 'save', 
           order, 
           timestamp: new Date() 
         });
-        return true;
+        this.saveOfflineQueue();
+        return false;
       }
       
-      // Синхронизируем с бэкендом
-      await this.syncWithBackend();
-      
-      return true;
+      // Пытаемся синхронизировать с сервером
+      try {
+        // Получаем актуальные данные с сервера
+        const serverOrders = await apiService.syncOrders([order]);
+        
+        // Обновляем локальное хранилище с учетом серверных данных
+        const { orders: localOrders } = getOrders();
+        const updatedOrders = localOrders.map(localOrder => {
+          const serverOrder = serverOrders.find(so => so.id === localOrder.id);
+          return serverOrder || localOrder;
+        });
+        
+        await saveOrders(updatedOrders);
+        this.lastSyncTime = new Date();
+        return true;
+      } catch (error) {
+        console.error('Ошибка синхронизации с сервером:', error);
+        
+        // Если произошла ошибка, добавляем в очередь для повторной попытки
+        this.offlineQueue.push({ 
+          type: 'save', 
+          order, 
+          timestamp: new Date() 
+        });
+        this.saveOfflineQueue();
+        
+        // Пробуем повторить синхронизацию позже
+        if (this.retryAttempts < this.maxRetryAttempts) {
+          this.retryAttempts++;
+          setTimeout(() => {
+            this.syncOnSave(order);
+          }, this.retryDelay * this.retryAttempts);
+        }
+        
+        return false;
+      }
     } catch (error) {
       console.error('Ошибка при сохранении и синхронизации:', error);
       return false;
     }
   }
 
-  startAutoSync(interval = 300000) {
+  startAutoSync(interval = 300000) { // 5 минут по умолчанию
     // Очищаем предыдущий интервал, если он был
-    if (this.syncInterval) {
-      clearInterval(this.syncInterval);
-    }
+    this.stopAutoSync();
     
     // Устанавливаем новый интервал
     this.syncInterval = setInterval(() => {
-      if (this.isOnline) {
+      if (this.isOnline && !this.isSyncing) {
         this.syncWithBackend();
       }
     }, interval);
