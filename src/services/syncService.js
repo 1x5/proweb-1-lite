@@ -236,26 +236,20 @@ class SyncService {
     console.log('🟥 НАЧАЛО СИНХРОНИЗАЦИИ ПРИ УДАЛЕНИИ');
     console.log('🟥 Заказ ID:', orderId);
     console.log('🟥 =====================================');
-    
-    if (!navigator.onLine) {
-      console.log('❌ Нет подключения к интернету');
-      this.notifyStatusChange('error');
-      return false;
-    }
 
     try {
-      this.notifyStatusChange('syncing');
-      
+      // Если ID начинается с temp-, значит заказ еще не был синхронизирован
+      if (orderId.startsWith('temp-')) {
+        console.log('✅ Заказ с временным ID успешно удален локально');
+        return true;
+      }
+
       console.log('🔄 Удаление заказа на сервере...');
       await apiService.deleteOrder(orderId);
-      
-      console.log('✅ ЗАКАЗ УСПЕШНО УДАЛЕН');
-      this.notifyStatusChange('success');
-      
+      console.log('✅ Заказ успешно удален на сервере');
       return true;
     } catch (error) {
-      console.error('❌ ОШИБКА ПРИ УДАЛЕНИИ ЗАКАЗА:', error);
-      this.notifyStatusChange('error');
+      console.log('❌ ОШИБКА ПРИ УДАЛЕНИИ ЗАКАЗА:', error);
       return false;
     } finally {
       console.log('🟥 =====================================');
