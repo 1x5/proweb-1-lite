@@ -55,7 +55,7 @@ const HomePage = () => {
   
   // Загрузка заказов при монтировании компонента
   useEffect(() => {
-    const loadedOrders = getOrders();
+    const { orders: loadedOrders } = getOrders();
     setOrders(loadedOrders);
     setFilteredOrders(loadedOrders);
     
@@ -73,7 +73,7 @@ const HomePage = () => {
   
   // Фильтрация заказов при изменении фильтра или поискового запроса
   useEffect(() => {
-    let result = orders;
+    let result = [...orders];
     
     // Фильтрация по статусу
     if (selectedFilter !== 'Все') {
@@ -110,13 +110,13 @@ const HomePage = () => {
       deleteOrder(orderId);
       
       // Получаем обновленный список заказов
-      const updatedOrders = getOrders();
+      const { orders: updatedOrders } = getOrders();
       
       // Обновляем состояния
       setOrders(updatedOrders);
       
       // Применяем текущие фильтры к обновленному списку
-      let filteredResult = updatedOrders;
+      let filteredResult = [...updatedOrders];
       if (selectedFilter !== 'Все') {
         filteredResult = filteredResult.filter(order => order.status === selectedFilter);
       }

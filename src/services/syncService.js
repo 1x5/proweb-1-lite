@@ -5,6 +5,40 @@ class SyncService {
   constructor() {
     this.isSyncing = false;
     this.lastSyncTime = null;
+    this.syncInterval = null;
+    this.isOnline = navigator.onLine;
+    this.offlineQueue = [];
+
+    // Слушаем изменения состояния сети
+    window.addEventListener('online', this.handleOnline.bind(this));
+    window.addEventListener('offline', this.handleOffline.bind(this));
+  }
+
+  handleOnline() {
+    this.isOnline = true;
+    // При восстановлении соединения синхронизируем накопленные изменения
+    if (this.offlineQueue.length > 0) {
+      this.processOfflineQueue();
+    }
+  }
+
+  handleOffline() {
+    this.isOnline = false;
+  }
+
+  async processOfflineQueue() {
+    if (!this.isOnline || this.offlineQueue.length === 0) return;
+
+    try {
+      // Обрабатываем каждое действие из очереди
+      for (const action of this.offlineQueue) {
+        await this.syncWithBackend();
+      }
+      // Очищаем очередь после успешной синхронизации
+      this.offlineQueue = [];
+    } catch (error) {
+      console.error('Ошибка при обработке офлайн очереди:', error);
+    }
   }
 
   async syncWithBackend() {
@@ -12,6 +46,11 @@ class SyncService {
     
     try {
       this.isSyncing = true;
+      
+      if (!this.isOnline) {
+        console.log('Нет подключения к интернету. Синхронизация отложена.');
+        return false;
+      }
       
       // Получаем локальные заказы
       const localOrders = getOrders();
@@ -26,6 +65,10 @@ class SyncService {
       return true;
     } catch (error) {
       console.error('Ошибка синхронизации:', error);
+      if (!this.isOnline) {
+        // Добавляем в очередь для последующей синхронизации
+        this.offlineQueue.push({ type: 'sync', timestamp: new Date() });
+      }
       return false;
     } finally {
       this.isSyncing = false;
@@ -39,6 +82,16 @@ class SyncService {
       const updatedLocalOrders = [...localOrders, order];
       saveOrders(updatedLocalOrders);
       
+      if (!this.isOnline) {
+        // Если нет подключения, добавляем в очередь
+        this.offlineQueue.push({ 
+          type: 'save', 
+          order, 
+          timestamp: new Date() 
+        });
+        return true;
+      }
+      
       // Синхронизируем с бэкендом
       await this.syncWithBackend();
       
@@ -49,11 +102,25 @@ class SyncService {
     }
   }
 
-  // Запускаем автоматическую синхронизацию каждые 5 минут
   startAutoSync(interval = 300000) {
-    setInterval(() => {
-      this.syncWithBackend();
+    // Очищаем предыдущий интервал, если он был
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+    }
+    
+    // Устанавливаем новый интервал
+    this.syncInterval = setInterval(() => {
+      if (this.isOnline) {
+        this.syncWithBackend();
+      }
     }, interval);
+  }
+
+  stopAutoSync() {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = null;
+    }
   }
 }
 

@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
-import { getOrderById, saveOrder, deleteOrder } from '../services/OrderService';
+import { getOrderById, saveOrders, getOrders, deleteOrder } from '../services/OrderService';
 import { useTheme } from '../contexts/ThemeContext';
 import heic2any from 'heic2any';
 
@@ -151,8 +151,8 @@ const OrderDetailsPage = () => {
     }
   }, [id, navigate]);
   
-  // Функция сохранения заказа
-  const handleSaveOrder = useCallback((shouldNavigateHome = false) => {
+  // Оборачиваем handleSaveOrder в useCallback
+  const handleSaveOrder = useCallback(async (redirectToHome = true) => {
     setIsSaving(true);
     try {
       if (!product) return;
@@ -176,38 +176,44 @@ const OrderDetailsPage = () => {
         balance: balance
       };
       
-      // Сохраняем изменения
-      const savedOrder = saveOrder(updatedProduct);
+      // Получаем текущие заказы
+      const { orders } = getOrders();
+      
+      // Если это новый заказ, добавляем его в конец списка
+      if (isNewOrder) {
+        await saveOrders([...orders, updatedProduct]);
+      } else {
+        // Если существующий, обновляем его
+        const updatedOrders = orders.filter(o => o.id !== product.id);
+        await saveOrders([...updatedOrders, updatedProduct]);
+      }
+      
+      // Обновляем состояние
+      setProduct(updatedProduct);
+      setEditMode(false);
+      setShowSuccessBar(true);
       
       // Если это был новый заказ, обновляем URL
       if (isNewOrder) {
         setIsNewOrder(false);
-        navigate(`/order/${savedOrder.id}`, { replace: true });
+        navigate(`/order/${updatedProduct.id}`, { replace: true });
       }
       
-      setProduct(savedOrder);
-      setEditMode(false);
-      setShowSuccessBar(true);
-      
-      if (shouldNavigateHome) {
-        // Если нужно перейти на главную страницу
+      // Если нужно перейти на главную страницу
+      if (redirectToHome) {
         setTimeout(() => {
           navigate('/');
         }, 500);
-      } else {
-        // Скрываем полосу через 1 секунду
-        setTimeout(() => {
-          setShowSuccessBar(false);
-          setIsSaving(false);
-        }, 1000);
       }
       
-      return savedOrder;
+      return updatedProduct;
     } catch (error) {
       console.error('Error saving order:', error);
+      return null;
+    } finally {
       setIsSaving(false);
     }
-  }, [product, navigate, photos, isNewOrder]);
+  }, [product, photos, isNewOrder, navigate]);
   
   // Обработчик нажатия клавиш (Cmd+S / Ctrl+S)
   useEffect(() => {

@@ -1,80 +1,8 @@
 // Сервис для работы с заказами
-const ORDERS_KEY = 'furniture_orders';
-
-// Функция для очистки старых фотографий
-const cleanupOldPhotos = (orders) => {
-  // Оставляем только последние 10 фотографий для каждого заказа
-  return orders.map(order => ({
-    ...order,
-    photos: (order.photos || []).slice(-10)
-  }));
-};
-
-// Получение всех заказов
-export const getOrders = () => {
-  const orders = localStorage.getItem('orders');
-  return orders ? JSON.parse(orders) : [];
-};
-
-// Получение заказа по ID
-export const getOrderById = (id) => {
-  const orders = getOrders();
-  return orders.find(order => order.id === parseInt(id));
-};
-
-// Сохранение заказа (добавление или обновление)
-export const saveOrder = (order) => {
-  try {
-    const orders = getOrders();
-    const index = orders.findIndex(o => o.id === order.id);
-    
-    if (index !== -1) {
-      orders[index] = order;
-    } else {
-      const maxId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) : 0;
-      orders.push({
-        ...order,
-        id: order.id || maxId + 1
-      });
-    }
-    
-    try {
-      localStorage.setItem('orders', JSON.stringify(orders));
-    } catch (e) {
-      if (e.name === 'QuotaExceededError') {
-        // Если все еще не хватает места, удаляем все фотографии из старых заказов
-        const ordersWithoutPhotos = orders.map(o => ({
-          ...o,
-          photos: o.id === order.id ? o.photos : []
-        }));
-        localStorage.setItem('orders', JSON.stringify(ordersWithoutPhotos));
-      } else {
-        throw e;
-      }
-    }
-    
-    return order;
-  } catch (error) {
-    console.error('Ошибка при сохранении заказа:', error);
-    throw error;
-  }
-};
-
-// Удаление заказа
-export const deleteOrder = (id) => {
-  try {
-    const orders = getOrders();
-    const updatedOrders = orders.filter(order => order.id !== (typeof id === 'string' ? parseInt(id) : id));
-    localStorage.setItem('orders', JSON.stringify(updatedOrders));
-    return true;
-  } catch (error) {
-    console.error('Error deleting order:', error);
-    return false;
-  }
-};
+const STORE_NAME = 'orders';
 
 // Начальные данные для демонстрации
-const getInitialOrders = () => [
+const initialOrders = [
   {
     id: 1,
     name: 'Стол обеденный',
@@ -180,4 +108,76 @@ const getInitialOrders = () => [
     ],
     notes: 'Компактная прихожая с зеркалом и вешалкой.'
   }
-]; 
+];
+
+// Функция для очистки старых фотографий
+const cleanupOldPhotos = (photos) => {
+  return (photos || []).slice(-10);
+};
+
+// Получение всех заказов
+export const getOrders = () => {
+  try {
+    const ordersJson = localStorage.getItem(STORE_NAME);
+    if (ordersJson) {
+      return { orders: JSON.parse(ordersJson) };
+    }
+    return { orders: initialOrders };
+  } catch (error) {
+    console.error('Error getting orders:', error);
+    return { orders: [] };
+  }
+};
+
+// Получение заказа по ID
+export const getOrderById = (id) => {
+  const { orders } = getOrders();
+  return orders.find(order => order.id === id) || null;
+};
+
+// Сохранение заказов
+export const saveOrders = async (orders) => {
+  try {
+    // Очищаем старые фотографии для каждого заказа
+    const cleanedOrders = orders.map(order => ({
+      ...order,
+      photos: cleanupOldPhotos(order.photos)
+    }));
+
+    localStorage.setItem(STORE_NAME, JSON.stringify(cleanedOrders));
+    return true;
+  } catch (error) {
+    console.error('Error saving orders:', error);
+    return false;
+  }
+};
+
+// Восстановление из резервной копии
+export const restoreFromBackup = () => {
+  try {
+    const backup = localStorage.getItem('orders_backup');
+    if (!backup) return false;
+    
+    const { orders, version } = JSON.parse(backup);
+    localStorage.setItem(STORE_NAME, JSON.stringify(orders));
+    localStorage.setItem('ordersVersion', version.toString());
+    
+    return true;
+  } catch (error) {
+    console.error('Ошибка при восстановлении из резервной копии:', error);
+    return false;
+  }
+};
+
+// Удаление заказа
+export const deleteOrder = async (id) => {
+  try {
+    const { orders } = getOrders();
+    const updatedOrders = orders.filter(order => order.id !== id);
+    await saveOrders(updatedOrders);
+    return true;
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    return false;
+  }
+}; 

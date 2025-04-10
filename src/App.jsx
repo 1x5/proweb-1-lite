@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -7,8 +7,22 @@ import HomePage from './pages/HomePage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import SettingsPage from './pages/SettingsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import { syncService } from './services/syncService';
 
-function App() {
+const App = () => {
+  useEffect(() => {
+    // Запускаем первичную синхронизацию
+    syncService.syncWithBackend();
+    
+    // Запускаем автоматическую синхронизацию каждые 5 минут
+    syncService.startAutoSync();
+    
+    // Очищаем интервал при размонтировании компонента
+    return () => {
+      clearInterval(syncService.syncInterval);
+    };
+  }, []);
+
   return (
     <AuthProvider>
       <ThemeProvider>
@@ -26,6 +40,6 @@ function App() {
       </ThemeProvider>
     </AuthProvider>
   );
-}
+};
 
 export default App; 
