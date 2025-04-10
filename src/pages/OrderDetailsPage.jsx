@@ -8,7 +8,7 @@ import BottomNavigation from '../components/BottomNavigation';
 import { getOrderById, saveOrders, getOrders, deleteOrder } from '../services/OrderService';
 import { useTheme } from '../contexts/ThemeContext';
 import heic2any from 'heic2any';
-import { syncService } from '../services/syncService';
+import syncService from '../services/syncService';
 import { toast } from 'react-hot-toast';
 
 // Добавляем стили анимации
@@ -71,6 +71,7 @@ const OrderDetailsPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [product, setProduct] = useState(null);
   const [showSuccessBar, setShowSuccessBar] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({});
   const [previewPhoto, setPreviewPhoto] = useState(null);
@@ -88,116 +89,6 @@ const OrderDetailsPage = () => {
   
   // Доступные мессенджеры
   const messengers = ['WhatsApp', 'Telegram'];
-  
-  // Загрузка данных заказа по ID
-  useEffect(() => {
-    if (id === 'new') {
-      // Создаем новый заказ с уникальным временным id
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substr(2, 9);
-      const tempId = `temp-${timestamp}-${random}`;
-      
-      setIsNewOrder(true);
-      setProduct({
-        id: tempId,
-        name: 'Новый заказ',
-        customer: '',
-        status: 'Ожидает',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        duration: 7,
-        price: 1000, // Начальная цена
-        cost: 0,
-        profit: 0,
-        profitPercent: 0,
-        prepayment: 0,
-        balance: 1000, // Начальный баланс равен цене
-        phone: '',
-        messenger: 'WhatsApp',
-        expenses: [{
-          id: Date.now().toString(),
-          name: '',
-          cost: 0,
-          link: '',
-          isNew: true
-        }],
-        photos: [],
-        notes: '',
-        version: 0
-      });
-      setEditMode(true);
-      // Очищаем состояние фотографий при создании нового заказа
-      setPhotos([]);
-      setPreviewPhoto(null);
-      setUploadProgress({});
-    } else {
-      // Загружаем существующий заказ
-      setIsNewOrder(false);
-      // Проверяем, что id существует и является числом
-      const orderId = id ? parseInt(id) : null;
-      console.log('Loading order:', { id, orderId });
-      if (orderId && !isNaN(orderId)) {
-        const orderData = getOrderById(orderId);
-        if (orderData) {
-          // Добавляем поля предоплаты и остатка, если их нет
-          if (orderData.prepayment === undefined) {
-            orderData.prepayment = 0;
-          }
-          if (orderData.balance === undefined) {
-            orderData.balance = orderData.price || 0;
-          }
-          // Добавляем поля телефона и мессенджера, если их нет
-          if (orderData.phone === undefined) {
-            orderData.phone = '';
-          }
-          if (orderData.messenger === undefined) {
-            orderData.messenger = 'WhatsApp';
-          }
-          setProduct(orderData);
-          // Загружаем фотографии, если они есть
-          if (orderData.photos && orderData.photos.length > 0) {
-            setPhotos(orderData.photos);
-          }
-        } else {
-          navigate('/');
-        }
-      }
-    }
-  }, [id, navigate]);
-  
-  // Инициализация нового заказа
-  useEffect(() => {
-    if (isNewOrder) {
-      const newOrder = {
-        id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: 'Новый заказ',
-        customer: '',
-        status: 'Ожидает',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        duration: 7,
-        price: 1000, // Начальная цена
-        cost: 0,
-        profit: 0,
-        profitPercent: 0,
-        prepayment: 0,
-        balance: 1000, // Начальный баланс равен цене
-        phone: '',
-        messenger: 'WhatsApp',
-        expenses: [{
-          id: Date.now().toString(),
-          name: '',
-          cost: 0,
-          link: '',
-          isNew: true
-        }],
-        photos: [],
-        notes: '',
-        version: 0
-      };
-      setProduct(newOrder);
-    }
-  }, [isNewOrder]);
   
   // Оборачиваем handleSaveOrder в useCallback
   const handleSaveOrder = useCallback(async (redirectToHome = true) => {
@@ -315,16 +206,20 @@ const OrderDetailsPage = () => {
       // Синхронизируем с сервером
       console.log('🔄 Начало синхронизации с сервером...');
       const syncResult = await syncService.syncOnSave(savedOrder);
+      console.log('📥 Результат синхронизации:', syncResult);
       
       if (syncResult) {
         console.log('✅ Синхронизация успешна');
         toast.success('Заказ сохранен и синхронизирован');
+        setSyncStatus('success');
       } else if (!syncService.isOnline) {
         console.log('⚠️ Офлайн режим - заказ будет синхронизирован позже');
         toast.warning('Заказ сохранен локально и будет синхронизирован при восстановлении соединения');
+        setSyncStatus('error');
       } else {
         console.log('❌ Ошибка синхронизации');
         toast.error('Ошибка синхронизации с сервером');
+        setSyncStatus('error');
       }
       
       setEditMode(false);
@@ -342,6 +237,8 @@ const OrderDetailsPage = () => {
     } catch (error) {
       console.error('❌ Ошибка при сохранении:', error);
       toast.error('Ошибка при сохранении заказа');
+      setSyncStatus('error');
+      setShowSuccessBar(true);
     } finally {
       setIsSaving(false);
       console.log('🔵 =====================================');
@@ -349,6 +246,116 @@ const OrderDetailsPage = () => {
       console.log('🔵 =====================================');
     }
   }, [product, photos, isNewOrder, navigate]);
+  
+  // Загрузка данных заказа по ID
+  useEffect(() => {
+    if (id === 'new') {
+      // Создаем новый заказ с уникальным временным id
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substr(2, 9);
+      const tempId = `temp-${timestamp}-${random}`;
+      
+      setIsNewOrder(true);
+      setProduct({
+        id: tempId,
+        name: 'Новый заказ',
+        customer: '',
+        status: 'Ожидает',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        duration: 7,
+        price: 1000, // Начальная цена
+        cost: 0,
+        profit: 0,
+        profitPercent: 0,
+        prepayment: 0,
+        balance: 1000, // Начальный баланс равен цене
+        phone: '',
+        messenger: 'WhatsApp',
+        expenses: [{
+          id: Date.now().toString(),
+          name: '',
+          cost: 0,
+          link: '',
+          isNew: true
+        }],
+        photos: [],
+        notes: '',
+        version: 0
+      });
+      setEditMode(true);
+      // Очищаем состояние фотографий при создании нового заказа
+      setPhotos([]);
+      setPreviewPhoto(null);
+      setUploadProgress({});
+    } else {
+      // Загружаем существующий заказ
+      setIsNewOrder(false);
+      // Проверяем, что id существует и является числом
+      const orderId = id ? parseInt(id) : null;
+      console.log('Loading order:', { id, orderId });
+      if (orderId && !isNaN(orderId)) {
+        const orderData = getOrderById(orderId);
+        if (orderData) {
+          // Добавляем поля предоплаты и остатка, если их нет
+          if (orderData.prepayment === undefined) {
+            orderData.prepayment = 0;
+          }
+          if (orderData.balance === undefined) {
+            orderData.balance = orderData.price || 0;
+          }
+          // Добавляем поля телефона и мессенджера, если их нет
+          if (orderData.phone === undefined) {
+            orderData.phone = '';
+          }
+          if (orderData.messenger === undefined) {
+            orderData.messenger = 'WhatsApp';
+          }
+          setProduct(orderData);
+          // Загружаем фотографии, если они есть
+          if (orderData.photos && orderData.photos.length > 0) {
+            setPhotos(orderData.photos);
+          }
+        } else {
+          navigate('/');
+        }
+      }
+    }
+  }, [id, navigate]);
+  
+  // Инициализация нового заказа
+  useEffect(() => {
+    if (isNewOrder) {
+      const newOrder = {
+        id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: 'Новый заказ',
+        customer: '',
+        status: 'Ожидает',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        duration: 7,
+        price: 1000, // Начальная цена
+        cost: 0,
+        profit: 0,
+        profitPercent: 0,
+        prepayment: 0,
+        balance: 1000, // Начальный баланс равен цене
+        phone: '',
+        messenger: 'WhatsApp',
+        expenses: [{
+          id: Date.now().toString(),
+          name: '',
+          cost: 0,
+          link: '',
+          isNew: true
+        }],
+        photos: [],
+        notes: '',
+        version: 0
+      };
+      setProduct(newOrder);
+    }
+  }, [isNewOrder]);
   
   // Обработчик нажатия клавиш (Cmd+S / Ctrl+S)
   useEffect(() => {
@@ -373,6 +380,48 @@ const OrderDetailsPage = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleSaveOrder, editMode]);
+  
+  // Добавляем стили в head
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = fadeInOutKeyframes + progressAnimation;
+    document.head.appendChild(styleSheet);
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+  
+  // Подписываемся на изменения статуса синхронизации
+  useEffect(() => {
+    syncService.onSyncStatusChange = (status) => {
+      if (status === 'syncing') {
+        setIsSaving(true);
+      } else if (status === 'success' || status === 'error') {
+        setIsSaving(false);
+        setSyncStatus(status);
+        setShowSuccessBar(true);
+        
+        // Скрываем статус через 2 секунды
+        setTimeout(() => {
+          setShowSuccessBar(false);
+          setSyncStatus(null);
+        }, 2000);
+      }
+    };
+
+    return () => {
+      syncService.onSyncStatusChange = null;
+    };
+  }, []);
+  
+  // Если данные еще не загружены
+  if (!product) {
+    return (
+      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: theme.bg }}>
+        <div style={{ color: theme.textPrimary }}>Загрузка...</div>
+      </div>
+    );
+  }
   
   // Расчет длительности при изменении дат
   const calculateDuration = (startDate, endDate) => {
@@ -772,25 +821,6 @@ const OrderDetailsPage = () => {
     }, 1000);
   };
   
-  // Добавляем стили в head
-  useEffect(() => {
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = fadeInOutKeyframes + progressAnimation;
-    document.head.appendChild(styleSheet);
-    return () => {
-      document.head.removeChild(styleSheet);
-    };
-  }, []);
-  
-  // Если данные еще не загружены
-  if (!product) {
-    return (
-      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: theme.bg }}>
-        <div style={{ color: theme.textPrimary }}>Загрузка...</div>
-      </div>
-    );
-  }
-  
   return (
     <>
       <style>{fadeInOutKeyframes}</style>
@@ -808,7 +838,7 @@ const OrderDetailsPage = () => {
               zIndex: 100
             }}
           >
-            {isSaving && (
+            {isSaving ? (
               <div 
                 style={{
                   height: '100%',
@@ -816,12 +846,21 @@ const OrderDetailsPage = () => {
                   background: `linear-gradient(
                     90deg,
                     transparent 0%,
-                    ${theme.green} 35%,
-                    ${theme.green} 65%,
+                    ${theme.accent} 35%,
+                    ${theme.accent} 65%,
                     transparent 100%
                   )`,
                   backgroundSize: '200% 100%',
                   animation: 'progress 1s linear infinite',
+                  opacity: 0.8
+                }}
+              />
+            ) : (
+              <div 
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  backgroundColor: syncStatus === 'success' ? theme.green : theme.red,
                   opacity: 0.8
                 }}
               />
