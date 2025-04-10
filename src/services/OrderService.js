@@ -119,12 +119,31 @@ const cleanupOldPhotos = (photos) => {
 export const getOrders = () => {
   try {
     const ordersJson = localStorage.getItem(STORE_NAME);
-    if (ordersJson) {
-      return { orders: JSON.parse(ordersJson) };
+    if (!ordersJson) {
+      console.log('ℹ️ Локальное хранилище пусто, возвращаем пустой массив');
+      return { orders: [] };
     }
-    return { orders: initialOrders };
+
+    const orders = JSON.parse(ordersJson);
+    
+    // Восстанавливаем объекты File из base64 строк
+    const processedOrders = orders.map(order => {
+      if (order.photos && order.photos.length > 0) {
+        return {
+          ...order,
+          photos: order.photos.map(photo => ({
+            ...photo,
+            preview: photo.preview || photo.file
+          }))
+        };
+      }
+      return order;
+    });
+
+    console.log('✅ Заказы успешно загружены из локального хранилища');
+    return { orders: processedOrders };
   } catch (error) {
-    console.error('Error getting orders:', error);
+    console.error('❌ Ошибка при загрузке заказов:', error);
     return { orders: [] };
   }
 };
@@ -135,33 +154,35 @@ export const getOrderById = (id) => {
   return orders.find(order => order.id === id) || null;
 };
 
-// Сохранение заказов
-export const saveOrders = async (orders) => {
+// Сохранение заказов в локальное хранилище
+export const saveOrders = (orders) => {
   try {
-    // Генерируем временные id для новых заказов
-    const ordersWithIds = orders.map(order => {
-      if (!order.id) {
-        // Генерируем уникальный временный id
-        const timestamp = Date.now();
-        const random = Math.random().toString(36).substr(2, 9);
+    // Преобразуем фотографии в строки base64 перед сохранением
+    const ordersToSave = orders.map(order => {
+      if (order.photos && order.photos.length > 0) {
         return {
           ...order,
-          id: `temp-${timestamp}-${random}`
+          photos: order.photos.map(photo => {
+            if (photo.file instanceof File) {
+              // Если это File объект, конвертируем в base64
+              return {
+                ...photo,
+                file: URL.createObjectURL(photo.file),
+                preview: photo.preview || URL.createObjectURL(photo.file)
+              };
+            }
+            return photo;
+          })
         };
       }
       return order;
     });
 
-    // Очищаем старые фотографии для каждого заказа
-    const cleanedOrders = ordersWithIds.map(order => ({
-      ...order,
-      photos: cleanupOldPhotos(order.photos)
-    }));
-
-    localStorage.setItem(STORE_NAME, JSON.stringify(cleanedOrders));
+    localStorage.setItem(STORE_NAME, JSON.stringify(ordersToSave));
+    console.log('✅ Заказы успешно сохранены в локальное хранилище');
     return true;
   } catch (error) {
-    console.error('Error saving orders:', error);
+    console.error('❌ Ошибка при сохранении заказов:', error);
     return false;
   }
 };

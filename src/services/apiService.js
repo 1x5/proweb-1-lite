@@ -61,21 +61,20 @@ export const apiService = {
 
   // Создать заказ
   async createOrder(order) {
-    return withRetry(async () => {
-      const response = await fetchWithTimeout(`${API_URL}/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(order),
-      });
-      if (!response.ok) {
-        const error = new Error(`HTTP error! status: ${response.status}`);
-        error.status = response.status;
-        throw error;
-      }
-      return await response.json();
+    console.log('📤 Создание нового заказа:', order);
+    const response = await fetchWithTimeout(`${API_URL}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(order)
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
   },
 
   // Обновить заказ

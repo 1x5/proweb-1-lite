@@ -63,6 +63,20 @@ const OrderDetailsPage = () => {
   const { darkMode, toggleDarkMode, theme } = useTheme();
   const [editMode, setEditMode] = useState(false);
   const [product, setProduct] = useState(null);
+  const [originalOrder, setOriginalOrder] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    customer: '',
+    price: 0,
+    balance: 0,
+    profit: 0,
+    profitPercent: 0,
+    startDate: '',
+    endDate: '',
+    status: 'Ожидает',
+    notes: '',
+    photos: []
+  });
   const [showSuccessBar, setShowSuccessBar] = useState(false);
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [syncStatus, setSyncStatus] = useState(null);
@@ -278,114 +292,116 @@ const OrderDetailsPage = () => {
   }, [product, photos, isNewOrder, navigate]);
   
   // Загрузка данных заказа по ID
-  useEffect(() => {
-    if (id === 'new') {
-      // Создаем новый заказ с уникальным временным id
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substr(2, 9);
-      const tempId = `temp-${timestamp}-${random}`;
-      
-      setIsNewOrder(true);
-      setProduct({
-        id: tempId,
-        name: 'Новый заказ',
-        customer: '',
-        status: 'Ожидает',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        duration: 7,
-        price: 1000, // Начальная цена
-        cost: 0,
-        profit: 0,
-        profitPercent: 0,
-        prepayment: 0,
-        balance: 1000, // Начальный баланс равен цене
-        phone: '',
-        messenger: 'WhatsApp',
-        expenses: [{
-          id: Date.now().toString(),
-          name: '',
-          cost: 0,
-          link: '',
-          isNew: true
-        }],
-        photos: [],
-        notes: '',
-        version: 0
-      });
-      setEditMode(true);
-      // Очищаем состояние фотографий при создании нового заказа
-      setPhotos([]);
-      setPreviewPhoto(null);
-      setUploadProgress({});
-    } else {
-      // Загружаем существующий заказ
-      setIsNewOrder(false);
-      // Проверяем, что id существует и является числом
-      const orderId = id ? parseInt(id) : null;
-      console.log('Loading order:', { id, orderId });
-      if (orderId && !isNaN(orderId)) {
-        const orderData = getOrderById(orderId);
-        if (orderData) {
-          // Добавляем поля предоплаты и остатка, если их нет
-          if (orderData.prepayment === undefined) {
-            orderData.prepayment = 0;
-          }
-          if (orderData.balance === undefined) {
-            orderData.balance = orderData.price || 0;
-          }
-          // Добавляем поля телефона и мессенджера, если их нет
-          if (orderData.phone === undefined) {
-            orderData.phone = '';
-          }
-          if (orderData.messenger === undefined) {
-            orderData.messenger = 'WhatsApp';
-          }
-          setProduct(orderData);
-          // Загружаем фотографии, если они есть
-          if (orderData.photos && orderData.photos.length > 0) {
-            setPhotos(orderData.photos);
-          }
-        } else {
-          navigate('/');
-        }
+  const loadOrder = async (id) => {
+    console.log('Loading order:', { id, orderId: id });
+    try {
+      const order = await getOrderById(id);
+      console.log('Order loaded:', order);
+      if (order) {
+        setProduct(order);
+        setOriginalOrder({ ...order });
+        setFormData({
+          name: order.name || '',
+          customer: order.customer || '',
+          price: order.price || 0,
+          balance: order.balance || 0,
+          profit: order.profit || 0,
+          profitPercent: order.profitPercent || 0,
+          startDate: order.startDate || '',
+          endDate: order.endDate || '',
+          status: order.status || 'Ожидает',
+          notes: order.notes || '',
+          photos: order.photos || []
+        });
+      } else {
+        console.error('Order not found');
+        navigate('/');
       }
+    } catch (error) {
+      console.error('Error loading order:', error);
+      navigate('/');
     }
-  }, [id, navigate]);
+  };
   
   // Инициализация нового заказа
   useEffect(() => {
-    if (isNewOrder) {
-      const newOrder = {
-        id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: 'Новый заказ',
-        customer: '',
-        status: 'Ожидает',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        duration: 7,
-        price: 1000, // Начальная цена
-        cost: 0,
-        profit: 0,
-        profitPercent: 0,
-        prepayment: 0,
-        balance: 1000, // Начальный баланс равен цене
-        phone: '',
-        messenger: 'WhatsApp',
-        expenses: [{
-          id: Date.now().toString(),
-          name: '',
-          cost: 0,
-          link: '',
-          isNew: true
-        }],
-        photos: [],
-        notes: '',
-        version: 0
-      };
-      setProduct(newOrder);
-    }
-  }, [isNewOrder]);
+    const initializeOrder = async () => {
+      if (id === 'new') {
+        // Создаем новый заказ с временным ID
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substr(2, 9);
+        const tempId = `temp-${timestamp}-${random}`;
+        
+        const newOrder = {
+          id: tempId,
+          name: 'Новый заказ',
+          customer: '',
+          status: 'Ожидает',
+          startDate: new Date().toISOString().split('T')[0],
+          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          price: 0,
+          balance: 0,
+          profit: 0,
+          profitPercent: 0,
+          notes: '',
+          photos: [],
+          version: 0,
+          expenses: [],
+          prepayment: 0,
+          cost: 0
+        };
+        
+        setProduct(newOrder);
+        setOriginalOrder({ ...newOrder });
+        setPhotos([]); // Очищаем фотографии для нового заказа
+        setFormData({
+          name: newOrder.name,
+          customer: newOrder.customer,
+          price: newOrder.price,
+          balance: newOrder.balance,
+          profit: newOrder.profit,
+          profitPercent: newOrder.profitPercent,
+          startDate: newOrder.startDate,
+          endDate: newOrder.endDate,
+          status: newOrder.status,
+          notes: newOrder.notes,
+          photos: newOrder.photos
+        });
+        setEditMode(true);
+      } else {
+        try {
+          const order = await getOrderById(id);
+          if (order) {
+            setProduct(order);
+            setOriginalOrder({ ...order });
+            // Устанавливаем фотографии из заказа
+            setPhotos(order.photos || []);
+            setFormData({
+              name: order.name || '',
+              customer: order.customer || '',
+              price: order.price || 0,
+              balance: order.balance || 0,
+              profit: order.profit || 0,
+              profitPercent: order.profitPercent || 0,
+              startDate: order.startDate || '',
+              endDate: order.endDate || '',
+              status: order.status || 'Ожидает',
+              notes: order.notes || '',
+              photos: order.photos || []
+            });
+          } else {
+            console.error('Order not found');
+            navigate('/');
+          }
+        } catch (error) {
+          console.error('Error loading order:', error);
+          navigate('/');
+        }
+      }
+    };
+
+    initializeOrder();
+  }, [id, navigate]);
   
   // Обработчик нажатия клавиш (Cmd+S / Ctrl+S)
   useEffect(() => {
@@ -587,7 +603,25 @@ const OrderDetailsPage = () => {
   
   // Удаление фотографии
   const handleDeletePhoto = (photoId) => {
-    setPhotos(prevPhotos => prevPhotos.filter(photo => photo.id !== photoId));
+    // Удаляем фото из обоих состояний
+    setProduct(prev => {
+      const updatedProduct = {
+        ...prev,
+        photos: prev.photos.filter(photo => photo.id !== photoId)
+      };
+      
+      // Сохраняем обновленный продукт в локальное хранилище
+      const { orders } = getOrders();
+      const updatedOrders = orders.map(order => 
+        order.id === updatedProduct.id ? updatedProduct : order
+      );
+      saveOrders(updatedOrders);
+      
+      return updatedProduct;
+    });
+    
+    setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+    
     if (previewPhoto && previewPhoto.id === photoId) {
       setPreviewPhoto(null);
     }
@@ -847,6 +881,153 @@ const OrderDetailsPage = () => {
     }, 1000);
   };
   
+  // Функция для конвертации File в base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handlePhotoUpload = async (event) => {
+    const files = Array.from(event.target.files);
+    
+    for (const file of files) {
+      const fileId = Date.now() + '_' + file.name;
+      
+      try {
+        // Устанавливаем начальный прогресс
+        setUploadProgress(prev => ({
+          ...prev,
+          [fileId]: 0
+        }));
+
+        // Имитируем процесс загрузки
+        const simulateProgress = () => {
+          setUploadProgress(prev => {
+            const currentProgress = prev[fileId] || 0;
+            if (currentProgress < 90) {
+              return {
+                ...prev,
+                [fileId]: currentProgress + 10
+              };
+            }
+            return prev;
+          });
+        };
+
+        // Запускаем имитацию прогресса каждые 100мс
+        const progressInterval = setInterval(simulateProgress, 100);
+
+        let base64;
+        try {
+          base64 = await fileToBase64(file);
+        } finally {
+          clearInterval(progressInterval);
+        }
+
+        // Устанавливаем 100% прогресс
+        setUploadProgress(prev => ({
+          ...prev,
+          [fileId]: 100
+        }));
+
+        const photo = {
+          id: fileId,
+          url: base64,
+          name: file.name,
+          type: file.type,
+          date: new Date().toISOString()
+        };
+        
+        // Обновляем оба состояния: product.photos и photos
+        setProduct(prev => {
+          const updatedProduct = {
+            ...prev,
+            photos: [...(prev.photos || []), photo]
+          };
+          
+          // Сохраняем обновленный продукт в локальное хранилище
+          const { orders } = getOrders();
+          const updatedOrders = orders.map(order => 
+            order.id === updatedProduct.id ? updatedProduct : order
+          );
+          saveOrders(updatedOrders);
+          
+          return updatedProduct;
+        });
+
+        // Обновляем отдельное состояние photos
+        setPhotos(prev => [...prev, photo]);
+
+        // Удаляем индикатор прогресса через 1 секунду
+        setTimeout(() => {
+          setUploadProgress(prev => {
+            const { [fileId]: removed, ...rest } = prev;
+            return rest;
+          });
+        }, 1000);
+
+      } catch (error) {
+        console.error('Ошибка при загрузке фото:', error);
+        toast.error('Ошибка при загрузке фото');
+        
+        // Удаляем индикатор прогресса в случае ошибки
+        setUploadProgress(prev => {
+          const { [fileId]: removed, ...rest } = prev;
+          return rest;
+        });
+      }
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      
+      // Создаем обновленный объект заказа
+      const updatedOrder = {
+        ...product,
+        name: formData.name,
+        customer: formData.customer,
+        price: parseFloat(formData.price),
+        balance: parseFloat(formData.balance),
+        profit: parseFloat(formData.profit),
+        profitPercent: parseFloat(formData.profitPercent),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        status: formData.status,
+        notes: formData.notes,
+        photos: photos, // Используем текущий массив фотографий
+        version: (product.version || 0) + 1
+      };
+
+      // Сохраняем заказ
+      const savedOrder = await handleSaveOrder(false);
+      
+      if (savedOrder) {
+        setProduct(savedOrder);
+        setOriginalOrder({ ...savedOrder });
+        setPhotos(savedOrder.photos || []); // Обновляем состояние фотографий
+        setFormData({
+          ...formData,
+          photos: savedOrder.photos || [] // Обновляем формы с новыми фотографиями
+        });
+        setEditMode(false);
+        setIsSaving(false);
+        
+        // Показываем уведомление об успешном сохранении
+        toast.success('Заказ успешно сохранен');
+      }
+    } catch (error) {
+      console.error('Error saving order:', error);
+      setIsSaving(false);
+      toast.error('Ошибка при сохранении заказа');
+    }
+  };
+  
   return (
     <>
       <style>{fadeInOutKeyframes}</style>
@@ -1064,7 +1245,7 @@ const OrderDetailsPage = () => {
                     {editMode ? (
                       <input 
                         type="number" 
-                        value={product.price || ''}
+                        value={product?.price || ''}
                         onChange={handlePriceChange}
                         className="w-full p-1.5 rounded text-sm"
                         style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
@@ -1072,7 +1253,7 @@ const OrderDetailsPage = () => {
                       />
                     ) : (
                       <div className="text-sm" style={{ color: theme.textPrimary }}>
-                        {product.price.toLocaleString()} ₽
+                        {(product?.price || 0).toLocaleString()} ₽
                       </div>
                     )}
                   </div>
@@ -1083,7 +1264,7 @@ const OrderDetailsPage = () => {
                     {editMode ? (
                       <input 
                         type="number" 
-                        value={product.prepayment || ''}
+                        value={product?.prepayment || ''}
                         onChange={handlePrepaymentChange}
                         className="w-full p-1.5 rounded text-sm"
                         style={{ backgroundColor: theme.inputBg, color: theme.textPrimary, border: 'none' }}
@@ -1091,7 +1272,7 @@ const OrderDetailsPage = () => {
                       />
                     ) : (
                       <div className="text-sm" style={{ color: theme.textPrimary }}>
-                        {product.prepayment.toLocaleString()} ₽
+                        {(product?.prepayment || 0).toLocaleString()} ₽
                       </div>
                     )}
                   </div>
@@ -1100,7 +1281,7 @@ const OrderDetailsPage = () => {
                   <div className="mb-1">
                     <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Себестоимость:</div>
                     <div className="text-sm" style={{ color: theme.textPrimary }}>
-                      {product.cost.toLocaleString()} ₽
+                      {(product?.cost || 0).toLocaleString()} ₽
                     </div>
                   </div>
                   
@@ -1108,10 +1289,10 @@ const OrderDetailsPage = () => {
                   <div className="mb-1">
                     <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Остаток:</div>
                     <div className="text-sm" style={{ 
-                      color: product.balance > 0 ? theme.red : theme.green,
+                      color: (product?.balance || 0) > 0 ? theme.red : theme.green,
                       fontWeight: 'bold'
                     }}>
-                      {product.balance.toLocaleString()} ₽
+                      {(product?.balance || 0).toLocaleString()} ₽
                     </div>
                   </div>
                   
@@ -1119,10 +1300,10 @@ const OrderDetailsPage = () => {
                   <div className="mb-1">
                     <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Прибыль:</div>
                     <div className="text-sm" style={{ 
-                      color: product.profit >= 0 ? theme.green : theme.red,
+                      color: (product?.profit || 0) >= 0 ? theme.green : theme.red,
                       fontWeight: 'bold'
                     }}>
-                      {product.profit.toLocaleString()} ₽
+                      {(product?.profit || 0).toLocaleString()} ₽
                     </div>
                   </div>
                   
@@ -1130,10 +1311,10 @@ const OrderDetailsPage = () => {
                   <div className="mb-1">
                     <div className="text-sm mb-0.5" style={{ color: theme.textSecondary }}>Процент:</div>
                     <div className="text-sm" style={{ 
-                      color: product.profitPercent >= 0 ? theme.green : theme.red,
+                      color: (product?.profitPercent || 0) >= 0 ? theme.green : theme.red,
                       fontWeight: 'bold'
                     }}>
-                      {product.profitPercent}%
+                      {product?.profitPercent || 0}%
                     </div>
                   </div>
                 </div>
@@ -1361,7 +1542,7 @@ const OrderDetailsPage = () => {
                     <input 
                       type="file" 
                       ref={fileInputRef}
-                      onChange={handleFileUpload}
+                      onChange={handlePhotoUpload}
                       accept="image/*"
                       multiple
                       className="hidden"
@@ -1413,9 +1594,9 @@ const OrderDetailsPage = () => {
                 )}
                 
                 {/* Галерея фотографий */}
-                {photos.length > 0 ? (
+                {product.photos.length > 0 ? (
                   <div className="grid grid-cols-3 gap-2">
-                    {photos.map(photo => (
+                    {product.photos.map(photo => (
                       <div 
                         key={`photo-${photo.id}`}
                         className="relative aspect-square rounded overflow-hidden"

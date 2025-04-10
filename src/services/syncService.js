@@ -188,46 +188,90 @@ class SyncService {
     }
   }
 
-  async syncOnSave(order) {
-    console.log('🟦 =====================================');
-    console.log('🟦 НАЧАЛО СИНХРОНИЗАЦИИ ПРИ СОХРАНЕНИИ');
-    console.log('🟦 Заказ:', order.id, order.name);
-    console.log('🟦 =====================================');
+  async compressPhoto(photo) {
+    if (!photo.url) return photo;
     
-    if (!navigator.onLine) {
-      console.log('📱 ОФЛАЙН РЕЖИМ - добавление в очередь');
-      this.offlineQueue.push(order);
-      this.saveOfflineQueue();
-      console.log('💾 Заказ добавлен в офлайн очередь');
-      this.notifyStatusChange('error');
-      return false;
-    }
+    // Создаем временный canvas для сжатия
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    return new Promise((resolve) => {
+      img.onload = () => {
+        // Максимальные размеры
+        const maxWidth = 800;
+        const maxHeight = 800;
+        
+        let width = img.width;
+        let height = img.height;
+        
+        // Изменяем размеры с сохранением пропорций
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Конвертируем в JPEG с качеством 0.7
+        const compressedUrl = canvas.toDataURL('image/jpeg', 0.7);
+        
+        resolve({
+          ...photo,
+          url: compressedUrl
+        });
+      };
+      img.src = photo.url;
+    });
+  }
 
+  async syncOnSave(order) {
     try {
-      this.notifyStatusChange('syncing');
+      // Проверяем подключение к интернету
+      if (!navigator.onLine) {
+        console.log('Нет подключения к интернету, добавляем в очередь');
+        this.addToOfflineQueue(order);
+        return { success: true, message: 'Добавлено в очередь для синхронизации' };
+      }
+
+      // Сжимаем фотографии перед отправкой
+      const compressedPhotos = await Promise.all(
+        (order.photos || []).map(photo => this.compressPhoto(photo))
+      );
       
-      console.log('🔄 Отправка на сервер...');
-      const result = await this.syncWithBackend([order]);
-      console.log('✅ СИНХРОНИЗАЦИЯ УСПЕШНА');
-      console.log('📊 Результат:', result);
-      
-      this.notifyStatusChange('success');
-      
-      return result;
+      const orderToSync = {
+        ...order,
+        photos: compressedPhotos
+      };
+
+      // Если это новый заказ (с временным ID)
+      if (order.id.startsWith('temp-')) {
+        // Удаляем временный ID перед отправкой на сервер
+        const { id, ...orderWithoutId } = orderToSync;
+        const result = await apiService.createOrder(orderWithoutId);
+        return { success: true, data: result };
+      }
+
+      // Для существующего заказа
+      const result = await apiService.updateOrder(orderToSync.id, orderToSync);
+      return { success: true, data: result };
+
     } catch (error) {
-      console.error('❌ ОШИБКА СИНХРОНИЗАЦИИ:', error);
-      console.log('📱 Добавление в офлайн очередь...');
-      this.offlineQueue.push(order);
-      this.saveOfflineQueue();
-      console.log('💾 Заказ добавлен в офлайн очередь');
-      
-      this.notifyStatusChange('error');
-      
-      return false;
-    } finally {
-      console.log('🟦 =====================================');
-      console.log('🟦 КОНЕЦ СИНХРОНИЗАЦИИ ПРИ СОХРАНЕНИИ');
-      console.log('🟦 =====================================');
+      console.error('Ошибка при синхронизации:', error);
+      this.addToOfflineQueue(order);
+      return { 
+        success: false, 
+        message: 'Ошибка при синхронизации, добавлено в очередь'
+      };
     }
   }
 
